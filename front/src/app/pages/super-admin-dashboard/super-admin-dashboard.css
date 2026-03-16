@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Main Layout Styles */
+:host {
+    display: block;
+    height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar-link {
+    transition: all 0.2s ease;
+}
+
+/* Scrollbar Hide */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Stat Cards */
+.bg-dark-premium {
+    background-color: #0B1437;
+}
+
+/* Charts */
+.transition-height {
+    transition: height 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.bar-tooltip {
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 4px 6px -1px rgb(0 0 0 / 0.1));
+}
+
+.group:hover .bar-tooltip {
+    display: block !important;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.grid>div {
+    animation: slideUp 0.5s ease-out forwards;
+}
+
+/* Staggered animation */
+.grid>div:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.grid>div:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.grid>div:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.grid>div:nth-child(4) {
+    animation-delay: 0.25s;
+}
+
+.grid>div:nth-child(5) {
+    animation-delay: 0.3s;
+}
+
+.grid>div:nth-child(6) {
+    animation-delay: 0.35s;
+}
+
+/* Donut Chart Animation */
+@keyframes progress {
+    0% {
+        stroke-dasharray: 0 100;
+    }
+}
+
+circle {
+    /* animation: progress 1s ease-out forwards; */
+    transition: stroke-dashoffset 1s ease-in-out;
+}
+
+/* Hover Effects */
+.hover-scale {
+    transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+
+/* Topbar Shadow & Border */
+header {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+/* Lucide Icon Styling */
+:host ::ng-deep [data-lucide] {
+    stroke-width: 2.5px;
+}
+
+/* Custom Scrollbar for Main Area */
+main::-webkit-scrollbar {
+    width: 6px;
+}
+
+main::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+main::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+
+main::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
+}
+
+/* Chart Bar Tooltip Emulation */
+.bar-tooltip {
+    display: none;
+}
+
+.group:hover .bar-tooltip {
+    display: block;
+}

@@ -1,0 +1,25 @@
+/* Super Admin Logs Styles */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+:host {
+    display: block;
+    width: 100%;
+}
+
+main {
+    width: calc(100% - 12rem);
+    /* Adjustment for w-48 sidebar */
+}
+
+@media (max-width: 1400px) {
+    .grid-cols-4 {
+        gap: 0.75rem;
+    }
+}

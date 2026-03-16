@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+:host {
+    display: block;
+    height: 100vh;
+}
+
+/* Scrollbar Hide */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.grid>div,
+.bg-white {
+    animation: slideUp 0.5s ease-out forwards;
+}
+
+/* Topbar Blur */
+header {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+/* Lucide Icon Styling */
+:host ::ng-deep [data-lucide] {
+    stroke-width: 2.5px;
+}
+
+/* Custom Scrollbar for Main Area */
+main::-webkit-scrollbar {
+    width: 6px;
+}
+
+main::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+main::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+
+main::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
+}
+
+/* Card Hover Effects */
+.group:hover {
+    transform: translateY(-2px);
+}
+
+/* Table Scrollbar */
+.overflow-x-auto::-webkit-scrollbar {
+    height: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+/* Status Colors */
+.status-active {
+    color: #10b981;
+    background: #ecfdf5;
+}
+
+.status-suspended {
+    color: #ef4444;
+    background: #fef2f2;
+}
+
+.status-pending {
+    color: #f59e0b;
+    background: #fffbeb;
+}

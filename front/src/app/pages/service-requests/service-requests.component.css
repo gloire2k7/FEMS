@@ -1,0 +1,148 @@
+/* Modal overlay: always on top of the viewport */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(11, 20, 55, 0.4);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Modal card animation */
+.modal-content {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 95%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px) scale(0.98);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Priority selection buttons */
+.priority-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.priority-btn {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  color: #6B7280;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.priority-btn:hover {
+  border-color: #D1D5DB;
+  background: #F9FAFB;
+}
+
+/* Active states for priorities */
+.priority-btn.active-low {
+  color: #10B981;
+  border-color: #10B981;
+  background: #ECFDF5;
+}
+
+.priority-btn.active-medium {
+  color: #F59E0B;
+  border-color: #F59E0B;
+  background: #FFFBEB;
+}
+
+.priority-btn.active-high {
+  color: #EF4444;
+  border-color: #EF4444;
+  background: #FEF2F2;
+}
+
+.priority-btn.active-urgent {
+  color: #EF4444;
+  border-color: #EF4444;
+  background: #FEF2F2;
+  font-weight: 600;
+  box-shadow: 0 0 0 1px #EF4444;
+}
+
+/* Custom Form Styles */
+.form-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-input {
+  width: 100%;
+  height: 40px;
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 13px;
+  color: #111827;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #0B1437;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(11, 20, 55, 0.05);
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 80px;
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #111827;
+  resize: none;
+  transition: all 0.2s ease;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #0B1437;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(11, 20, 55, 0.05);
+}

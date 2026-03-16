@@ -1,0 +1,495 @@
+﻿<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
+    <!-- SIDEBAR (Standard Super Admin) -->
+    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0 z-50">
+        <div class="px-4 py-4 mb-6 flex items-center gap-5">
+            <div
+                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
+                <i data-lucide="flame" class="w-3 h-3 text-white"></i>
+            </div>
+            <span class="text-xs font-black text-white tracking-[0.2em] leading-none uppercase">FEM</span>
+        </div>
+
+        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
+            <div class="space-y-3">
+                <a routerLink="/super-admin-dashboard" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="layout-grid" class="w-3 h-3 opacity-90 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Dashboard</span>
+                </a>
+                <a routerLink="/super-admin-admins" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="users" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Admins</span>
+                </a>
+                <a routerLink="/super-admin-clients" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-white bg-white/10 transition-all group cursor-pointer">
+                    <i data-lucide="briefcase" class="w-3 h-3 opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Clients</span>
+                </a>
+            </div>
+
+            <p class="text-[12px] font-black text-slate-500 uppercase tracking-[0.15em] px-3 mt-8 mb-6">Management</p>
+            <div class="space-y-3">
+                <a routerLink="/super-admin-reports" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="file-text" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Reports</span>
+                </a>
+                <a routerLink="/super-admin-logs" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="activity" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Logs</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="px-3 pb-6 mt-auto">
+            <div
+                class="bg-white/5 rounded-xl p-3 flex items-center gap-5.5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
+                <div
+                    class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10">
+                    <img src="https://ui-avatars.com/api/?name=Aurore&background=FFC107&color=fff" alt="Profile"
+                        class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Welcome
+                        Back</p>
+                    <p class="text-[13px] font-black text-white truncate">Aurore</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col bg-[#F6F8FC] overflow-y-auto scrollbar-hide">
+        <!-- TOPBAR: Replicating design's unique topbar -->
+        <header class="h-[72px] flex items-center justify-between px-8 bg-white shrink-0 sticky top-0 z-40">
+            <div class="flex-1 flex items-center gap-5">
+                <a routerLink="/super-admin-clients"
+                    class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex flex-col justify-center items-center hover:bg-slate-100 transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4 text-slate-600"></i>
+                </a>
+                <h2 class="text-[18px] font-black text-[#0f172a] tracking-tight">Client Details</h2>
+            </div>
+
+            <div class="relative w-[340px] mr-6">
+                <i data-lucide="search" class="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-blue-500/60"></i>
+                <input type="text" placeholder="Search for something"
+                    class="w-full pl-12 pr-4 py-3 bg-[#f8fafc] rounded-full border-none text-[14px] font-semibold text-slate-700 placeholder:text-blue-300 focus:outline-none focus:ring-1 focus:ring-blue-500/20 tracking-wide">
+            </div>
+
+            <div class="flex items-center gap-5">
+                <button
+                    class="w-10 h-10 rounded-full bg-[#f8fafc] flex items-center justify-center text-slate-400 relative hover:bg-slate-100 transition-colors">
+                    <i data-lucide="shopping-cart" class="w-[18px] h-[18px] text-slate-500"></i>
+                    <span
+                        class="absolute top-[8px] right-[8px] w-[5px] h-[5px] bg-red-500 rounded-full transform translate-x-1/2 -translate-y-1/2"></span>
+                </button>
+                <button
+                    class="w-10 h-10 rounded-full bg-[#fef2f2] flex items-center justify-center relative hover:bg-red-50 transition-colors">
+                    <i data-lucide="bell" class="w-[18px] h-[18px] text-red-400"></i>
+                    <span
+                        class="absolute top-[8px] right-[8px] w-[5px] h-[5px] bg-red-500 rounded-full transform translate-x-1/2 -translate-y-1/2 border-[1.5px] border-[#fef2f2]"></span>
+                </button>
+                <button
+                    class="w-10 h-10 rounded-full bg-[#eff6ff] flex items-center justify-center hover:bg-blue-50 transition-colors">
+                    <i data-lucide="settings" class="w-[18px] h-[18px] text-blue-400"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CONTENT -->
+        <div class="p-8 pb-32 space-y-6">
+
+            <!-- STATS ROW (5 Cards) -->
+            <div class="grid grid-cols-5 gap-5">
+                <!-- Location -->
+                <div
+                    class="bg-[#0B1437] rounded-xl p-8 relative overflow-hidden h-[95px] flex flex-col justify-between group cursor-pointer shadow-md shadow-slate-200/50">
+                    <div class="relative z-10 space-y-3">
+                        <span class="text-[12px] font-extrabold text-[#3B4D8D] uppercase tracking-widest block">Total
+                            Locations</span>
+                        <div class="flex items-center gap-5">
+                            <span class="text-[36px] font-black text-white leading-none">12</span>
+                            <span
+                                class="px-2 py-0.5 bg-[#1b346d] rounded bg-opacity-80 text-[12px] font-bold text-[#64fac2] mb-1">+2
+                                this month</span>
+                        </div>
+                    </div>
+                    <i data-lucide="map"
+                        class="absolute right-[-10px] top-4 w-16 h-16 text-white/5 stroke-[0.5] group-hover:scale-110 transition-transform"></i>
+                </div>
+
+                <!-- Assets -->
+                <div
+                    class="bg-[#0B1437] rounded-xl p-8 relative overflow-hidden h-[95px] flex flex-col justify-between group cursor-pointer shadow-md shadow-slate-200/50">
+                    <div class="relative z-10 space-y-3">
+                        <span class="text-[12px] font-extrabold text-[#3B4D8D] uppercase tracking-widest block">Total
+                            Assets</span>
+                        <div class="flex items-center gap-5">
+                            <span class="text-[36px] font-black text-white leading-none">342</span>
+                            <span
+                                class="px-2 py-0.5 bg-[#1e2a52] rounded bg-opacity-80 text-[12px] font-bold text-slate-300 mb-1">All
+                                Types</span>
+                        </div>
+                    </div>
+                    <i data-lucide="fire-extinguisher"
+                        class="absolute right-[-5px] top-6 w-14 h-14 text-white/5 stroke-[0.5] group-hover:scale-110 transition-transform"></i>
+                </div>
+
+                <!-- Inspected -->
+                <div
+                    class="bg-[#0B1437] rounded-xl p-8 relative overflow-hidden h-[95px] flex flex-col justify-between group cursor-pointer shadow-md shadow-slate-200/50">
+                    <div class="relative z-10 space-y-3">
+                        <span class="text-[12px] font-extrabold text-[#3ce0a3] uppercase tracking-widest block">Inspected
+                            (YTD)</span>
+                        <div class="flex items-center gap-5">
+                            <span class="text-[36px] font-black text-[#3ce0a3] leading-none">290</span>
+                            <span
+                                class="px-2 py-0.5 bg-[#143d3a] rounded bg-opacity-80 text-[12px] font-bold text-[#3ce0a3] mb-1">85%
+                                Done</span>
+                        </div>
+                    </div>
+                    <i data-lucide="clipboard-check"
+                        class="absolute right-2 top-2 w-14 h-14 text-white/5 stroke-[0.5] group-hover:scale-110 transition-transform"></i>
+                </div>
+
+                <!-- Needs Refill -->
+                <div
+                    class="bg-[#0B1437] rounded-xl p-8 relative overflow-hidden h-[95px] flex flex-col justify-between group cursor-pointer shadow-md shadow-slate-200/50">
+                    <div class="relative z-10 space-y-3">
+                        <span class="text-[12px] font-extrabold text-[#fbbf24] uppercase tracking-widest block">Needs
+                            Refill</span>
+                        <div class="flex items-center gap-5">
+                            <span class="text-[36px] font-black text-[#fbbf24] leading-none">18</span>
+                            <span
+                                class="px-2 py-0.5 bg-[#3a2f1b] rounded text-[12px] font-bold text-[#fbbf24] mb-1">Urgent</span>
+                        </div>
+                    </div>
+                    <i data-lucide="droplet"
+                        class="absolute right-0 top-3 w-16 h-16 text-white/5 stroke-[0.5] group-hover:scale-110 transition-transform"></i>
+                </div>
+
+                <!-- Expired/Condemned -->
+                <div
+                    class="bg-[#0B1437] rounded-xl p-8 relative overflow-hidden h-[95px] flex flex-col justify-between group cursor-pointer shadow-md shadow-slate-200/50">
+                    <div class="relative z-10 space-y-3">
+                        <span class="text-[12px] font-extrabold text-[#f87171] uppercase tracking-widest block">Expired /
+                            Condemned</span>
+                        <div class="flex items-center gap-5">
+                            <span class="text-[36px] font-black text-[#f87171] leading-none">5</span>
+                            <span
+                                class="px-2 py-0.5 bg-[#3a1a24] rounded text-[12px] font-bold text-[#f87171] mb-1">Action
+                                Req.</span>
+                        </div>
+                    </div>
+                    <i data-lucide="alert-octagon"
+                        class="absolute right-[-5px] top-6 w-14 h-14 text-white/5 stroke-[0.5] group-hover:scale-110 transition-transform"></i>
+                </div>
+            </div>
+
+            <!-- MAIN TWO COLUMNS -->
+            <div class="flex gap-6 items-start">
+
+                <!-- LEFT COLUMN -->
+                <div class="w-[305px] shrink-0 space-y-6">
+
+                    <!-- COMPANY PROFILE CARD -->
+                    <div
+                        class="bg-white rounded-[24px] border border-[#f1f5f9] shadow-sm overflow-hidden flex flex-col">
+                        <!-- Cover Image -->
+                        <div class="h-32 bg-slate-200 relative">
+                            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop"
+                                class="w-full h-full object-cover">
+                        </div>
+
+                        <div class="px-5 pb-5">
+                            <!-- Logo & Name -->
+                            <div class="flex justify-between items-start -mt-8 mb-6">
+                                <div
+                                    class="w-[60px] h-[60px] rounded-[16px] bg-white border border-[#f1f5f9] shadow-sm flex items-center justify-center flex-shrink-0 z-10 relative">
+                                    <span class="text-[26px] font-[300] text-slate-800 leading-none">G</span>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <h2
+                                        class="text-[17px] font-black text-[#0f172a] leading-tight tracking-tight mb-1.5">
+                                        Global Tech Industries</h2>
+                                    <span
+                                        class="inline-flex px-2 py-0.5 bg-green-100/70 text-green-600 rounded text-[12px] font-bold tracking-wide">Active
+                                        Account</span>
+                                </div>
+                                <button
+                                    class="flex items-center gap-1.5 text-slate-500 hover:text-slate-800 transition-colors mt-0.5">
+                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                    <span class="text-[14px] font-bold">Edit</span>
+                                </button>
+                            </div>
+
+                            <!-- List items -->
+                            <div class="space-y-4 mt-6">
+                                <div class="flex gap-5">
+                                    <i data-lucide="user" class="w-[18px] h-[18px] text-slate-400 shrink-0 mt-0.5"></i>
+                                    <div>
+                                        <p class="text-[13px] font-bold text-slate-400">Contact Person</p>
+                                        <p class="text-[15px] font-medium text-slate-700 tracking-wide mt-0.5">James
+                                            Richardson</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-5">
+                                    <i data-lucide="mail" class="w-[18px] h-[18px] text-slate-400 shrink-0 mt-0.5"></i>
+                                    <div>
+                                        <p class="text-[13px] font-bold text-slate-400">Email</p>
+                                        <p class="text-[15px] font-medium text-slate-700 tracking-wide mt-0.5">
+                                            j.richardson@globaltech.com</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-5">
+                                    <i data-lucide="phone" class="w-[18px] h-[18px] text-slate-400 shrink-0 mt-0.5"></i>
+                                    <div>
+                                        <p class="text-[13px] font-bold text-slate-400">Phone</p>
+                                        <p class="text-[15px] font-medium text-slate-700 tracking-wide mt-0.5">+1 (555)
+                                            0123-4567</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-5">
+                                    <i data-lucide="building-2"
+                                        class="w-[18px] h-[18px] text-slate-400 shrink-0 mt-0.5"></i>
+                                    <div>
+                                        <p class="text-[13px] font-bold text-slate-400">Headquarters</p>
+                                        <p
+                                            class="text-[15px] font-medium text-slate-700 leading-snug tracking-wide mt-0.5">
+                                            450 Innovation Drive, Tech Park<br>San Francisco, CA 94016</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- GPS Section -->
+                            <div class="mt-6 pt-5 border-t border-slate-100">
+                                <p class="text-[13px] font-medium text-slate-400 mb-6">GPS Location</p>
+                                <div
+                                    class="h-[80px] bg-slate-200 rounded-xl relative overflow-hidden border border-slate-200">
+                                    <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1474&auto=format&fit=crop"
+                                        class="w-full h-full object-cover grayscale opacity-90 sepia-[0.3]">
+                                    <div class="absolute inset-0 flex items-center justify-center pb-2">
+                                        <div class="relative">
+                                            <i data-lucide="map-pin" class="w-6 h-6 text-[#bc54ff] drop-shadow-md"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RECENT ACTIVITY CARD -->
+                    <div class="bg-white rounded-[24px] border border-[#f1f5f9] shadow-sm p-7">
+                        <div class="flex items-center gap-5 mb-6">
+                            <i data-lucide="history" class="w-[18px] h-[18px] text-[#0f172a]"></i>
+                            <h3 class="text-[18px] font-black text-[#0f172a] tracking-tight">Recent Activity</h3>
+                        </div>
+
+                        <div class="relative pl-3 space-y-6">
+                            <!-- Timeline Line -->
+                            <div class="absolute top-[6px] bottom-0 left-[18px] w-px bg-[#f1f5f9]"></div>
+
+                            <div *ngFor="let activity of activities" class="relative">
+                                <!-- Dot -->
+                                <div class="absolute top-[5px] left-[-0.5px] w-[11px] h-[11px] rounded-full bg-white border-2"
+                                    [ngClass]="activity.dot"></div>
+                                <div class="pl-7">
+                                    <p class="text-[12px] font-medium text-slate-400 mb-0.5">{{activity.time}}</p>
+                                    <p class="text-[15px] font-black text-[#0f172a] tracking-tight mb-0.5">
+                                        {{activity.title}}</p>
+                                    <p class="text-[13px] font-medium text-slate-500">{{activity.desc}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="flex-1 space-y-6">
+
+                    <!-- TOP TWO CARDS -->
+                    <div class="grid grid-cols-2 gap-6">
+
+                        <!-- Extinguisher Types -->
+                        <div class="bg-white rounded-[24px] border border-[#f1f5f9] shadow-sm p-8 flex flex-col">
+                            <h3 class="text-[18px] font-black text-[#0f172a] tracking-tight mb-6">Extinguisher Types
+                            </h3>
+
+                            <div class="space-y-5">
+                                <div>
+                                    <div class="flex justify-between items-center text-[14px] mb-6">
+                                        <span class="font-medium text-slate-500">CO<sub
+                                                class="text-[11px] -bottom-[1px]">2</sub> (Carbon Dioxide)</span>
+                                        <span class="font-bold text-[#0f172a]">45% <span
+                                                class="text-slate-400 font-medium">(154)</span></span>
+                                    </div>
+                                    <div class="w-full bg-[#f1f5f9] rounded-full h-[6px]">
+                                        <div class="bg-[#1e3a8a] h-[6px] rounded-full" style="width: 45%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center text-[14px] mb-6">
+                                        <span class="font-medium text-slate-500">Dry Powder</span>
+                                        <span class="font-bold text-[#0f172a]">30% <span
+                                                class="text-slate-400 font-medium">(102)</span></span>
+                                    </div>
+                                    <div class="w-full bg-[#f1f5f9] rounded-full h-[6px]">
+                                        <div class="bg-[#3b82f6] h-[6px] rounded-full" style="width: 30%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center text-[14px] mb-6">
+                                        <span class="font-medium text-slate-500">Foam</span>
+                                        <span class="font-bold text-[#0f172a]">15% <span
+                                                class="text-slate-400 font-medium">(51)</span></span>
+                                    </div>
+                                    <div class="w-full bg-[#f1f5f9] rounded-full h-[6px]">
+                                        <div class="bg-[#8b5cf6] h-[6px] rounded-full" style="width: 15%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center text-[14px] mb-6">
+                                        <span class="font-medium text-slate-500">Water</span>
+                                        <span class="font-bold text-[#0f172a]">10% <span
+                                                class="text-slate-400 font-medium">(35)</span></span>
+                                    </div>
+                                    <div class="w-full bg-[#f1f5f9] rounded-full h-[6px]">
+                                        <div class="bg-[#22d3ee] h-[6px] rounded-full" style="width: 10%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Compliance Health -->
+                        <div
+                            class="bg-white rounded-[24px] border border-[#f1f5f9] shadow-sm p-8 flex flex-col items-center relative">
+                            <h3 class="text-[18px] font-black text-[#0f172a] tracking-tight w-full text-left mb-6">
+                                Compliance Health</h3>
+
+                            <div class="relative w-[150px] h-[150px] mb-6">
+                                <svg viewBox="0 0 100 100" class="w-full h-full transform -rotate-90">
+                                    <!-- Background -->
+                                    <circle cx="50" cy="50" r="42" fill="transparent" stroke="#f8fafc"
+                                        stroke-width="8" />
+                                    <!-- 85% Solid green with round caps -->
+                                    <circle cx="50" cy="50" r="42" fill="transparent" stroke="#22c55e" stroke-width="8"
+                                        stroke-dasharray="224.3 263.89" stroke-linecap="round" />
+                                </svg>
+                                <!-- The spaces in the image are green dashes. Actually to match exactly: green dasharray -->
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <div
+                                        class="text-[32px] font-black text-[#0f172a] leading-none mb-1 flex items-baseline mt-5">
+                                        85<span class="text-[26px] font-black relative top-[-6px] ml-[2px]">%</span>
+                                    </div>
+                                    <span
+                                        class="text-[13px] font-extrabold text-[#0B1437] opacity-60 tracking-wide">Compliance</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-5 w-full mt-auto">
+                                <div class="bg-[#fff1f2] rounded-[16px] py-4 flex flex-col items-center justify-center">
+                                    <span class="text-[13px] font-extrabold text-red-600 mb-1">Overdue</span>
+                                    <span class="text-[26px] font-black text-red-600 leading-none">12</span>
+                                </div>
+                                <div class="bg-[#f8fafc] rounded-[16px] py-4 flex flex-col items-center justify-center">
+                                    <span class="text-[13px] font-extrabold text-slate-500 mb-1">Condemned</span>
+                                    <span class="text-[26px] font-black text-[#0f172a] leading-none">3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LOCATIONS OVERVIEW TABLE -->
+                    <div class="bg-white rounded-[24px] border border-[#f1f5f9] shadow-sm p-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-[18px] font-black text-[#0f172a] tracking-tight">Locations Overview</h3>
+                            <div class="relative">
+                                <input type="text" placeholder="Search locations..."
+                                    class="pl-4 pr-10 py-1.5 w-[200px] border border-slate-200 rounded-lg text-[14px] placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition-colors">
+                                <i data-lucide="blocks"
+                                    class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 rotate-90"></i>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr>
+                                        <th
+                                            class="pb-3 text-[13px] font-black text-[#0f172a] tracking-wide border-b border-[#f1f5f9]">
+                                            Location Name</th>
+                                        <th
+                                            class="pb-3 text-[13px] font-black text-[#0f172a] tracking-wide border-b border-[#f1f5f9]">
+                                            Units</th>
+                                        <th
+                                            class="pb-3 text-[13px] font-black text-[#0f172a] tracking-wide border-b border-[#f1f5f9]">
+                                            Risk Level</th>
+                                        <th
+                                            class="pb-3 text-[13px] font-black text-[#0f172a] tracking-wide border-b border-[#f1f5f9]">
+                                            Last<br>Inspection</th>
+                                        <th
+                                            class="pb-3 text-[13px] font-black text-[#0f172a] tracking-wide border-b border-[#f1f5f9]">
+                                            Status</th>
+                                        <th
+                                            class="pb-3 text-[13px] font-black text-[#0f172a] tracking-wide border-b border-[#f1f5f9] text-right">
+                                            Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let loc of locations">
+                                        <td class="py-4 align-top">
+                                            <p class="text-[15px] font-black text-[#0f172a] tracking-tight">{{loc.name}}
+                                            </p>
+                                            <p class="text-[13px] text-slate-400 font-medium">{{loc.subtitle}}</p>
+                                        </td>
+                                        <td class="py-4 align-top">
+                                            <span class="text-[15px] font-medium text-slate-500">{{loc.units}}</span>
+                                        </td>
+                                        <td class="py-4 align-top">
+                                            <span class="inline-flex px-2 py-0.5 rounded text-[13px] font-bold"
+                                                [ngClass]="loc.riskColor">{{loc.risk}}</span>
+                                        </td>
+                                        <td class="py-4 align-top text-[15px] text-slate-500 font-medium">
+                                            {{loc.lastInspection.split(', ')[0]}},<br>{{loc.lastInspection.split(',
+                                            ')[1]}}
+                                        </td>
+                                        <td class="py-4 align-top">
+                                            <div class="flex items-center gap-1.5">
+                                                <div class="w-1.5 h-1.5 rounded-full"
+                                                    [ngClass]="{'bg-green-500': loc.status === 'Compliant', 'bg-red-500': loc.status === 'Overdue', 'bg-amber-500': loc.status === 'Refill Req.'}">
+                                                </div>
+                                                <span
+                                                    class="text-[15px] text-slate-500 font-medium">{{loc.status}}</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 align-top text-right">
+                                            <button
+                                                class="bg-[#f8fafc] border border-slate-200 hover:bg-slate-100 transition-colors text-[12px] font-black text-[#0f172a] px-5 py-1.5 rounded-md leading-tight">View<br>Location</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="flex justify-between items-center mt-6 pt-4 border-t border-[#f1f5f9]">
+                            <span class="text-[13px] font-medium text-slate-500">Showing 4 of 12 locations</span>
+                            <div class="flex gap-5">
+                                <button
+                                    class="px-3 py-1 bg-white border border-slate-200 rounded text-[13px] font-bold text-slate-400 cursor-not-allowed">Prev</button>
+                                <button
+                                    class="px-3 py-1 bg-white border border-slate-200 rounded text-[13px] font-bold text-slate-600 hover:bg-slate-50 transition-colors">Next</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

@@ -1,0 +1,431 @@
+﻿<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden text-[#0B1437]">
+    <!-- SIDEBAR -->
+    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0">
+        <!-- LOGO -->
+        <div class="px-4 py-4 mb-6 flex items-center gap-5">
+            <div
+                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
+                <i data-lucide="flame" class="icon-xs text-white"></i>
+            </div>
+            <span class="text-xs font-black text-white tracking-[0.2em] leading-none uppercase">FEM</span>
+        </div>
+
+        <!-- NAV -->
+        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
+            <div>
+                <a routerLink="/admin-dashboard" routerLinkActive="bg-white/10 text-white"
+                    [routerLinkActiveOptions]="{exact: true}"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="layout-grid" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-bold">Dashboard</span>
+                </a>
+            </div>
+
+            <div class="mt-8 mb-6 pt-2">
+                <p class="text-[12px] font-black text-slate-500 uppercase tracking-[0.15em] px-3 mb-6 opacity-70">
+                    Operations</p>
+                <div class="space-y-3">
+                    <a routerLink="/clients" routerLinkActive="bg-white/10 text-white"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                        <i data-lucide="users" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                        <span class="text-[13px] tracking-wide font-bold">Clients</span>
+                    </a>
+                    <a routerLink="/admin-locations" routerLinkActive="bg-white/10 text-white"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                        <i data-lucide="map-pin" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                        <span class="text-[13px] tracking-wide font-bold">Locations</span>
+                    </a>
+                    <a routerLink="/admin-location-details"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer text-[#0B1437]">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="flame" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-bold text-slate-400 group-hover:text-white">Fire
+                                Extinguishers</span>
+                        </div>
+                        <i data-lucide="chevron-right"
+                            class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100 text-slate-400 group-hover:text-white"></i>
+                    </a>
+                    <div class="space-y-3">
+                        <a (click)="toggleInspections()"
+                            class="flex items-center gap-5.5 px-4 py-3 rounded-xl text-white hover:bg-white/20 transition-all justify-between group cursor-pointer"
+                            [class.bg-white/15]="inspectionsOpen">
+                            <div class="flex items-center gap-5.5">
+                                <i data-lucide="clipboard-check"
+                                    class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                                <span class="text-[13px] tracking-wide font-bold">Inspections</span>
+                            </div>
+                            <i [attr.data-lucide]="inspectionsOpen ? 'chevron-up' : 'chevron-down'"
+                                class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                        </a>
+
+                        <div *ngIf="inspectionsOpen" class="pl-9 space-y-3 mt-1">
+                            <a routerLink="/admin-assigned-inspections" routerLinkActive="text-blue-400 !font-black"
+                                class="block py-1.5 text-[12px] font-bold text-slate-400 hover:text-white transition-colors cursor-pointer">
+                                Assigned
+                            </a>
+                            <a routerLink="/admin-inspection-label"
+                                class="block py-1.5 text-[12px] font-bold text-slate-400 hover:text-white transition-colors cursor-pointer">
+                                Inspection label
+                            </a>
+                            <a routerLink="/admin-inspectors" routerLinkActive="text-white !font-black"
+                                class="block py-1.5 text-[12px] font-bold text-slate-500 hover:text-white transition-colors cursor-pointer">
+                                Inspectors
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 mb-6 pt-2">
+                <p class="text-[12px] font-black text-slate-500 uppercase tracking-[0.15em] px-3 mb-6 opacity-70">
+                    Management</p>
+                <div class="space-y-3">
+                    <a routerLink="/admin-compliance"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="shield-check"
+                                class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-bold">Compliance</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                    </a>
+                    <a
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="repeat" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-bold">Refills</span>
+                        </div>
+                        <i data-lucide="chevron-down" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                    </a>
+                    <a routerLink="/admin-settings"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="settings" class="icon-xs opacity-80 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-bold">Settings</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-50 group-hover:opacity-100"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- PROFILE BLOCK -->
+        <div class="px-3 pb-6 mt-auto">
+            <div
+                class="bg-white/5 rounded-xl p-3 flex items-center gap-5.5 border border-white/5 transition-all hover:bg-white/10 cursor-pointer group">
+                <div
+                    class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10 shadow-sm transition-transform group-hover:scale-105">
+                    <img src="https://ui-avatars.com/api/?name=Usanase&background=FFC107&color=fff" alt="Profile"
+                        class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest opacity-60">ADMIN</p>
+                    <p class="text-[13px] font-black text-white truncate">Usanase</p>
+                </div>
+                <i data-lucide="log-out"
+                    class="icon-xs text-slate-400 ml-auto opacity-40 group-hover:opacity-100 group-hover:text-red-400 transition-all"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto relative">
+        <!-- TOPBAR -->
+        <header
+            class="h-16 flex items-center justify-between px-8 bg-[#F8FAFC] border-b border-slate-100 sticky top-0 z-20">
+            <div class="relative w-[320px] mx-auto">
+                <i data-lucide="search" class="icon-xs absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" placeholder="Search for something..."
+                    class="w-full pl-10 pr-4 py-2 bg-[#E2E8F0] border-none rounded-xl text-[13px] focus:outline-none transition-all placeholder:text-slate-500 font-semibold text-slate-600">
+            </div>
+            <div class="flex items-center gap-5">
+                <button
+                    class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 relative hover:bg-slate-200">
+                    <i data-lucide="shopping-cart" class="icon-xs"></i>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                </button>
+                <button
+                    class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-red-500 relative hover:bg-slate-200">
+                    <i data-lucide="bell" class="icon-xs"></i>
+                    <span class="absolute top-1 right-1 w-1.5 h-1.5 bg-red-500 rounded-full border border-white"></span>
+                </button>
+                <button routerLink="/admin-settings"
+                    class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200">
+                    <i data-lucide="settings" class="icon-xs"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="p-8 space-y-6 animate-in">
+            <!-- ALERT BANNER -->
+            <div
+                class="bg-[#FFF9F2] border-l-4 border-[#EB9A2D] rounded-xl p-8 flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-5">
+                    <div class="w-10 h-10 rounded-full bg-[#FEECDC] flex items-center justify-center">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-[#EB9A2D]"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-black text-[#A35200]">Action Required: 3 Inspections Pending Approval
+                        </h4>
+                        <p class="text-[13px] text-[#BC7D39] font-bold">Review the inspections submitted by Inspector J.
+                            Doe before end of day.</p>
+                    </div>
+                </div>
+                <button
+                    class="text-[#EB9A2D] text-[13px] font-black hover:underline uppercase tracking-widest mr-4">Review
+                    Now</button>
+            </div>
+
+            <!-- STAT CARDS -->
+            <div class="grid grid-cols-5 gap-5">
+                <!-- Total -->
+                <div class="bg-[#051139] stat-card text-white">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="text-[12px] font-black text-slate-400 uppercase tracking-widest">Total
+                            Inspections</span>
+                        <div class="bg-white/10 p-1.5 rounded-lg">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-white"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-black mb-6">647</h2>
+                        <span
+                            class="text-[11px] font-black text-emerald-400 bg-emerald-400/10 px-3 py-1.5 rounded-full">+12%
+                            this month</span>
+                    </div>
+                </div>
+
+                <!-- Passed -->
+                <div class="bg-[#051139] stat-card text-white border-r-4 border-emerald-500">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="text-[12px] font-black text-slate-400 uppercase tracking-widest">Passed</span>
+                        <div class="bg-emerald-500/10 p-1.5 rounded-lg">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-black mb-1">647</h2>
+                        <p class="text-[12px] font-bold text-slate-500 uppercase tracking-tighter">78% Compliance Rate
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Needs Refill -->
+                <div class="bg-[#051139] stat-card text-white border-r-4 border-amber-500">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="text-[12px] font-black text-slate-400 uppercase tracking-widest">Needs Refill</span>
+                        <div class="bg-amber-500/10 p-1.5 rounded-lg">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-amber-500"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-black mb-1">145</h2>
+                        <p class="text-[12px] font-bold text-slate-500 uppercase tracking-tighter">Scheduled for
+                            maintenance</p>
+                    </div>
+                </div>
+
+                <!-- Expired -->
+                <div class="bg-[#A91D1D] stat-card text-white">
+                    <div class="flex justify-between items-start mb-6">
+                        <span
+                            class="text-[12px] font-black text-red-200 uppercase tracking-widest opacity-80">Expired/Condem</span>
+                        <div class="bg-white/20 p-1.5 rounded-lg">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5 text-white"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-black mb-6">12</h2>
+                        <span class="text-[11px] font-black text-white bg-black/20 px-3 py-1.5 rounded-lg">Requires
+                            Critical Action</span>
+                    </div>
+                </div>
+
+                <!-- Trend -->
+                <div class="bg-[#051139] stat-card text-white group">
+                    <span class="text-[12px] font-black text-slate-400 uppercase tracking-widest">Compliance Trend</span>
+                    <div class="grid grid-cols-6 gap-0.5 h-16 items-end mt-5">
+                        <div class="bg-white/5 rounded-t w-full h-[40%]"></div>
+                        <div class="bg-white/20 rounded-t w-full h-[70%]"></div>
+                        <div class="bg-white/10 rounded-t w-full h-[50%]"></div>
+                        <div class="bg-white/40 rounded-t w-full h-[95%]"></div>
+                        <div class="bg-blue-600 rounded-t w-full h-[60%]"></div>
+                        <div class="bg-white/5 rounded-t w-full h-[30%]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-6">
+                <!-- LEFT -->
+                <div class="flex-1 space-y-6">
+                    <!-- SEARCH -->
+                    <div class="bg-[#E2E8F0] p-3 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="relative w-full">
+                            <i data-lucide="search"
+                                class="icon-xs absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" placeholder="Search ID or Inspector..."
+                                class="w-full pl-10 pr-4 py-2 bg-transparent border-none text-[15px] focus:outline-none placeholder:text-slate-500 font-bold text-slate-700">
+                        </div>
+                    </div>
+
+                    <!-- TABLE -->
+                    <div class="space-y-3">
+                        <div class="flex px-6 text-[13px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                            <span class="w-[30%]">Extinguisher ID / Loc</span>
+                            <span class="w-[25%]">Inspector</span>
+                            <span class="w-[15%]">Date</span>
+                            <span class="w-[15%]">Status</span>
+                            <span class="w-[15%] text-right pr-2">Actions</span>
+                        </div>
+
+                        <div *ngFor="let item of inspections; let i = index" [class.selected-inspection]="item.selected"
+                            class="flex items-center px-6 py-4 rounded-2xl bg-white border border-slate-100 shadow-sm transition-all hover:border-slate-300 cursor-pointer group">
+                            <div class="w-[30%]">
+                                <h4 class="text-sm font-black text-[#0B1437]">{{item.id}}</h4>
+                                <p class="text-[13px] font-bold text-slate-400 mt-0.5 truncate">{{item.location}}</p>
+                            </div>
+                            <div class="w-[25%] flex items-center gap-5">
+                                <div
+                                    class="w-7 h-7 rounded-full overflow-hidden shrink-0 border border-white shadow-sm">
+                                    <img [src]="item.avatar || 'https://ui-avatars.com/api/?name='+item.inspector+'&background=f1f5f9&color=94a3b8'"
+                                        class="w-full h-full object-cover">
+                                </div>
+                                <span class="text-[15px] font-black text-slate-600">{{item.inspector}}</span>
+                            </div>
+                            <div class="w-[15%] text-[14px] font-bold text-slate-500">{{item.date}}</div>
+                            <div class="w-[15%]">
+                                <span [class]="item.status === 'Passed' ? 'bg-green-100 text-green-600' : 
+                                               item.status === 'Needs Refill' ? 'bg-amber-100 text-amber-600' : 
+                                               'bg-red-100 text-red-600'"
+                                    class="px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-widest flex items-center gap-1.5 w-fit">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                                    {{item.status}}
+                                </span>
+                            </div>
+                            <div class="w-[15%] flex justify-end items-center gap-5 pr-2">
+                                <span *ngIf="item.selected" class="text-[14px] font-black text-[#0B1437]">Viewing</span>
+                                <div *ngIf="!item.selected" class="flex items-center gap-5">
+                                    <i data-lucide="cloud-download"
+                                        class="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors"></i>
+                                    <button
+                                        class="px-4 py-1.5 rounded-xl border border-slate-200 bg-white text-[13px] font-black text-[#0B1437] hover:bg-[#0B1437] hover:text-white transition-all">View</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BOTTOM SECTION -->
+                    <div class="grid grid-cols-2 gap-6 pt-2">
+                        <!-- NOTES -->
+                        <div
+                            class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm flex flex-col h-full relative overflow-hidden">
+                            <p class="text-[12px] font-black text-slate-400 uppercase tracking-widest mb-6">Inspector
+                                Notes</p>
+                            <p class="text-[15px] font-bold text-slate-500 leading-relaxed italic">
+                                "{{selectedInspection.notes}}"
+                            </p>
+                            <div class="mt-8 flex items-center gap-5 pt-6 border-t border-slate-50">
+                                <img [src]="'https://ui-avatars.com/api/?name='+selectedInspection.inspector+'&background=6366f1&color=fff'"
+                                    class="w-8 h-8 rounded-full border border-white shadow-sm">
+                                <div>
+                                    <p class="text-[15px] font-black text-[#0B1437]">{{selectedInspection.inspector}}
+                                    </p>
+                                    <p class="text-[13px] font-bold text-slate-400">{{selectedInspection.date}}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PRESSURE HISTORY -->
+                        <div
+                            class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group">
+                            <p class="text-[12px] font-black text-slate-400 uppercase tracking-widest mb-6 w-full">
+                                Pressure History</p>
+                            <div class="w-full max-w-[200px] h-24 relative scale-90">
+                                <svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 200 100">
+                                    <path d="M 20 60 Q 100 20 180 60" stroke="#0B1437" stroke-width="2" fill="none"
+                                        stroke-dasharray="5,5" />
+                                </svg>
+                                <div
+                                    class="absolute top-0 left-4 bg-white px-3 py-1.5 rounded-lg shadow border border-slate-50 text-[11px] font-black text-slate-500">
+                                    Sept 2023</div>
+                                <div
+                                    class="absolute bottom-2 right-4 bg-white px-3 py-1.5 rounded-lg shadow border border-slate-50 text-[11px] font-black text-slate-500">
+                                    Aug 2023</div>
+                                <div
+                                    class="absolute top-[40%] left-[35%] bg-blue-50 px-4 py-2 rounded-xl shadow-lg border border-blue-100 text-[13px] font-black text-blue-600 z-10 flex items-center gap-5">
+                                    <i data-lucide="activity" class="w-3 h-3"></i>
+                                    Latest Report
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT -->
+                <div class="w-[320px] shrink-0">
+                    <div class="bg-white rounded-[40px] p-8 border border-slate-100 shadow-xl space-y-8 sticky top-20">
+                        <!-- Stat Grid -->
+                        <div class="grid grid-cols-2 gap-5">
+                            <div class="bg-amber-50/30 p-8 rounded-3xl border border-amber-100/50">
+                                <p class="text-[12px] font-black text-amber-600/60 uppercase tracking-widest mb-6">
+                                    Pressure Level</p>
+                                <div class="flex items-center gap-5">
+                                    <h3 class="text-3xl font-black text-amber-600">Low</h3>
+                                    <p class="text-[13px] font-bold text-amber-600/40">(100psi)</p>
+                                    <i data-lucide="gauge" class="w-4 h-4 text-amber-500 ml-auto opacity-50"></i>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50/50 p-8 rounded-3xl border border-slate-100">
+                                <p class="text-[12px] font-black text-slate-400 uppercase tracking-widest mb-6">Weight
+                                </p>
+                                <h3 class="text-3xl font-black text-[#0B1437]">4.2 kg</h3>
+                            </div>
+                        </div>
+
+                        <!-- Physical Condition -->
+                        <div class="space-y-4">
+                            <h3 class="text-[14px] font-black text-[#0B1437] uppercase tracking-widest px-2 opacity-50">
+                                Physical Condition</h3>
+
+                            <div
+                                class="flex items-center justify-between p-8 rounded-2xl bg-slate-50/50 border border-slate-100 transition-all hover:bg-white hover:shadow-md">
+                                <span class="text-[14px] font-bold text-slate-500">Seal Status</span>
+                                <span
+                                    class="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-lg text-[12px] font-black uppercase">Intact</span>
+                            </div>
+
+                            <div
+                                class="flex items-center justify-between p-8 rounded-2xl bg-slate-50/50 border border-slate-100 transition-all hover:bg-white hover:shadow-md">
+                                <span class="text-[14px] font-bold text-slate-500">Mounting Bracket</span>
+                                <span
+                                    class="bg-amber-100 text-amber-600 px-3 py-1 rounded-lg text-[12px] font-black uppercase">Loose</span>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="space-y-4 pt-4 px-2">
+                            <button (click)="approveInspection()"
+                                class="w-full h-14 bg-[#0B1437] rounded-2xl flex items-center justify-center gap-5 text-white shadow-xl shadow-blue-900/40 hover:scale-[1.02] active:scale-95 transition-all group btn-approve">
+                                <i data-lucide="check-circle" class="w-5 h-5 opacity-70 group-hover:opacity-100"></i>
+                                <span class="text-[16px] font-black tracking-wide">Approve Inspection</span>
+                            </button>
+                            <div class="grid grid-cols-2 gap-5">
+                                <button
+                                    class="h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center gap-5 text-red-500 transition-all hover:bg-red-50 hover:border-red-100 font-black text-[15px] shadow-sm active:scale-95 btn-secondary">
+                                    <i data-lucide="x-circle" class="w-4 h-4"></i>
+                                    Reject
+                                </button>
+                                <button
+                                    class="h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center gap-5 text-[#0B1437] transition-all hover:bg-slate-50 hover:border-slate-300 font-black text-[15px] shadow-sm active:scale-95 btn-secondary">
+                                    <i data-lucide="tag" class="w-4 h-4"></i>
+                                    Label
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

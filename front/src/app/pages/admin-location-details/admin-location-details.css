@@ -1,0 +1,211 @@
+:host {
+    display: block;
+    height: 100vh;
+    font-family: 'Poppins', sans-serif;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Colors & Components from Premium Design */
+.bg-navy-main {
+    background-color: #0B1437;
+}
+
+.bg-navy-sidebar {
+    background-color: #060B28;
+}
+
+.text-navy-main {
+    color: #0B1437;
+}
+
+.text-navy-secondary {
+    color: #2B3674;
+}
+
+.text-slate-muted {
+    color: #A3AED0;
+}
+
+.card-premium {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #E9EDF7;
+    box-shadow: 0px 18px 40px 0px rgba(112, 144, 176, 0.08);
+}
+
+.icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F4F7FE;
+    color: #4318FF;
+}
+
+.icon-box-success {
+    background-color: #EEFDF6;
+    color: #059669;
+}
+
+.icon-box-danger {
+    background-color: #FFF5F5;
+    color: #E03E3E;
+}
+
+.icon-box-warning {
+    background-color: #FFFDF5;
+    color: #FFB107;
+}
+
+/* Sidebar Specifics */
+.sidebar-link {
+    color: rgba(163, 174, 208, 0.7);
+    font-weight: 700;
+    transition: all 0.2s;
+    font-size: 11px;
+    letter-spacing: -0.01em;
+}
+
+.sidebar-link:hover {
+    color: white;
+}
+
+.sidebar-link-active {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+}
+
+.sidebar-link-active i {
+    color: #4318FF;
+}
+
+.sidebar-header {
+    font-size: 10px;
+    font-weight: 800;
+    color: #A3AED0;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+/* Table Header Style */
+.table-header {
+    font-size: 10px;
+    font-weight: 800;
+    color: #A3AED0;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 24px 20px;
+}
+
+/* Status Pills */
+.status-pill {
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+}
+
+.status-passed {
+    background-color: #059669;
+    color: white;
+}
+
+.status-expired {
+    background-color: #E03E3E;
+    color: white;
+}
+
+.status-almost {
+    background-color: #FFB107;
+    color: white;
+}
+
+/* Table hover & fonts */
+tbody tr {
+    transition: background-color 0.2s;
+}
+
+tbody tr:hover {
+    background-color: #F4F7FE;
+}
+
+.data-cell-main {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1B254B;
+}
+
+.data-cell-sub {
+    font-size: 11px;
+    font-weight: 600;
+    color: #A3AED0;
+}
+
+/* Custom scrollbar for table overflow */
+.table-container::-webkit-scrollbar {
+    height: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 10px;
+}
+
+.btn-action {
+    background-color: #111C44;
+    color: white;
+    padding: 8px 24px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-action:hover {
+    background-color: #1b254b;
+    transform: translateY(-1px);
+}
+
+.btn-ghost {
+    background-color: #F4F7FE;
+    color: #2B3674;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-card-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #A3AED0;
+}
+
+.stat-card-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1B254B;
+    line-height: 1;
+}

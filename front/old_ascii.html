@@ -1,0 +1,187 @@
+<div class="p-6 bg-[#F6F8FC] min-h-screen">
+  <!-- HEADER -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-[#0B1437]">Locations Dashboard</h1>
+    <p class="text-sm text-gray-500">
+      Monitor and manage fire safety across all business locations.
+    </p>
+  </div>
+
+  <!-- SUMMARY CARDS -->
+  <div class="grid grid-cols-4 gap-4 mb-6">
+    <!-- Total Locations -->
+    <div class="bg-[#0B1437] rounded-xl p-4 shadow text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-bold">12</p>
+          <p class="text-xs text-gray-300">Total Locations</p>
+        </div>
+        <div class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center">
+          <i data-lucide="map-pin" class="w-3 h-3 text-white"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compliant -->
+    <div class="bg-[#0B1437] rounded-xl p-4 shadow text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-bold">8</p>
+          <p class="text-xs text-gray-300">Compliant</p>
+        </div>
+        <div class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center">
+          <i data-lucide="check-circle" class="w-3 h-3 text-white"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Needs Attention -->
+    <div class="bg-[#0B1437] rounded-xl p-4 shadow text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-bold">3</p>
+          <p class="text-xs text-gray-300">Needs Attention</p>
+        </div>
+        <div class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center">
+          <i data-lucide="alert-triangle" class="w-3 h-3 text-white"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Critical -->
+    <div class="bg-[#0B1437] rounded-xl p-4 shadow text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-bold">1</p>
+          <p class="text-xs text-gray-300">Critical</p>
+        </div>
+        <div class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center">
+          <i data-lucide="x-circle" class="w-3 h-3 text-white"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH AND FILTERS -->
+  <div class="flex gap-4 mb-6">
+    <!-- Search Bar -->
+    <div class="flex-1">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Search locations..."
+        class="w-full h-10 rounded-lg border border-gray-200 bg-white px-4 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0B1437]"
+      />
+    </div>
+
+    <!-- Filter Dropdown -->
+    <div class="w-48">
+      <select
+        [(ngModel)]="selectedFilter"
+        class="w-full h-10 rounded-lg border border-gray-200 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#0B1437]"
+      >
+        <option *ngFor="let option of filterOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- LOCATIONS GRID -->
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div
+      *ngFor="let location of paginatedLocations"
+      (click)="selectLocation(location)"
+      class="bg-white rounded-xl shadow-md border border-gray-100 cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-200 relative overflow-hidden group"
+    >
+      <!-- Gradient Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-br from-[#0B1437]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+      <!-- Header -->
+      <div class="p-4 border-b border-gray-100">
+        <div class="flex items-start justify-between mb-2">
+          <div>
+            <h3 class="font-semibold text-base text-[#0B1437] mb-1">{{ location.name }}</h3>
+            <p class="text-xs text-gray-500">{{ location.address }}, {{ location.city }}</p>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span [class]="'px-2 py-0.5 rounded-full text-xs font-medium border ' + getStatusColor(location.status)">
+              {{ location.status === 'compliant' ? 'Compliant' : location.status === 'attention' ? 'Needs Attention' : 'Critical' }}
+            </span>
+            <span [class]="'px-2 py-0.5 rounded-full text-xs font-medium ' + getTypeColor(location.type)">
+              {{ location.type }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="p-4">
+        <!-- Extinguisher Stats -->
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-600">Fire Extinguishers</span>
+            <span class="text-xs font-semibold text-[#0B1437]">{{ location.compliantExtinguishers }}/{{ location.totalExtinguishers }}</span>
+          </div>
+          
+          <!-- Progress Bar -->
+          <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-2">
+            <div 
+              class="h-full transition-all duration-300"
+              [class]="location.status === 'compliant' ? 'bg-green-500' : location.status === 'attention' ? 'bg-yellow-500' : 'bg-red-500'"
+              [style.width.%]="getCompliancePercentage(location)">
+            </div>
+          </div>
+          
+          <div class="flex justify-between text-xs">
+            <span class="text-green-600">{{ location.compliantExtinguishers }} Compliant</span>
+            <span class="text-yellow-600">{{ location.needsService }} Need Service</span>
+            <span class="text-red-600">{{ location.expired }} Expired</span>
+          </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="space-y-2 text-xs">
+          <div class="flex items-center gap-2">
+            <i data-lucide="user" class="w-2 h-2 text-gray-400"></i>
+            <span class="text-gray-600">Manager: {{ location.manager }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="calendar" class="w-2 h-2 text-gray-400"></i>
+            <span class="text-gray-600">Last Inspection: {{ location.lastInspection | date:'MMM dd, yyyy' }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="mail" class="w-2 h-2 text-gray-400"></i>
+            <span class="text-gray-600 truncate">{{ location.contact }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGINATION -->
+  <div class="flex items-center justify-between">
+    <p class="text-sm text-gray-500">
+      Showing {{ paginatedLocations.length }} of {{ filteredLocations.length }} locations
+    </p>
+    <div class="flex items-center gap-2">
+      <button 
+        (click)="changePage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+        class="px-3 py-1 rounded border border-gray-300 text-xs font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+        <i data-lucide="chevron-left" class="w-2 h-2"></i>
+      </button>
+      
+      <span class="text-xs text-gray-600">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+      
+      <button 
+        (click)="changePage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+        class="px-3 py-1 rounded border border-gray-300 text-xs font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+        <i data-lucide="chevron-right" class="w-2 h-2"></i>
+      </button>
+    </div>
+  </div>
+</div>

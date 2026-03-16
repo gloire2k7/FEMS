@@ -1,0 +1,278 @@
+﻿<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
+    <!-- SIDEBAR -->
+    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0 z-50">
+        <div class="px-4 py-4 mb-6 flex items-center gap-5">
+            <div
+                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
+                <i data-lucide="flame" class="w-3 h-3 text-white"></i>
+            </div>
+            <span class="text-xs font-black text-white tracking-[0.2em] leading-none uppercase">FEM</span>
+        </div>
+
+        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
+            <div class="space-y-3">
+                <a routerLink="/super-admin-dashboard" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="layout-grid" class="w-3 h-3 opacity-90 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Dashboard</span>
+                </a>
+                <a routerLink="/super-admin-admins" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="users" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Admins</span>
+                </a>
+                <a routerLink="/super-admin-clients" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="briefcase" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Clients</span>
+                </a>
+            </div>
+
+            <p class="text-[12px] font-black text-slate-500 uppercase tracking-[0.15em] px-3 mt-8 mb-6">Management</p>
+            <div class="space-y-3">
+                <a routerLink="/super-admin-reports" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="file-text" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Reports</span>
+                </a>
+                <a routerLink="/super-admin-logs" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="activity" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Logs</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- PROFILE BLOCK -->
+        <div class="px-3 pb-6 mt-auto">
+            <div
+                class="bg-white/5 rounded-xl p-3 flex items-center gap-5.5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
+                <div
+                    class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10">
+                    <img src="https://ui-avatars.com/api/?name=Aurore&background=FFC107&color=fff" alt="Profile"
+                        class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Welcome
+                        Back</p>
+                    <p class="text-[13px] font-black text-white truncate">Aurore</p>
+                </div>
+                <i data-lucide="chevron-right"
+                    class="w-3 h-3 text-slate-500 ml-auto opacity-40 group-hover:opacity-100"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col bg-white overflow-y-auto scrollbar-hide">
+        <!-- TOPBAR -->
+        <header
+            class="h-12 flex items-center justify-between px-6 bg-white border-b border-slate-100 shrink-0 sticky top-0 z-40">
+            <div class="relative w-64">
+                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" placeholder="Search for something..."
+                    class="w-full pl-9 pr-4 py-2 bg-[#F6F8FC] border-none rounded-xl text-[13px] focus:outline-none placeholder:text-slate-400 font-medium tracking-tight">
+            </div>
+            <div class="flex items-center gap-5">
+                <button
+                    class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-slate-400 relative">
+                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
+                    <span
+                        class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <button
+                    class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-red-500/80 relative">
+                    <i data-lucide="bell" class="w-3.5 h-3.5 text-red-500/70"></i>
+                    <span
+                        class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <button class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-slate-400">
+                    <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="p-7 space-y-6 bg-[#F8FAFC] min-h-screen">
+
+            <!-- STATS GRID -->
+            <div class="grid grid-cols-6 gap-5">
+                <div *ngFor="let stat of stats"
+                    class="bg-[#0B1437] rounded-xl p-8 text-white relative overflow-hidden group">
+                    <div class="relative z-10 flex flex-col h-full justify-between">
+                        <span
+                            class="text-[11px] font-black text-slate-400 uppercase tracking-widest opacity-80">{{stat.label}}</span>
+                        <h2 class="text-3xl font-black mt-1 mb-1">{{stat.value}}</h2>
+                        <div class="flex items-center gap-1">
+                            <i *ngIf="stat.trendType === 'positive'" data-lucide="trending-up"
+                                class="w-2.5 h-2.5 text-emerald-400"></i>
+                            <i *ngIf="stat.trendType === 'healthy'" data-lucide="check-circle"
+                                class="w-2.5 h-2.5 text-emerald-400"></i>
+                            <span class="text-[11px] font-bold"
+                                [ngClass]="{'text-emerald-400': stat.trendType === 'positive' || stat.trendType === 'healthy', 'text-slate-400': stat.trendType === 'neutral'}">
+                                {{stat.trend}}
+                            </span>
+                        </div>
+                    </div>
+                    <div *ngIf="stat.label === 'Compliance Rate'"
+                        class="absolute left-0 top-0 w-1 h-full bg-emerald-500"></div>
+                    <div class="absolute right-0 top-0 p-2 opacity-5">
+                        <i [attr.data-lucide]="stat.label === 'Total Companies' ? 'briefcase' : 
+                                               stat.label === 'Total Admins' ? 'user-check' : 
+                                               stat.label === 'Inspections' ? 'check-square' : 'layout-grid'"
+                            class="w-8 h-8"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CRITICAL ISSUES & QUICK ACTIONS -->
+            <div class="grid grid-cols-12 gap-6">
+                <!-- CRITICAL ATTENTION REQUIRED -->
+                <div class="col-span-8 bg-white rounded-2xl p-7 border border-slate-100 shadow-sm relative">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-5">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-red-500"></i>
+                            <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider">Critical Attention
+                                Required</h3>
+                        </div>
+                        <span
+                            class="px-3 py-1.5 bg-red-50 text-red-500 rounded text-[12px] font-bold uppercase tracking-widest">4
+                            Critical Issues</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div *ngFor="let issue of criticalIssues"
+                            [ngClass]="{'bg-red-50/50 border-red-100': issue.type === 'error', 'bg-orange-50/50 border-orange-100': issue.type === 'warning', 'bg-yellow-50/50 border-yellow-100': issue.type === 'neutral'}"
+                            class="rounded-xl p-3 border flex items-center justify-between group cursor-pointer hover:scale-[1.01] transition-all">
+                            <div class="flex items-center gap-5">
+                                <div [ngClass]="{'bg-red-100 text-red-600': issue.type === 'error', 'bg-orange-100 text-orange-600': issue.type === 'warning', 'bg-yellow-100 text-yellow-600': issue.type === 'neutral'}"
+                                    class="w-10 h-10 rounded-xl flex items-center justify-center">
+                                    <i [attr.data-lucide]="issue.icon" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-[14px] font-black text-[#0B1437] tracking-tight">{{issue.title}}
+                                    </h4>
+                                    <p class="text-[12px] font-medium text-slate-500">{{issue.subtitle}}</p>
+                                </div>
+                            </div>
+                            <button
+                                class="text-[13px] font-black text-slate-600 underline underline-offset-4 hover:text-[#0B1437] transition-colors">{{issue.actionName}}</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QUICK ACTIONS -->
+                <div class="col-span-4 bg-white rounded-2xl p-7 border border-slate-100 shadow-sm">
+                    <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider mb-1">Quick Actions</h3>
+                    <p class="text-[12px] font-medium text-slate-400 mb-6">Common administrative tasks.</p>
+
+                    <div class="space-y-3">
+                        <button
+                            class="w-full bg-[#0B1437] text-white rounded-xl py-3 flex items-center justify-center gap-5 text-[13px] font-black uppercase tracking-widest hover:bg-[#1a2b5a] transition-all shadow-lg shadow-blue-900/10">
+                            <i data-lucide="plus-circle" class="w-4 h-4 text-white/80"></i>
+                            Add Company
+                        </button>
+                        <button routerLink="/super-admin-add-admin"
+                            class="w-full bg-white border-2 border-slate-100 text-[#0B1437] rounded-xl py-3 flex items-center justify-center gap-5 text-[13px] font-black uppercase tracking-widest hover:border-blue-200 transition-all">
+                            <span class="text-slate-400 font-bold">+1</span>
+                            Add Admin
+                        </button>
+                        <button
+                            class="w-full bg-slate-50 text-slate-600 rounded-xl py-3 flex items-center justify-center gap-5 text-[13px] font-black uppercase tracking-widest hover:bg-slate-100 transition-all">
+                            <i data-lucide="file-text" class="w-4 h-4 opacity-70"></i>
+                            View Compliance Reports
+                        </button>
+                        <button
+                            class="w-full bg-slate-50 text-slate-600 rounded-xl py-3 flex items-center justify-center gap-5 text-[13px] font-black uppercase tracking-widest hover:bg-slate-100 transition-all">
+                            <i data-lucide="settings" class="w-4 h-4 opacity-70"></i>
+                            Global System Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHARTS SECTION -->
+            <div class="grid grid-cols-12 gap-6">
+                <!-- MONTHLY VOLUME CHART -->
+                <div
+                    class="col-span-7 bg-white rounded-2xl p-7 border border-slate-100 shadow-sm relative overflow-hidden">
+                    <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider mb-12">Monthly Inspection
+                        Volume</h3>
+                    <div class="h-56 flex items-end justify-between gap-5 px-6 relative">
+                        <!-- Y-Axis Grid Lines -->
+                        <div
+                            class="absolute inset-x-0 top-0 bottom-0 flex flex-col justify-between opacity-5 pointer-events-none">
+                            <div class="border-t border-slate-900 w-full mt-10"></div>
+                            <div class="border-t border-slate-900 w-full"></div>
+                            <div class="border-t border-slate-900 w-full"></div>
+                            <div class="border-t border-slate-900 w-full mb-10"></div>
+                        </div>
+
+                        <div *ngFor="let data of chartData"
+                            class="flex-1 flex flex-col items-center group relative z-10 h-full justify-end">
+                            <span
+                                class="text-[12px] font-bold text-slate-400 mb-6 uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">{{data.month}}</span>
+                            <div class="w-full max-w-[40px] bg-[#0B1437] rounded-lg transition-all group-hover:bg-blue-600 relative cursor-pointer"
+                                [style.height.%]="data.value">
+                                <div
+                                    class="bar-tooltip absolute -top-8 left-1/2 -translate-x-1/2 bg-[#0B1437] text-white text-[11px] px-3 py-1.5 rounded hidden group-hover:block whitespace-nowrap z-20 shadow-lg">
+                                    {{data.value}}% Complete
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DISTRIBUTION DONUT -->
+                <div class="col-span-5 bg-white rounded-2xl p-7 border border-slate-100 shadow-sm overflow-hidden">
+                    <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider mb-10">Inspection Outcome
+                        Distribution</h3>
+                    <div class="flex items-center justify-between gap-8 h-56">
+                        <div class="relative w-44 h-44 shrink-0 -mt-3">
+                            <svg class="w-full h-full -rotate-90 drop-shadow-sm" viewBox="0 0 100 100">
+                                <!-- Background circle -->
+                                <circle class="text-slate-50" stroke-width="10" stroke="currentColor" fill="transparent"
+                                    r="38" cx="50" cy="50"></circle>
+
+                                <!-- Segments -->
+                                <circle class="text-emerald-500" stroke-width="10" stroke="currentColor"
+                                    fill="transparent" r="38" cx="50" cy="50" stroke-dasharray="155.2 238.7"
+                                    stroke-dashoffset="0" class="transition-all duration-1000"></circle>
+
+                                <circle class="text-[#0B1437]" stroke-width="10" stroke="currentColor"
+                                    fill="transparent" r="38" cx="50" cy="50" stroke-dasharray="47.7 238.7"
+                                    stroke-dashoffset="-155.2" class="transition-all duration-1000"></circle>
+
+                                <circle class="text-amber-400" stroke-width="10" stroke="currentColor"
+                                    fill="transparent" r="38" cx="50" cy="50" stroke-dasharray="23.9 238.7"
+                                    stroke-dashoffset="-202.9" class="transition-all duration-1000"></circle>
+
+                                <circle class="text-red-500" stroke-width="10" stroke="currentColor" fill="transparent"
+                                    r="38" cx="50" cy="50" stroke-dasharray="11.9 238.7" stroke-dashoffset="-226.8"
+                                    class="transition-all duration-1000"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="text-3xl font-black text-[#0B1437] tracking-tighter">892</span>
+                                <span
+                                    class="text-[12px] font-black text-slate-400 uppercase tracking-widest leading-none mt-1">Total</span>
+                            </div>
+                        </div>
+
+                        <div class="flex-1 space-y-4 pr-2">
+                            <div *ngFor="let item of distribution"
+                                class="flex items-center justify-between group cursor-pointer">
+                                <div class="flex items-center gap-5">
+                                    <div class="w-2.5 h-2.5 rounded-full shadow-sm" [ngClass]="item.color"></div>
+                                    <span
+                                        class="text-[13px] font-bold text-slate-500 group-hover:text-[#0B1437] transition-colors tracking-tight">{{item.label}}</span>
+                                </div>
+                                <span class="text-[13px] font-black text-[#0B1437]">{{item.percentage}}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>

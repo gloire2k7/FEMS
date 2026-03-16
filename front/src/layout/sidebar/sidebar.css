@@ -1,0 +1,11 @@
+/* Sidebar: icons and text use #CBD5E1 (user-specified) */
+aside {
+  color: #CBD5E1;
+}
+aside svg {
+  color: #CBD5E1;
+  stroke: #CBD5E1;
+}
+aside i {
+  color: #CBD5E1;
+}

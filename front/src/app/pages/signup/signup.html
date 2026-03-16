@@ -1,0 +1,141 @@
+<div class="min-h-screen flex font-['Poppins'] overflow-hidden bg-white">
+
+  <!-- LEFT FORM CONTAINER -->
+  <div class="w-full lg:w-[45%] flex flex-col justify-center px-8 sm:px-12 md:px-20 lg:px-24">
+    <div class="max-w-[360px] w-full mx-auto">
+
+      <!-- HEADER -->
+      <div class="mb-8">
+        <h1 class="text-[22px] font-semibold text-[#1B2559] leading-tight tracking-tight">
+          Welcome to FEM<br>
+          <span class="font-extrabold text-[24px]">Sign Up</span> to getting started.
+        </h1>
+        <p class="mt-2 text-[12px] font-medium text-[#A3AED0] tracking-wide">
+          Enter your details to proceed further
+        </p>
+      </div>
+
+      <!-- FORM -->
+      <form (submit)="onSubmit()" class="space-y-4">
+        <!-- Error Message -->
+        <div *ngIf="error" class="text-red-500 text-[11px] font-semibold text-center">
+          {{ error }}
+        </div>
+
+        <!-- Full name -->
+        <div class="group">
+          <label
+            class="block text-[11px] font-bold text-[#A3AED0] uppercase tracking-widest mb-1 ml-1 transform transition-all group-focus-within:text-blue-600">Full Name</label>
+          <div
+            class="relative flex items-center border-b border-[#E0E5F2] group-focus-within:border-blue-500 transition-all pb-1">
+            <input type="text" name="name" [(ngModel)]="name" placeholder="John Doe"
+              class="w-full bg-transparent border-none py-1 text-[13px] font-semibold text-[#1B2559] placeholder-[#1B2559] outline-none" required />
+            <i data-lucide="user" class="w-3.5 h-3.5 text-[#1B2559] opacity-60"></i>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="group">
+          <label
+            class="block text-[11px] font-bold text-[#A3AED0] uppercase tracking-widest mb-1 ml-1 transform transition-all group-focus-within:text-blue-600">Email</label>
+          <div
+            class="relative flex items-center border-b border-[#E0E5F2] group-focus-within:border-blue-500 transition-all pb-1">
+            <input type="email" name="email" [(ngModel)]="email" placeholder="support@craftui.com"
+              class="w-full bg-transparent border-none py-1 text-[13px] font-semibold text-[#1B2559] placeholder-[#1B2559] outline-none" required />
+            <i data-lucide="mail" class="w-3.5 h-3.5 text-[#1B2559] opacity-60"></i>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="group">
+          <label
+            class="block text-[11px] font-bold text-[#A3AED0] uppercase tracking-widest mb-1 ml-1 transform transition-all group-focus-within:text-indigo-600">Password</label>
+          <div
+            class="relative flex items-center border-b border-[#E0E5F2] group-focus-within:border-indigo-500 transition-all pb-1">
+            <input type="password" name="password" [(ngModel)]="password" placeholder="Start typing..."
+              class="w-full bg-transparent border-none py-1 text-[13px] font-semibold text-[#1B2559] placeholder-[#6876AC] outline-none" required />
+            <i data-lucide="lock" class="w-3.5 h-3.5 text-[#6876AC]"></i>
+          </div>
+        </div>
+
+        <!-- Company Name -->
+        <div class="group">
+          <label
+            class="block text-[11px] font-bold text-[#A3AED0] uppercase tracking-widest mb-1 ml-1 transform transition-all group-focus-within:text-blue-600">Company Name</label>
+          <div
+            class="relative flex items-center border-b border-[#E0E5F2] group-focus-within:border-blue-500 transition-all pb-1">
+            <input type="text" name="company_name" [(ngModel)]="company_name" placeholder="Acme Inc."
+              class="w-full bg-transparent border-none py-1 text-[13px] font-semibold text-[#1B2559] placeholder-[#1B2559] outline-none" required />
+            <i data-lucide="building" class="w-3.5 h-3.5 text-[#1B2559] opacity-60"></i>
+          </div>
+        </div>
+
+        <!-- Phone & Address (Inline-ish) -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="group">
+            <label
+              class="block text-[11px] font-bold text-[#A3AED0] uppercase tracking-widest mb-1 ml-1 transform transition-all group-focus-within:text-blue-600">Phone</label>
+            <div
+              class="relative flex items-center border-b border-[#E0E5F2] group-focus-within:border-blue-500 transition-all pb-1">
+              <input type="text" name="phone" [(ngModel)]="phone" placeholder="+123..."
+                class="w-full bg-transparent border-none py-1 text-[13px] font-semibold text-[#1B2559] placeholder-[#1B2559] outline-none" required />
+            </div>
+          </div>
+          <div class="group">
+            <label
+              class="block text-[11px] font-bold text-[#A3AED0] uppercase tracking-widest mb-1 ml-1 transform transition-all group-focus-within:text-blue-600">Address</label>
+            <div
+              class="relative flex items-center border-b border-[#E0E5F2] group-focus-within:border-blue-500 transition-all pb-1">
+              <input type="text" name="address" [(ngModel)]="address" placeholder="123 Main St"
+                class="w-full bg-transparent border-none py-1 text-[13px] font-semibold text-[#1B2559] placeholder-[#1B2559] outline-none" required />
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="flex gap-4 pt-4">
+          <button type="submit" [disabled]="isLoading"
+            class="flex-1 bg-[#0B1437] text-white py-2.5 rounded-xl text-[12px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 hover:bg-black transition-all transform active:scale-[0.98] disabled:opacity-50">
+            {{ isLoading ? 'Creating account...' : 'Sign Up' }}
+          </button>
+          <button type="button" routerLink="/signin"
+            class="flex-1 bg-[#F4F7FE] text-[#1B2559] py-2.5 rounded-xl text-[12px] font-black uppercase tracking-widest hover:bg-[#E9EDF7] transition-all transform active:scale-[0.98]">
+            Sign In
+          </button>
+        </div>
+      </form>
+
+      <!-- SOCIAL -->
+      <div class="mt-12 text-center">
+        <p class="text-[11px] font-bold text-[#A3AED0] uppercase tracking-[0.2em] mb-6">Or sign in with</p>
+        <div class="flex justify-center gap-5">
+          <button
+            class="w-11 h-11 rounded-xl border border-[#E0E5F2] flex items-center justify-center group hover:bg-[#F4F7FE] transition-all hover:border-[#1B2559]/10">
+            <i data-lucide="twitter" class="w-4 h-4 text-[#A3AED0] group-hover:text-[#1DA1F2] transition-colors"></i>
+          </button>
+          <button
+            class="w-11 h-11 rounded-xl border border-[#E0E5F2] flex items-center justify-center group hover:bg-[#F4F7FE] transition-all hover:border-[#1B2559]/10">
+            <i data-lucide="chrome" class="w-4 h-4 text-[#A3AED0] group-hover:text-[#4285F4] transition-colors"></i>
+          </button>
+          <button
+            class="w-11 h-11 rounded-xl border border-[#E0E5F2] flex items-center justify-center group hover:bg-[#F4F7FE] transition-all hover:border-[#1B2559]/10">
+            <i data-lucide="facebook" class="w-4 h-4 text-[#A3AED0] group-hover:text-[#1877F2] transition-colors"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT ILLUSTRATION CONTAINER -->
+  <div class="hidden lg:flex w-[55%] bg-[#0B1437] items-center justify-center relative overflow-hidden">
+    <!-- Abstract Shapes -->
+    <div class="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/10 rounded-full blur-[120px]"></div>
+    <div class="absolute bottom-[-5%] left-[-5%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[100px]"></div>
+
+    <div class="relative z-10 w-full max-w-[500px] px-12">
+      <img src="assets/illustration.png" class="w-full h-auto drop-shadow-2xl" alt="Illustration">
+    </div>
+  </div>
+
+</div>

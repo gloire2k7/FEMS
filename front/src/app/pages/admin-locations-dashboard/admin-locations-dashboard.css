@@ -1,0 +1,56 @@
+/* Admin Locations Dashboard Styles */
+:host {
+    display: block;
+}
+
+/* FORCING SIZES ON LUCIDE ICONS - Match Admin Dashboard Standard */
+:host ::ng-deep [data-lucide] {
+    width: 10px !important;
+    height: 10px !important;
+    display: inline-block !important;
+    flex-shrink: 0 !important;
+}
+
+:host ::ng-deep .icon-sm,
+:host ::ng-deep [data-lucide].large-stat-icon {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+:host ::ng-deep .icon-xs {
+    width: 10px !important;
+    height: 10px !important;
+}
+
+:host ::ng-deep .icon-md {
+    width: 18px !important;
+    height: 18px !important;
+}
+
+.dashboard-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #0B1437;
+    border-radius: 10px;
+}
+
+.sidebar-link-active {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px;
+}

@@ -1,0 +1,145 @@
+/* Custom Scrollbar for the sidebar and main area */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Sidebar Styles */
+.sidebar-link {
+    transition: all 0.2s ease;
+    color: #f8fafc;
+    /* slate-50 */
+    font-weight: 600;
+    font-size: 10px;
+}
+
+.sidebar-link:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-link-active {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    font-weight: 700 !important;
+}
+
+.sidebar-header {
+    padding-left: 0.75rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 9px;
+    font-weight: 900;
+    color: #f8fafc;
+    /* slate-50 */
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    opacity: 0.6;
+}
+
+/* Card Styles */
+.dashboard-card {
+    background: #0B1437;
+    border: 1px border-white/5;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card-glow {
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-glow::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.stat-card-glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Stats Cards Micro-interactions */
+.stat-card {
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Lucide Icon Sizes */
+[data-lucide] {
+    stroke-width: 2.5px;
+}
+
+.icon-xs {
+    width: 14px;
+    height: 14px;
+}
+
+.icon-sm {
+    width: 18px;
+    height: 18px;
+}
+
+.icon-md {
+    width: 24px;
+    height: 24px;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-in {
+    animation: slideIn 0.5s ease-out forwards;
+}
+
+/* Donut segment animation (if used later) */
+.donut-segment {
+    transition: stroke-dasharray 0.3s ease;
+}
+
+/* Custom Dropdown Styling */
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.25rem center;
+    background-size: 1rem;
+}

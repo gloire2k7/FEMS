@@ -1,0 +1,100 @@
+/* Admin Dashboard Styles */
+:host {
+    display: block;
+}
+
+@keyframes pulse-slow {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+    }
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 3s infinite ease-in-out;
+}
+
+/* FORCING SIZES ON LUCIDE ICONS */
+:host ::ng-deep [data-lucide] {
+    width: 14px !important;
+    height: 14px !important;
+    display: inline-block !important;
+    flex-shrink: 0 !important;
+}
+
+:host ::ng-deep .icon-sm,
+:host ::ng-deep [data-lucide].large-stat-icon {
+    width: 18px !important;
+    height: 18px !important;
+}
+
+:host ::ng-deep .icon-xs {
+    width: 13px !important;
+    height: 13px !important;
+}
+
+/* Specific size for map pins */
+:host ::ng-deep .map-pin-icon {
+    width: 20px !important;
+    height: 20px !important;
+}
+
+.stat-card-glow {
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-glow::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.dashboard-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+select {
+    background-image: none;
+}
+
+/* Custom scrollbar for a cleaner look */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.sidebar-link-active {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px;
+}

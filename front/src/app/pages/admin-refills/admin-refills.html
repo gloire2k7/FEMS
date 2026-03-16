@@ -1,0 +1,356 @@
+﻿<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
+    <!-- SIDEBAR -->
+    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0 z-50">
+        <div class="px-4 py-4 mb-6 flex items-center gap-5">
+            <div
+                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
+                <i data-lucide="flame" class="w-3 h-3 text-white"></i>
+            </div>
+            <span class="text-xs font-black text-white tracking-[0.2em] leading-none">FEM</span>
+        </div>
+
+        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
+            <div>
+                <a routerLink="/admin-dashboard" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="layout-grid" class="w-3 h-3 opacity-90 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Dashboard</span>
+                </a>
+            </div>
+
+            <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mt-8 mb-6">Operations</p>
+            <div class="space-y-3">
+                <a routerLink="/clients" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group">
+                    <i data-lucide="users" class="w-3 h-3 opacity-90 group-hover:opacity-100"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Clients</span>
+                </a>
+                <a routerLink="/admin-locations" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group">
+                    <i data-lucide="map-pin" class="w-3 h-3 opacity-90 group-hover:opacity-100"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Locations</span>
+                </a>
+                <a routerLink="/admin-location-details" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group">
+                    <i data-lucide="flame" class="w-3 h-3 opacity-90 group-hover:opacity-100"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Fire Extinguishers</span>
+                </a>
+                <div class="space-y-3">
+                    <a (click)="toggleInspections()"
+                        class="flex items-center justify-between px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer"
+                        [class.bg-white/10]="inspectionsOpen">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="clipboard-check" class="w-3 h-3 opacity-90 group-hover:opacity-100"></i>
+                            <span class="text-[13px] tracking-wide font-semibold">Inspections</span>
+                        </div>
+                        <i [attr.data-lucide]="inspectionsOpen ? 'chevron-up' : 'chevron-down'"
+                            class="w-2.5 h-2.5 opacity-60"></i>
+                    </a>
+
+                    <div *ngIf="inspectionsOpen" class="pl-9 space-y-3 mt-1">
+                        <a routerLink="/admin-assigned-inspections" routerLinkActive="text-white !font-black"
+                            class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white cursor-pointer">Assigned</a>
+                        <a routerLink="/admin-inspection-label/LE-2023-894" routerLinkActive="text-white !font-black"
+                            class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white cursor-pointer">Labels</a>
+                        <a routerLink="/admin-inspectors" routerLinkActive="text-white !font-black"
+                            class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white cursor-pointer">Inspectors</a>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mt-8 mb-6">Management</p>
+            <div class="space-y-3">
+                <a routerLink="/admin-compliance" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center justify-between px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group">
+                    <div class="flex items-center gap-5.5">
+                        <i data-lucide="shield-check" class="w-3 h-3 opacity-90 group-hover:opacity-100"></i>
+                        <span class="text-[13px] tracking-wide font-semibold">Compliance</span>
+                    </div>
+                </a>
+                <a routerLink="/admin-refills" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center justify-between px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <div class="flex items-center gap-5.5">
+                        <i data-lucide="repeat" class="w-3 h-3 opacity-90 group-hover:opacity-100"></i>
+                        <span class="text-[13px] tracking-wide font-semibold">Refills</span>
+                    </div>
+                    <span
+                        class="w-4 h-4 bg-amber-500 text-white rounded-full text-[11px] flex items-center justify-center font-black">5</span>
+                </a>
+                <a routerLink="/admin-settings" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center justify-between px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <div class="flex items-center gap-5.5">
+                        <i data-lucide="settings" class="w-3 h-3 opacity-90 group-hover:opacity-100"></i>
+                        <span class="text-[13px] tracking-wide font-semibold">Settings</span>
+                    </div>
+                </a>
+            </div>
+        </nav>
+
+        <div class="px-3 pb-6 mt-auto">
+            <div
+                class="bg-white/5 rounded-xl p-3 flex items-center gap-5.5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
+                <div
+                    class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10">
+                    <img src="https://ui-avatars.com/api/?name=Usanase&background=FFC107&color=fff" alt="Profile"
+                        class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[11px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">ADMIN
+                    </p>
+                    <p class="text-[13px] font-black text-white truncate">Usanase</p>
+                </div>
+                <i data-lucide="log-out"
+                    class="w-3.5 h-3.5 text-slate-400 ml-auto opacity-40 group-hover:opacity-100 group-hover:text-red-400"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col bg-white overflow-y-auto scrollbar-hide">
+        <!-- TOPBAR -->
+        <header
+            class="h-12 flex items-center justify-between px-6 bg-white border-b border-slate-100 shrink-0 sticky top-0 z-40">
+            <div class="relative w-64">
+                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" placeholder="Search for something..."
+                    class="w-full pl-9 pr-4 py-2 bg-[#F6F8FC] border-none rounded-xl text-[13px] focus:outline-none placeholder:text-slate-400 font-medium tracking-tight">
+            </div>
+            <div class="flex items-center gap-5">
+                <button
+                    class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-slate-400 relative">
+                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
+                    <span
+                        class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <button
+                    class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-red-500/80 relative">
+                    <i data-lucide="bell" class="w-3.5 h-3.5 text-red-500/70"></i>
+                    <span
+                        class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <button class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-slate-400">
+                    <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="p-7 space-y-5 bg-[#F8FAFC] min-h-screen">
+
+            <!-- ALERT BANNERS -->
+            <div class="space-y-3">
+                <div class="bg-[#FFF5F5] border border-red-100 rounded-xl p-3 flex items-center justify-between">
+                    <div class="flex items-center gap-5">
+                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                            <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                        </div>
+                        <p class="text-[14px] font-black text-red-700 tracking-tight">3 Extinguishers are Overdue for
+                            Maintenance</p>
+                    </div>
+                    <button
+                        class="text-[13px] font-black text-red-700 underline underline-offset-4 hover:text-red-800 transition-colors">View
+                        Items</button>
+                </div>
+
+                <div class="bg-[#FFF9F2] border border-amber-100 rounded-xl p-3 flex items-center justify-between">
+                    <div class="flex items-center gap-5">
+                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+                            <i data-lucide="droplet" class="w-4 h-4"></i>
+                        </div>
+                        <p class="text-[14px] font-black text-amber-700 tracking-tight">5 Refills Required - Pending
+                            Technician Assignment</p>
+                    </div>
+                    <button
+                        class="text-[13px] font-black text-amber-700 underline underline-offset-4 hover:text-amber-800 transition-colors">Assign
+                        Now</button>
+                </div>
+            </div>
+
+            <!-- STATS GRID -->
+            <div class="grid grid-cols-4 gap-5">
+                <div class="dashboard-card stat-card-glow rounded-2xl p-8 text-white">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest opacity-80">Total
+                            Requests</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                            <i data-lucide="list-ordered" class="w-3.5 h-3.5"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl font-black leading-none mb-1">124</h2>
+                    <p class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">+12% from last month</p>
+                </div>
+
+                <div class="dashboard-card stat-card-glow rounded-2xl p-8 text-white">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest opacity-80">Waiting
+                            for Assignment</span>
+                        <div
+                            class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-0 bg-amber-500 opacity-20"></div>
+                            <div class="absolute -right-1 -top-1 w-4 h-4 rounded-full bg-amber-500 opacity-20 blur-sm">
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl font-black leading-none mb-1">18</h2>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Waiting for assignment</p>
+                </div>
+
+                <div class="dashboard-card stat-card-glow rounded-2xl p-8 text-white">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest opacity-80">In
+                            Progress</span>
+                        <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 animate-spin-slow"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl font-black leading-none mb-1">42</h2>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Currently being serviced</p>
+                </div>
+
+                <div class="dashboard-card stat-card-glow rounded-2xl p-8 text-white">
+                    <div class="flex justify-between items-start mb-6">
+                        <span
+                            class="text-[11px] font-black text-slate-400 uppercase tracking-widest opacity-80">Completed</span>
+                        <div class="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl font-black leading-none mb-1">64</h2>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">This month</p>
+                </div>
+            </div>
+
+            <!-- FILTERS -->
+            <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm flex items-center justify-between">
+                <div class="relative w-80">
+                    <i data-lucide="search"
+                        class="w-3.5 h-3.5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                    <input type="text" [(ngModel)]="searchTerm" placeholder="Search by Extinguisher ID or Location..."
+                        class="w-full pl-11 pr-4 py-2 bg-slate-50 border-none rounded-xl text-[13px] focus:outline-none placeholder:text-slate-400 font-bold border border-slate-50">
+                </div>
+                <div class="flex items-center gap-5">
+                    <div class="flex items-center gap-5">
+                        <span
+                            class="text-[13px] font-black text-slate-400 uppercase tracking-widest leading-none">Status:</span>
+                        <select [(ngModel)]="selectedStatus"
+                            class="bg-slate-50 border-none rounded-xl px-5 py-3 text-[13px] font-bold text-slate-600 focus:outline-none min-w-[120px]">
+                            <option value="All">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Condemned">Condemned</option>
+                        </select>
+                    </div>
+                    <button
+                        class="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors">
+                        <i data-lucide="sliders" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/50 border-b border-slate-100">
+                            <th class="px-6 py-4 text-[12px] font-black text-slate-400 uppercase tracking-[0.15em]">ID &
+                                Type</th>
+                            <th class="px-6 py-4 text-[12px] font-black text-slate-400 uppercase tracking-[0.15em]">
+                                Location</th>
+                            <th class="px-6 py-4 text-[12px] font-black text-slate-400 uppercase tracking-[0.15em]">Issue
+                            </th>
+                            <th class="px-6 py-4 text-[12px] font-black text-slate-400 uppercase tracking-[0.15em]">Dates
+                            </th>
+                            <th class="px-6 py-4 text-[12px] font-black text-slate-400 uppercase tracking-[0.15em]">
+                                Status</th>
+                            <th class="px-6 py-4 text-[12px] font-black text-slate-400 uppercase tracking-[0.15em]">
+                                Technician</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        <tr *ngFor="let req of filteredRequests" class="hover:bg-slate-50/30 transition-colors group">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-5">
+                                    <div
+                                        class="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-white transition-colors">
+                                        <i data-lucide="flame" class="w-4 h-4"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-[14px] font-black text-[#0B1437]">{{req.extinguisherId}}</p>
+                                        <p class="text-[12px] font-bold text-slate-400">{{req.type}} • {{req.capacity}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div>
+                                    <p class="text-[14px] font-black text-[#0B1437]">{{req.location}}</p>
+                                    <p class="text-[12px] font-bold text-slate-400">{{req.subLocation}}</p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span [ngClass]="{
+                                    'bg-amber-50 text-amber-600 border-amber-100': req.issueType === 'warning',
+                                    'bg-blue-50 text-blue-600 border-blue-100': req.issueType === 'info',
+                                    'bg-red-50 text-red-600 border-red-100': req.issueType === 'error',
+                                    'bg-slate-100 text-slate-500 border-transparent': req.issueType === 'success'
+                                }"
+                                    class="px-3 py-1 rounded-full text-[12px] font-black border uppercase tracking-wider">
+                                    {{req.issue}}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div>
+                                    <p class="text-[13px] font-bold text-slate-500">Req: {{req.requestDate}}</p>
+                                    <p *ngIf="req.dueDate" class="text-[12px] font-black text-red-500 mt-0.5"
+                                        [class.text-red-500]="req.dueDate.includes('Overdue') || req.dueDate.includes('Tomorrow')">
+                                        {{req.dueDate.includes('Overdue') ? req.dueDate : 'Due: ' + req.dueDate}}
+                                    </p>
+                                    <p *ngIf="req.doneDate" class="text-[12px] font-black text-emerald-500 mt-0.5">Done:
+                                        {{req.doneDate}}</p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span [ngClass]="{
+                                    'bg-slate-100 text-slate-600': req.statusType === 'pending',
+                                    'bg-blue-600 text-white': req.statusType === 'in-progress',
+                                    'bg-emerald-600 text-white': req.statusType === 'completed',
+                                    'bg-red-600 text-white': req.statusType === 'condemned'
+                                }"
+                                    class="px-4 py-2 rounded-lg text-[12px] font-black uppercase tracking-widest shadow-sm">
+                                    {{req.status}}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div *ngIf="req.technician" class="flex items-center gap-5.5">
+                                    <img [src]="req.technician.avatar"
+                                        class="w-6 h-6 rounded-full border border-slate-200">
+                                    <span class="text-[13px] font-black text-[#0B1437]">{{req.technician.name}}</span>
+                                </div>
+                                <span *ngIf="!req.technician"
+                                    class="text-[13px] font-bold text-slate-300">Unassigned</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- FOOTER -->
+                <div class="px-6 py-4 bg-slate-50/50 flex items-center justify-between border-t border-slate-100">
+                    <p class="text-[13px] font-bold text-slate-400">Showing 1 to 4 of 124 results</p>
+                    <div class="flex items-center gap-5">
+                        <button
+                            class="px-5 py-3 rounded-xl bg-white border border-slate-200 text-[13px] font-black text-slate-600 hover:bg-slate-50 transition-colors">Previous</button>
+                        <button class="w-8 h-8 rounded-xl bg-[#0B1437] text-[13px] font-black text-white">1</button>
+                        <button
+                            class="w-8 h-8 rounded-xl bg-white border border-slate-200 text-[13px] font-black text-slate-600 hover:bg-slate-50 transition-colors">2</button>
+                        <button
+                            class="w-8 h-8 rounded-xl bg-white border border-slate-200 text-[13px] font-black text-slate-600 hover:bg-slate-50 transition-colors">3</button>
+                        <button
+                            class="px-5 py-3 rounded-xl bg-white border border-slate-200 text-[13px] font-black text-slate-600 hover:bg-slate-50 transition-colors">Next</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>

@@ -1,0 +1,472 @@
+﻿<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
+    <!-- SIDEBAR -->
+    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0 z-50">
+        <div class="px-4 py-4 mb-6 flex items-center gap-5">
+            <div
+                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
+                <i data-lucide="flame" class="w-3 h-3 text-white"></i>
+            </div>
+            <span class="text-xs font-black text-white tracking-[0.2em] leading-none uppercase">FEM</span>
+        </div>
+
+        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
+            <div class="space-y-3">
+                <a routerLink="/super-admin-dashboard" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="layout-grid" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Dashboard</span>
+                </a>
+                <a routerLink="/super-admin-admins" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-white bg-white/10 transition-all group cursor-pointer">
+                    <i data-lucide="users" class="w-3 h-3 opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Admins</span>
+                </a>
+                <a routerLink="/super-admin-clients" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="briefcase" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Clients</span>
+                </a>
+            </div>
+
+            <p class="text-[12px] font-black text-slate-500 uppercase tracking-[0.15em] px-3 mt-8 mb-6">Management</p>
+            <div class="space-y-3">
+                <a routerLink="/super-admin-reports" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="file-text" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Reports</span>
+                </a>
+                <a routerLink="/super-admin-logs" routerLinkActive="bg-white/10 text-white"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="activity" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Logs</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- PROFILE BLOCK -->
+        <div class="px-3 pb-6 mt-auto">
+            <div
+                class="bg-white/5 rounded-xl p-3 flex items-center gap-5.5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
+                <div
+                    class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10">
+                    <img src="https://ui-avatars.com/api/?name=Aurore&background=FFC107&color=fff" alt="Profile"
+                        class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Welcome
+                        Back</p>
+                    <p class="text-[13px] font-black text-white truncate">Aurore</p>
+                </div>
+                <i data-lucide="chevron-right"
+                    class="w-3 h-3 text-slate-500 ml-auto opacity-40 group-hover:opacity-100"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col bg-[#F8FAFC] overflow-y-auto scrollbar-hide">
+        <!-- TOPBAR -->
+        <header
+            class="h-12 flex items-center justify-between px-6 bg-white border-b border-slate-100 shrink-0 sticky top-0 z-40">
+            <div class="relative w-64">
+                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" placeholder="Search for something..."
+                    class="w-full pl-9 pr-4 py-2 bg-[#F6F8FC] border-none rounded-xl text-[13px] focus:outline-none placeholder:text-slate-400 font-medium tracking-tight">
+            </div>
+            <div class="flex items-center gap-5">
+                <button
+                    class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-slate-400 relative">
+                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
+                    <span
+                        class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <button
+                    class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-red-500/80 relative">
+                    <i data-lucide="bell" class="w-3.5 h-3.5 text-red-500/70"></i>
+                    <span
+                        class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <button class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-slate-400">
+                    <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="p-7 space-y-6">
+
+            <!-- STATS GRID -->
+            <div class="grid grid-cols-4 gap-5">
+                <div
+                    class="bg-[#0B1437] rounded-2xl p-8 text-white relative overflow-hidden group border border-white/5">
+                    <div class="relative z-10 flex justify-between items-start mb-6">
+                        <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
+                            <i data-lucide="briefcase" class="w-4 h-4 text-blue-400"></i>
+                        </div>
+                        <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest">+12%</span>
+                    </div>
+                    <h2 class="text-3xl font-black mb-1">24</h2>
+                    <p class="text-[12px] font-black text-slate-400 uppercase tracking-widest leading-none mb-6">Clients
+                        Created</p>
+                    <div
+                        class="absolute right-0 bottom-0 w-16 h-16 bg-blue-500/5 rounded-full translate-x-1/2 translate-y-1/2">
+                    </div>
+                </div>
+
+                <div
+                    class="bg-[#0B1437] rounded-2xl p-8 text-white relative overflow-hidden group border border-white/5">
+                    <div class="relative z-10 flex justify-between items-start mb-6">
+                        <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
+                            <i data-lucide="shield" class="w-4 h-4 text-blue-400"></i>
+                        </div>
+                        <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest">+8%</span>
+                    </div>
+                    <h2 class="text-3xl font-black mb-1">1,847</h2>
+                    <p class="text-[12px] font-black text-slate-400 uppercase tracking-widest leading-none mb-6">
+                        Extinguishers Registered</p>
+                    <div
+                        class="absolute right-0 bottom-0 w-16 h-16 bg-blue-500/5 rounded-full translate-x-1/2 translate-y-1/2">
+                    </div>
+                </div>
+
+                <div
+                    class="bg-[#0B1437] rounded-2xl p-8 text-white relative overflow-hidden group border border-white/5">
+                    <div class="relative z-10 flex justify-between items-start mb-6">
+                        <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
+                            <i data-lucide="check-square" class="w-4 h-4 text-blue-400"></i>
+                        </div>
+                        <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest">+24%</span>
+                    </div>
+                    <h2 class="text-3xl font-black mb-1">312</h2>
+                    <p class="text-[12px] font-black text-slate-400 uppercase tracking-widest leading-none mb-6">
+                        Inspections Managed</p>
+                    <div
+                        class="absolute right-0 bottom-0 w-16 h-16 bg-blue-500/5 rounded-full translate-x-1/2 translate-y-1/2">
+                    </div>
+                </div>
+
+                <div
+                    class="bg-[#0B1437] rounded-2xl p-8 text-white relative overflow-hidden group border border-white/5 text-nowrap">
+                    <div class="relative z-10 flex justify-between items-start mb-6">
+                        <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
+                            <i data-lucide="tag" class="w-4 h-4 text-blue-400"></i>
+                        </div>
+                        <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest">+18%</span>
+                    </div>
+                    <h2 class="text-3xl font-black mb-1">1,523</h2>
+                    <p class="text-[12px] font-black text-slate-400 uppercase tracking-widest leading-none mb-6">Labels
+                        Generated</p>
+                    <div
+                        class="absolute right-0 bottom-0 w-16 h-16 bg-blue-500/5 rounded-full translate-x-1/2 translate-y-1/2">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="flex items-center gap-5">
+                <button
+                    class="bg-[#0B1437] text-white px-6 py-2.5 rounded-xl text-[13px] font-black uppercase tracking-widest flex items-center gap-5 hover:bg-[#1a2b5a] transition-all">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit Admin
+                </button>
+                <button
+                    class="bg-[#0B1437] text-white px-6 py-2.5 rounded-xl text-[13px] font-black uppercase tracking-widest flex items-center gap-5 hover:bg-[#1a2b5a] transition-all">
+                    <i data-lucide="briefcase" class="w-3.5 h-3.5"></i> Assign / Remove Companies
+                </button>
+                <button
+                    class="bg-[#0B1437] text-white px-6 py-2.5 rounded-xl text-[13px] font-black uppercase tracking-widest flex items-center gap-5 hover:bg-[#1a2b5a] transition-all text-nowrap">
+                    <i data-lucide="slash" class="w-3.5 h-3.5"></i> Suspend Account
+                </button>
+                <button
+                    class="bg-[#0B1437] text-white px-6 py-2.5 rounded-xl text-[13px] font-black uppercase tracking-widest flex items-center gap-5 hover:bg-[#1a2b5a] transition-all">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Reset Password
+                </button>
+            </div>
+
+            <div class="grid grid-cols-12 gap-6">
+                <!-- LEFT COLUMN: PROFILE & METRICS -->
+                <div class="col-span-3 space-y-6">
+                    <div
+                        class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm flex flex-col items-center text-center">
+                        <div class="relative mb-6">
+                            <div class="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-blue-500 to-emerald-400">
+                                <img src="https://ui-avatars.com/api/?name=Kamali+Muhoza&background=F1F5F9&color=64748B"
+                                    alt="Kamali" class="w-full h-full rounded-full object-cover border-4 border-white">
+                            </div>
+                            <div
+                                class="absolute bottom-1 right-1 w-5 h-5 bg-emerald-500 border-4 border-white rounded-full">
+                            </div>
+                        </div>
+                        <h3 class="text-sm font-black text-[#0B1437] mb-1">Kamali Muhoza</h3>
+                        <p class="text-[13px] font-medium text-slate-400 mb-6">@smitchell_admin</p>
+                        <span
+                            class="px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-[11px] font-black uppercase tracking-widest flex items-center gap-1.5 mb-8">
+                            <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Active
+                        </span>
+
+                        <div class="w-full space-y-5 text-left">
+                            <div class="flex items-center gap-5">
+                                <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                                    <i data-lucide="mail" class="w-4 h-4 text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
+                                        Email Address</p>
+                                    <p class="text-[13px] font-bold text-[#0B1437]">sarah.mitchell@company.com</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-5">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-nowrap">
+                                    <i data-lucide="phone" class="w-4 h-4 text-amber-600"></i>
+                                </div>
+                                <div class="text-nowrap">
+                                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
+                                        Phone Number</p>
+                                    <p class="text-[13px] font-bold text-[#0B1437]">+1 (555) 234-5678</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-5">
+                                <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+                                    <i data-lucide="clock" class="w-4 h-4 text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
+                                        Last Login</p>
+                                    <p class="text-[13px] font-bold text-[#0B1437]">Today at 9:42 AM</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-5">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-nowrap">
+                                    <i data-lucide="calendar" class="w-4 h-4 text-slate-600"></i>
+                                </div>
+                                <div class="text-nowrap">
+                                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
+                                        Account Created</p>
+                                    <p class="text-[13px] font-bold text-[#0B1437]">Jan 15, 2023</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+                        <div class="flex items-center gap-5 mb-6">
+                            <i data-lucide="activity" class="w-4 h-4 text-[#0B1437]"></i>
+                            <h4 class="text-[13px] font-black text-[#0B1437] uppercase tracking-wider">Performance
+                                Metrics</h4>
+                        </div>
+                        <div class="space-y-5">
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center text-[13px] font-bold">
+                                    <span class="text-slate-500">Inspection Rate</span>
+                                    <span class="text-[#0B1437]">94%</span>
+                                </div>
+                                <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-[#0B1437] rounded-full" style="width: 94%"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center text-[13px] font-bold">
+                                    <span class="text-slate-500">Response Time</span>
+                                    <span class="text-[#0B1437]">88%</span>
+                                </div>
+                                <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-emerald-500 rounded-full" style="width: 88%"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center text-[13px] font-bold">
+                                    <span class="text-slate-500">Client Satisfaction</span>
+                                    <span class="text-[#0B1437]">96%</span>
+                                </div>
+                                <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-500 rounded-full" style="width: 96%"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center text-[13px] font-bold">
+                                    <span class="text-slate-500">System Efficiency</span>
+                                    <span class="text-[#0B1437]">91%</span>
+                                </div>
+                                <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden text-nowrap">
+                                    <div class="h-full bg-purple-500 rounded-full" style="width: 91%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: COMPANIES & LOGS -->
+                <div class="col-span-9 space-y-6">
+                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="p-8 border-b border-slate-50 flex items-center justify-between text-nowrap">
+                            <div class="flex items-center gap-5">
+                                <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center">
+                                    <i data-lucide="building-2" class="w-5 h-5 text-slate-400"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-black text-[#0B1437] uppercase tracking-wider">Assigned
+                                        Companies</h4>
+                                    <p class="text-[12px] font-medium text-slate-400">Managing 5 client organizations</p>
+                                </div>
+                            </div>
+                            <span
+                                class="px-3 py-1 bg-[#0B1437] text-white rounded-full text-[11px] font-black uppercase tracking-widest">5
+                                Active</span>
+                        </div>
+                        <div class="p-8 space-y-4">
+                            <!-- COMPANY 1 -->
+                            <div
+                                class="p-7 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-all group">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center gap-5">
+                                        <div
+                                            class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg shadow-blue-500/20">
+                                            GT</div>
+                                        <div>
+                                            <h5 class="text-xs font-black text-[#0B1437]">Global Tech Industries</h5>
+                                            <p class="text-[12px] font-medium text-slate-400">Assigned 8 months ago</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        class="px-5 py-2 bg-[#0B1437] text-white rounded-xl text-[12px] font-black uppercase tracking-widest hover:bg-[#1a2b5a] transition-all">View
+                                        Company</button>
+                                </div>
+                                <div class="grid grid-cols-3 gap-5">
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100">
+                                        <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                                            Locations</p>
+                                        <p class="text-lg font-black text-[#0B1437]">12</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100">
+                                        <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                                            Extinguishers</p>
+                                        <p class="text-lg font-black text-[#0B1437]">548</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100">
+                                        <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                                            Compliance</p>
+                                        <p class="text-lg font-black text-emerald-500">98%</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- COMPANY 2 -->
+                            <div
+                                class="p-7 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-orange-200 transition-all group">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center gap-5">
+                                        <div
+                                            class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg shadow-orange-500/20">
+                                            MF</div>
+                                        <div>
+                                            <h5 class="text-xs font-black text-[#0B1437]">Metro Fire Safety</h5>
+                                            <p class="text-[12px] font-medium text-slate-400">Assigned 4 months ago</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        class="px-5 py-2 bg-[#0B1437] text-white rounded-xl text-[12px] font-black uppercase tracking-widest hover:bg-[#1a2b5a] transition-all">View
+                                        Company</button>
+                                </div>
+                                <div class="grid grid-cols-3 gap-5">
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100">
+                                        <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                                            Locations</p>
+                                        <p class="text-lg font-black text-[#0B1437]">15</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100">
+                                        <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                                            Extinguishers</p>
+                                        <p class="text-lg font-black text-[#0B1437]">687</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100">
+                                        <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                                            Compliance</p>
+                                        <p class="text-lg font-black text-orange-500">87%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECURITY & ACTIVITY LOGS -->
+                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="p-8 border-b border-slate-50 flex items-center gap-5">
+                            <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center">
+                                <i data-lucide="shield-check" class="w-5 h-5 text-slate-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-[#0B1437] uppercase tracking-wider">Security &
+                                    Activity Logs</h4>
+                                <p class="text-[12px] font-medium text-slate-400">Recent authentication and permission
+                                    changes</p>
+                            </div>
+                        </div>
+                        <div class="p-8 space-y-3">
+                            <div
+                                class="flex items-center justify-between p-8 bg-slate-50/50 rounded-xl hover:bg-white border border-transparent hover:border-slate-100 transition-all cursor-pointer group">
+                                <div class="flex items-center gap-5">
+                                    <div
+                                        class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <i data-lucide="log-in" class="w-5 h-5"></i>
+                                    </div>
+                                    <div class="text-nowrap">
+                                        <p class="text-[13px] font-black text-[#0B1437]">Successful Login</p>
+                                        <p class="text-[12px] font-medium text-slate-400">From IP: 192.168.1.45 - Chrome
+                                            on Windows</p>
+                                    </div>
+                                </div>
+                                <span class="text-[13px] font-bold text-slate-400 text-nowrap">2 hours ago</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between p-8 bg-slate-50/50 rounded-xl hover:bg-white border border-transparent hover:border-slate-100 transition-all cursor-pointer group">
+                                <div class="flex items-center gap-5">
+                                    <div
+                                        class="w-10 h-10 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <i data-lucide="key" class="w-5 h-5"></i>
+                                    </div>
+                                    <div class="text-nowrap">
+                                        <p class="text-[13px] font-black text-[#0B1437]">Password Changed</p>
+                                        <p class="text-[12px] font-medium text-slate-400">User initiated password reset
+                                            successfully</p>
+                                    </div>
+                                </div>
+                                <span class="text-[13px] font-bold text-slate-400 text-nowrap">3 days ago</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between p-8 bg-slate-50/50 rounded-xl hover:bg-white border border-transparent hover:border-slate-100 transition-all cursor-pointer group">
+                                <div class="flex items-center gap-5">
+                                    <div
+                                        class="w-10 h-10 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <i data-lucide="cpu" class="w-5 h-5"></i>
+                                    </div>
+                                    <div class="text-nowrap">
+                                        <p class="text-[13px] font-black text-[#0B1437]">Permission Updated</p>
+                                        <p class="text-[12px] font-medium text-slate-400">Operational access level
+                                            modified by Super Admin</p>
+                                    </div>
+                                </div>
+                                <span class="text-[13px] font-bold text-slate-400 text-nowrap">1 week ago</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between p-8 bg-slate-50/50 rounded-xl hover:bg-white border border-transparent hover:border-slate-100 transition-all cursor-pointer group">
+                                <div class="flex items-center gap-5">
+                                    <div
+                                        class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <i data-lucide="log-in" class="w-5 h-5"></i>
+                                    </div>
+                                    <div class="text-nowrap">
+                                        <p class="text-[13px] font-black text-[#0B1437]">Successful Login</p>
+                                        <p class="text-[12px] font-medium text-slate-400">From IP: 192.168.1.45 - Safari
+                                            on MacOS</p>
+                                    </div>
+                                </div>
+                                <span class="text-[13px] font-bold text-slate-400 text-nowrap">1 week ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

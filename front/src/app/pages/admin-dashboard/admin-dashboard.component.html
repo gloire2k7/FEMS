@@ -1,0 +1,519 @@
+<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
+    <!-- SIDEBAR: Specific for Admin Dashboard -->
+    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0">
+        <!-- LOGO -->
+        <div class="px-4 py-4 mb-6 flex items-center gap-5">
+            <div
+                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
+                <i data-lucide="flame" class="icon-xs text-white"></i>
+            </div>
+            <span class="text-xs font-black text-white tracking-[0.2em] leading-none">FEM</span>
+        </div>
+
+        <!-- NAV -->
+        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
+            <div>
+                <a routerLink="/admin-dashboard" routerLinkActive="bg-white/10 text-white"
+                    [routerLinkActiveOptions]="{exact: true}"
+                    class="flex items-center gap-5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="layout-grid" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[15px] tracking-wide font-semibold">Dashboard</span>
+                </a>
+            </div>
+
+            <div class="mt-8 mb-6 pt-2">
+                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">Operations</p>
+                <div class="space-y-3">
+                    <a routerLink="/clients" routerLinkActive="bg-white/10 text-white"
+                        class="flex items-center gap-5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                        <i data-lucide="users" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                        <span class="text-[15px] tracking-wide font-semibold">Clients</span>
+                    </a>
+                    <a routerLink="/admin-locations" routerLinkActive="bg-white/10 text-white"
+                        class="flex items-center gap-5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                        <i data-lucide="map-pin" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                        <span class="text-[15px] tracking-wide font-semibold">Locations</span>
+                    </a>
+                    <a routerLink="/admin-location-details"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="flame" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-semibold">Fire Extinguishers</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                    </a>
+                    <div class="space-y-3">
+                        <a (click)="toggleInspections()"
+                            class="flex items-center gap-5 px-4 py-3 rounded-lg text-white hover:bg-white/20 transition-all justify-between group cursor-pointer"
+                            [class.bg-white/15]="inspectionsOpen">
+                            <div class="flex items-center gap-5">
+                                <i data-lucide="clipboard-check"
+                                    class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                                <span class="text-[15px] tracking-wide font-semibold">Inspections</span>
+                            </div>
+                            <i [attr.data-lucide]="inspectionsOpen ? 'chevron-up' : 'chevron-down'"
+                                class="w-3 h-3 opacity-60 group-hover:opacity-100"></i>
+                        </a>
+
+                        <div *ngIf="inspectionsOpen" class="pl-9 space-y-3 mt-1">
+                            <a routerLink="/admin-assigned-inspections" routerLinkActive="text-white !font-black"
+                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
+                                Assigned
+                            </a>
+                            <a routerLink="/admin-inspection-label/LE-2023-894"
+                                routerLinkActive="text-white !font-black"
+                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
+                                Inspection Label
+                            </a>
+                            <a routerLink="/admin-inspectors" routerLinkActive="text-white !font-black"
+                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
+                                Inspectors
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 mb-6 pt-2">
+                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">
+                    Management</p>
+                <div class="space-y-3">
+                    <a routerLink="/admin-orders" routerLinkActive="bg-white/10 text-white"
+                        class="flex items-center justify-between px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                        <div class="flex items-center gap-5">
+                            <i data-lucide="shopping-bag" class="w-3 h-3 opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[15px] tracking-wide font-semibold">Orders</span>
+                        </div>
+                        <span *ngIf="pendingCount > 0"
+                            class="w-5 h-5 bg-orange-500 text-white rounded-full text-[13px] flex items-center justify-center font-black">
+                            {{ pendingCount }}
+                        </span>
+                    </a>
+                    <a routerLink="/admin-compliance"
+                        class="flex items-center gap-5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5">
+                            <i data-lucide="shield-check"
+                                class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[15px] tracking-wide font-semibold">Compliance</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-3 h-3 opacity-60 group-hover:opacity-100"></i>
+                    </a>
+                    <a routerLink="/admin-refills" routerLinkActive="bg-white/10 text-white"
+                        class="flex items-center justify-between px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                        <div class="flex items-center gap-5">
+                            <i data-lucide="repeat" class="w-3 h-3 opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[15px] tracking-wide font-semibold">Refills</span>
+                        </div>
+                        <span
+                            class="w-5 h-5 bg-amber-500 text-white rounded-full text-[13px] flex items-center justify-center font-black">5</span>
+                    </a>
+                    <a routerLink="/admin-settings" routerLinkActive="bg-white/10 text-white"
+                        class="flex items-center justify-between px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group">
+                        <div class="flex items-center gap-5">
+                            <i data-lucide="settings" class="icon-xs opacity-90 group-hover:opacity-100"></i>
+                            <span class="text-[15px] tracking-wide font-semibold">Settings</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- PROFILE BLOCK -->
+        <div class="px-3 pb-6 mt-auto">
+            <div
+                class="bg-white/5 rounded-xl p-8 flex items-center gap-5 border border-white/5 transition-all hover:bg-white/10 cursor-pointer group">
+                <div
+                    class="w-10 h-10 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10 shadow-sm transition-transform group-hover:scale-105">
+                    <img src="https://ui-avatars.com/api/?name=Usanase&background=FFC107&color=fff" alt="Profile"
+                        class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[13px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">ADMIN
+                    </p>
+                    <p class="text-[15px] font-black text-white truncate">Usanase</p>
+                </div>
+                <i data-lucide="log-out"
+                    class="icon-sm text-slate-400 ml-auto opacity-40 group-hover:opacity-100 group-hover:text-red-400 transition-all"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col bg-white overflow-y-auto">
+        <!-- TOPBAR IN-PAGE -->
+        <header
+            class="h-12 bg-white flex items-center justify-between px-6 sticky top-0 z-10 w-full border-b border-slate-100 shadow-sm shadow-slate-200/50">
+            <div class="relative w-64">
+                <i data-lucide="search"
+                    class="icon-xs absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/50 shrink-0"></i>
+                <input type="text" placeholder="Search for something..."
+                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-none rounded-xl text-[15px] focus:outline-none focus:ring-1 focus:ring-blue-500/10 transition-all placeholder:text-slate-400">
+            </div>
+            <div class="flex items-center gap-5">
+                <div class="relative">
+                    <button
+                        class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 relative hover:bg-slate-50 hover:text-slate-600 transition-all shadow-sm">
+                        <i data-lucide="shopping-cart" class="icon-xs shrink-0"></i>
+                        <span
+                            class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                </div>
+                <div class="relative">
+                    <button
+                        class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-red-500/80 relative hover:bg-red-50 hover:text-red-600 transition-all shadow-sm">
+                        <i data-lucide="bell" class="icon-xs shrink-0"></i>
+                        <span
+                            class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                </div>
+                <button routerLink="/admin-settings"
+                    class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-blue-500/80 hover:bg-blue-50 hover:text-blue-600 transition-all shadow-sm">
+                    <i data-lucide="settings" class="icon-xs shrink-0"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="p-7 space-y-5 bg-[#F8FAFC]">
+            <!-- SAFETY ALERT BANNER -->
+            <div class="space-y-3 mb-6">
+                <div routerLink="/admin-compliance"
+                    class="bg-[#FFF5F5] border border-red-100 rounded-xl p-7 flex items-center justify-between shadow-sm cursor-pointer hover:bg-red-50 transition-all group">
+                    <div class="flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                            <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-[19px] font-black text-red-700 tracking-tight">URGENT: 8 High-Priority
+                                Safety
+                                Alerts Require Immediate Action</h4>
+                            <p class="text-[15px] font-bold text-red-600/70 mt-1">3 extinguishers expired, 5 critical
+                                inspections overdue</p>
+                        </div>
+                    </div>
+                    <button
+                        class="px-5 py-2 bg-red-600 text-white rounded-lg text-[14px] font-black hover:bg-red-700 transition-all shadow-lg shadow-red-600/20 uppercase tracking-widest">View
+                        All</button>
+                </div>
+
+                <div routerLink="/admin-refills"
+                    class="bg-[#FFF9F2] border border-amber-100 rounded-xl p-8 flex items-center justify-between shadow-sm cursor-pointer hover:bg-amber-50 transition-all group">
+                    <div class="flex items-center gap-5">
+                        <div
+                            class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+                            <i data-lucide="droplet" class="w-5 h-5"></i>
+                        </div>
+                        <p class="text-[16px] font-black text-amber-700 tracking-tight">5 Refills Required - Pending
+                            Technician Assignment</p>
+                    </div>
+                    <button
+                        class="text-[14px] font-black text-amber-700 underline underline-offset-4 hover:text-amber-800 transition-colors">Assign
+                        Now</button>
+                </div>
+            </div>
+
+            <!-- TOP STATS -->
+            <div
+                class="bg-[#0B1437] rounded-xl flex overflow-hidden border border-white/5 shadow-2xl shadow-blue-900/20 dashboard-card stat-card-glow transition-all">
+                <!-- Earnings -->
+                <div
+                    class="flex-1 p-8 border-r border-white/10 relative group cursor-pointer hover:bg-white/[0.02] transition-all">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3
+                            class="text-[14px] font-black text-slate-300 uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
+                            Total Earnings</h3>
+                        <span class="text-[14px] font-black text-blue-400">Detail</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-black text-white mb-6.5">5,000,000 <span
+                                    class="text-[14px] text-slate-500 font-bold uppercase ml-1">rwf</span></h2>
+                            <div
+                                class="flex items-center gap-1.5 px-2 py-0.5 bg-white rounded-full text-[13px] font-black text-slate-900 w-max shadow-sm">
+                                <i data-lucide="arrow-up" class="icon-xs text-green-500 shrink-0"></i>
+                                <span>+1.23%</span>
+                            </div>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shadow-inner group">
+                            <i data-lucide="dollar-sign" class="icon-sm text-white shrink-0"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders -->
+                <div
+                    class="flex-1 p-8 border-r border-white/10 relative group cursor-pointer hover:bg-white/[0.02] transition-all">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3
+                            class="text-[14px] font-black text-slate-300 uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
+                            Total Orders</h3>
+                        <span class="text-[14px] font-black text-blue-400">Detail</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-black text-white mb-6.5">40</h2>
+                            <div
+                                class="flex items-center gap-1.5 px-2 py-0.5 bg-white rounded-full text-[13px] font-black text-slate-900 w-max shadow-sm">
+                                <i data-lucide="arrow-up" class="icon-xs text-green-500 shrink-0"></i>
+                                <span>+1.23%</span>
+                            </div>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shadow-inner group">
+                            <i data-lucide="shopping-cart" class="icon-sm text-white shrink-0"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customers -->
+                <div
+                    class="flex-1 p-8 border-r border-white/10 relative group cursor-pointer hover:bg-white/[0.02] transition-all">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3
+                            class="text-[14px] font-black text-slate-300 uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
+                            Total Customers</h3>
+                        <span class="text-[14px] font-black text-blue-400">Detail</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-black text-white mb-6.5">1,000</h2>
+                            <div
+                                class="flex items-center gap-1.5 px-2 py-0.5 bg-white rounded-full text-[13px] font-black text-slate-900 w-max shadow-sm">
+                                <i data-lucide="arrow-up" class="icon-xs text-green-500 shrink-0"></i>
+                                <span>+1.23%</span>
+                            </div>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shadow-inner group">
+                            <i data-lucide="users" class="icon-sm text-white shrink-0"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance -->
+                <div routerLink="/admin-compliance"
+                    class="flex-1 p-8 relative group cursor-pointer hover:bg-red-500/10 transition-all bg-red-500/5">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3
+                            class="text-[14px] font-black text-red-400 uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
+                            Safety Alerts</h3>
+                        <span class="text-[14px] font-black text-red-500">Action</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-black text-white mb-6.5">18</h2>
+                            <div
+                                class="flex items-center gap-1.5 px-2 py-0.5 bg-red-500 rounded-full text-[13px] font-black text-white w-max shadow-sm">
+                                <i data-lucide="alert-octagon" class="icon-xs shrink-0"></i>
+                                <span>Urgent</span>
+                            </div>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center shadow-lg shadow-red-500/20">
+                            <i data-lucide="shield-alert" class="icon-sm text-white shrink-0"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MIDDLE SECTION (CHART & MAP) -->
+            <div class="grid grid-cols-12 gap-6">
+                <!-- Order Status Graph -->
+                <div
+                    class="col-span-8 bg-white rounded-xl p-8 border border-slate-100 shadow-sm relative overflow-hidden">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-3xl font-bold text-slate-800">Order Status</h3>
+                        <div class="flex items-center gap-10">
+                            <div class="flex items-center gap-5">
+                                <div class="w-3.5 h-3.5 rounded-full bg-red-500 shadow-sm shadow-red-500/20"></div>
+                                <span class="text-sm font-bold text-slate-400">Order</span>
+                            </div>
+                            <div class="flex items-center gap-5">
+                                <div class="w-3.5 h-3.5 rounded-full bg-blue-500 shadow-sm shadow-blue-500/20"></div>
+                                <span class="text-sm font-bold text-slate-400">Store</span>
+                            </div>
+                            <div class="flex gap-8 ml-6">
+                                <button class="text-sm font-bold text-blue-600">Daily</button>
+                                <button class="text-sm font-bold text-slate-300">Weekly</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MOCK CHART -->
+                    <div class="h-48 relative">
+                        <div class="absolute inset-0 flex flex-col justify-between">
+                            <div class="w-full border-t border-slate-50 flex items-center gap-5">
+                                <span class="text-[14px] font-bold text-slate-300 w-8">1000</span>
+                                <div class="flex-1 border-t border-slate-50"></div>
+                            </div>
+                            <div class="w-full border-t border-slate-50 flex items-center gap-5">
+                                <span class="text-[14px] font-bold text-slate-300 w-8">600</span>
+                                <div class="flex-1 border-t border-slate-50"></div>
+                            </div>
+                            <div class="w-full border-t border-slate-50 flex items-center gap-5">
+                                <span class="text-[14px] font-bold text-slate-300 w-8">300</span>
+                                <div class="flex-1 border-t border-slate-50"></div>
+                            </div>
+                            <div class="w-full border-t border-slate-50 flex items-center gap-5">
+                                <span class="text-[14px] font-bold text-slate-300 w-8">100</span>
+                                <div class="flex-1 border-t border-slate-50"></div>
+                            </div>
+                        </div>
+                        <!-- SVG WAVE CHART MOCK -->
+                        <svg class="absolute inset-0 h-full w-full" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#4F46E5" />
+                                    <stop offset="100%" stop-color="transparent" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M0,150 Q100,50 200,80 T400,120 T600,60 T800,100" fill="none" stroke="#4F46E5"
+                                stroke-width="2" stroke-linecap="round" />
+                            <path d="M0,180 Q150,140 300,160 T600,100 T800,140" fill="none" stroke="#EF4444"
+                                stroke-width="2" stroke-linecap="round" />
+                            <!-- Fill Areas -->
+                            <path d="M0,150 Q100,50 200,80 T400,120 T600,60 T800,100 V256 H0 Z" fill="url(#blueGrad)"
+                                fill-opacity="0.03" />
+                        </svg>
+                    </div>
+                    <div
+                        class="flex justify-between px-12 mt-5 text-[15px] font-bold text-slate-400 uppercase tracking-widest">
+                        <span>Nov 01</span>
+                        <span>Nov 02</span>
+                        <span>Nov 03</span>
+                        <span>Nov 04</span>
+                        <span>Nov 06</span>
+                    </div>
+                </div>
+
+                <!-- Sales by Locations -->
+                <div class="col-span-4 bg-white rounded-xl p-8 border border-slate-100 shadow-sm">
+                    <h3 class="text-3xl font-bold text-slate-800 mb-8">Sales by Locations</h3>
+
+                    <div
+                        class="relative bg-slate-50/50 rounded-2xl h-64 mb-10 flex items-center justify-center border border-slate-50 p-8 overflow-hidden">
+                        <!-- RWANDA MAP SVG -->
+                        <svg viewBox="0 0 500 400" class="h-full w-full opacity-80" stroke="#2563EB" stroke-width="2"
+                            fill="none" stroke-linejoin="round">
+                            <path
+                                d="M150,50 L180,30 L220,40 L260,20 L300,40 L340,20 L380,40 L420,20 L450,50 L480,100 L495,150 L480,200 L495,250 L480,300 L450,350 L420,380 L380,350 L340,380 L280,350 L220,380 L180,350 L120,380 L80,350 L40,300 L10,250 L40,200 L10,150 L40,100 L80,50 Z" />
+                        </svg>
+
+                        <!-- Pin Points -->
+                        <div class="absolute top-[30%] left-[65%] group cursor-pointer">
+                            <i data-lucide="map-pin"
+                                class="map-pin-icon text-red-500 fill-red-500 drop-shadow-md group-hover:scale-110 transition-transform shrink-0"></i>
+                        </div>
+                        <div class="absolute top-[50%] left-[30%] group cursor-pointer">
+                            <i data-lucide="map-pin"
+                                class="map-pin-icon text-blue-600 fill-blue-600 drop-shadow-md group-hover:scale-110 transition-transform shrink-0"></i>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8">
+                        <div>
+                            <div class="flex justify-between items-center mb-6">
+                                <span class="text-sm font-bold text-slate-700">Rubavu</span>
+                            </div>
+                            <div class="w-full h-2 bg-blue-50 rounded-full overflow-hidden">
+                                <div class="h-full bg-blue-600 rounded-full shadow-[0_0_10px_rgba(37,99,235,0.2)]"
+                                    style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-6">
+                                <span class="text-sm font-bold text-slate-700">Gatsata</span>
+                            </div>
+                            <div class="w-full h-2 bg-pink-50 rounded-full overflow-hidden">
+                                <div class="h-full bg-pink-500 rounded-full relative" style="width: 45%;">
+                                    <div class="absolute inset-0 w-full h-full opacity-40"
+                                        style="background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #fff 5px, #fff 10px);">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT ORDERS TABLE -->
+            <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden mb-6">
+                <div class="p-8">
+                    <h3 class="text-xs font-bold text-slate-800">Recent Orders</h3>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-slate-50/30">
+                                <th
+                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                                    Id</th>
+                                <th
+                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                                    Company name</th>
+                                <th
+                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                                    Product</th>
+                                <th
+                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                                    Category</th>
+                                <th
+                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                                    Amount</th>
+                                <th
+                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                                    Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            <tr *ngFor="let order of orders" class="hover:bg-slate-50/50 transition-colors border-b border-slate-50">
+                                <td class="py-3 px-4 text-[14px] text-slate-400">{{ order.id }}</td>
+                                <td class="py-3 px-4 text-[15px] font-bold text-slate-700">{{ order.companyName }}</td>
+                                <td class="py-3 px-4 text-[14px] text-slate-500">{{ order.productNames }}</td>
+                                <td class="py-3 px-4 text-[14px] text-slate-400">{{ order.category }}</td>
+                                <td class="py-3 px-4 text-[14px] text-slate-600">{{ order.amount }} rwf</td>
+                                <td class="py-3 px-4">
+                                    <span *ngIf="order.status === 'Complete'" class="px-3 py-1 bg-green-100 text-green-600 text-[13px] font-bold rounded-full">Complete</span>
+                                    <span *ngIf="order.status === 'Cancelled'" class="px-3 py-1 bg-red-100 text-red-600 text-[13px] font-bold rounded-full">Cancelled</span>
+                                    <span *ngIf="order.status === 'Pending Approval'" class="px-3 py-1 bg-orange-100 text-orange-600 text-[13px] font-bold rounded-full">Pending</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- PAGINATION -->
+                <div class="px-5 py-3 flex items-center justify-between border-t border-slate-50 bg-white">
+                    <div class="flex items-center gap-5">
+                        <span class="text-[14px] font-bold text-slate-400">Showing</span>
+                        <div class="relative">
+                            <select
+                                class="appearance-none px-3 py-1 bg-slate-50 border border-slate-100 rounded text-[14px] font-black text-[#0B1437] pr-8 focus:outline-none">
+                                <option>10</option>
+                            </select>
+                            <i data-lucide="chevron-down"
+                                class="w-3 h-3 absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                        </div>
+                        <span class="text-[14px] font-bold text-slate-400">of 50</span>
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                        <button
+                            class="w-6 h-6 flex items-center justify-center rounded border border-slate-50 text-slate-400 hover:bg-slate-50 transition-colors">
+                            <i data-lucide="chevron-left" class="w-3 h-3"></i>
+                        </button>
+                        <button
+                            class="w-6 h-6 flex items-center justify-center rounded bg-[#0B1437] text-white text-[13px] font-black shadow-sm">1</button>
+                        <button
+                            class="w-6 h-6 flex items-center justify-center rounded border border-slate-50 text-slate-600 text-[13px] font-bold hover:bg-slate-50 transition-colors">2</button>
+                        <button
+                            class="w-6 h-6 flex items-center justify-center rounded border border-slate-50 text-slate-400 hover:bg-slate-50 transition-colors">
+                            <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

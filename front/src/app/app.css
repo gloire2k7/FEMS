@@ -1,0 +1,6 @@
+/* Root component styles live here (keep minimal; prefer Tailwind). */
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+

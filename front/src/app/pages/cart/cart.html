@@ -1,0 +1,224 @@
+<div class="p-6 bg-[#F6F8FC] min-h-screen font-sans">
+
+    <!-- BREADCRUMB -->
+    <div class="flex items-center gap-2 text-[11px] font-semibold text-slate-400 mb-3 ml-2">
+        <a routerLink="/dashboard" class="hover:text-[#0B1228] transition-colors">Dashboard</a>
+        <span>/</span>
+        <a routerLink="/shop" class="hover:text-[#0B1228] transition-colors">Shop</a>
+        <span>/</span>
+        <span class="text-[#0B1228] font-bold">Cart</span>
+    </div>
+
+    <!-- TITLE -->
+    <h1 class="text-[24px] font-black text-[#0B1228] mb-6 tracking-tight ml-2">Shopping Cart</h1>
+
+    <!-- WARNING BANNER -->
+    <div class="flex items-start gap-3 bg-[#FFFBEB] border border-[#FDE68A] rounded-xl px-5 py-4 mb-6 mx-2">
+        <svg class="w-4 h-4 text-[#D97706] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+        <div>
+            <p class="text-[11px] font-extrabold text-[#92400E] mb-1">Review Required</p>
+            <p class="text-[11px] font-medium text-[#B45309] leading-relaxed">
+                Some items in your cart (CO₂ Cylinders) are currently low in stock. Delivery might be delayed by 2
+                days.<br>
+                Prices for chemical refills may change before final checkout if the session expires.
+            </p>
+        </div>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="flex gap-5 items-start mx-2">
+
+        <!-- LEFT: ITEMS + CLIENT INFO -->
+        <div class="flex-1 flex flex-col gap-6 min-w-0">
+
+            <!-- ITEMS CARD -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <div class="flex items-center justify-between mb-6 pb-2 border-b border-slate-50">
+                    <span class="text-[14px] font-black text-[#0B1228]">Items ({{ items.length }})</span>
+                    <button (click)="clearCart()"
+                        class="text-[11px] font-bold text-[#EF4444] hover:opacity-70 transition-opacity">Clear
+                        Cart</button>
+                </div>
+
+                <!-- ITEM ROWS -->
+                <div class="flex flex-col divide-y divide-slate-100">
+                    <div *ngFor="let item of items; let i = index" class="py-6 flex items-start gap-5">
+                        <!-- Thumbnail -->
+                        <div
+                            class="w-16 h-16 bg-slate-50 rounded-xl shrink-0 flex items-center justify-center border border-slate-100 shadow-inner">
+                            <svg class="w-8 h-8 text-slate-200" viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="12" cy="12" r="10" opacity=".1" />
+                                <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"
+                                    opacity=".2" />
+                            </svg>
+                        </div>
+
+                        <!-- Details -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <h4
+                                        class="text-[14px] font-black text-[#0B1228] leading-tight mb-1 cursor-pointer hover:text-blue-600 transition-colors">
+                                        {{ item.type }} Extinguisher</h4>
+                                    <p class="text-[11px] font-medium text-slate-400">Category: <span
+                                            class="text-slate-500 uppercase">{{ item.type }}</span></p>
+                                    <p class="text-[11px] font-medium text-slate-400">Capacity: <span
+                                            class="text-slate-500">{{ item.capacity }}</span></p>
+                                </div>
+                                <span class="text-[15px] font-black text-[#0B1228] shrink-0">{{ item.price | number:'1.0-0' }} RWF</span>
+                            </div>
+
+                            <!-- Qty controls + subtotal + delete -->
+                            <div class="flex items-center justify-between mt-5">
+                                <div
+                                    class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                                    <button (click)="decrease(item)"
+                                        class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-[#0B1228] hover:bg-slate-50 transition-all text-sm font-bold border-r border-slate-100">−</button>
+                                    <span class="w-10 text-center text-[11px] font-black text-[#0B1228]">{{ item.quantity }}</span>
+                                    <button (click)="increase(item)"
+                                        class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-[#0B1228] hover:bg-slate-50 transition-all text-sm font-bold border-l border-slate-100">+</button>
+                                </div>
+                                <div class="flex items-center gap-5">
+                                    <span
+                                        class="text-[11px] font-bold text-slate-400 uppercase tracking-tight">Subtotal:
+                                        <span class="text-[#0B1228] font-black ml-1">{{ (item.price * item.quantity) | number:'1.0-0' }} RWF</span></span>
+                                    <button (click)="removeItem(i)"
+                                        class="text-slate-300 hover:text-red-500 transition-colors p-1 group">
+                                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path d="M19 6l-1 14H6L5 6" />
+                                            <path d="M10 11v6M14 11v6" />
+                                            <path d="M9 6V4h6v2" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div *ngIf="items.length === 0"
+                        class="py-20 flex flex-col items-center justify-center text-slate-400">
+                        <svg class="w-16 h-16 mb-4 text-slate-100" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <circle cx="9" cy="21" r="1" />
+                            <circle cx="20" cy="21" r="1" />
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                        </svg>
+                        <p class="text-[13px] font-extrabold text-[#0B1228]">Your cart is empty</p>
+                        <p class="text-[11px] font-medium text-slate-400 mt-1">Add some products to see them here.</p>
+                        <button routerLink="/shop"
+                            class="mt-6 px-6 py-2 bg-[#0B1228] text-white rounded-xl text-[11px] font-bold hover:bg-slate-800 transition-all shadow-sm">Start
+                            Shopping</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CLIENT INFO CARD -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <span class="text-[14px] font-black text-[#0B1228]">Client Information</span>
+                    <button class="text-[11px] font-bold text-[#0B1228] hover:underline transition-colors">Edit
+                        Details</button>
+                </div>
+                <div class="grid grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Company Name
+                        </p>
+                        <p class="text-[13px] font-black text-[#0B1228]">{{ client?.company_name || 'Not Available' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Contact Person
+                        </p>
+                        <p class="text-[13px] font-black text-[#0B1228]">{{ client?.contact_person || 'Not Available' }}</p>
+                    </div>
+                    <div class="col-span-2">
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Address</p>
+                        <p class="text-[12px] font-bold text-[#0B1228]">{{ client?.address || 'Not Available' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Phone Number
+                        </p>
+                        <p class="text-[13px] font-black text-[#0B1228]">{{ client?.phone || 'Not Available' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: ORDER SUMMARY -->
+        <div class="w-[300px] shrink-0 flex flex-col gap-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <h3 class="text-[15px] font-black text-[#0B1228] mb-6">Order Summary</h3>
+
+                <div class="flex flex-col gap-4 mb-6">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[12px] font-medium text-slate-500">Subtotal ({{ totalItems }} items)</span>
+                        <span class="text-[13px] font-black text-[#0B1228]">{{ subtotal | number:'1.0-0' }} RWF</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[12px] font-medium text-slate-500">Taxes (VAT 10%)</span>
+                        <span class="text-[13px] font-black text-[#0B1228]">{{ taxes | number:'1.0-0' }} RWF</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[12px] font-medium text-slate-500">Delivery Fee</span>
+                        <span class="text-[13px] font-black text-[#0B1228]">{{ deliveryFee | number:'1.0-0' }} RWF</span>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-100 pt-5 mb-6">
+                    <div class="flex items-start justify-between">
+                        <span class="text-[13px] font-black text-[#0B1228]">Grand Total</span>
+                        <div class="text-right">
+                            <p class="text-[24px] font-black text-[#0B1228] leading-none">{{ grandTotal | number:'1.0-0' }} RWF</p>
+                            <p class="text-[9px] font-bold text-slate-400 mt-1 uppercase">Inclusive of all taxes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button (click)="goToCheckOut()"
+                    class="w-full py-3.5 bg-[#0B1230] text-white rounded-xl text-[12px] font-extrabold hover:bg-black transition-all mb-3 shadow-md shadow-slate-200">
+                    Proceed to Checkout
+                </button>
+                <button (click)="continueShopping()"
+                    class="w-full py-3.5 border border-slate-200 text-[#0B1228] rounded-xl text-[12px] font-extrabold hover:bg-slate-50 transition-all">
+                    Continue Shopping
+                </button>
+
+                <div class="mt-5 flex items-center gap-2 justify-center">
+                    <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Secure Encrypted
+                        Transaction</span>
+                </div>
+            </div>
+
+            <!-- Help block -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex items-start gap-3">
+                <div
+                    class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100 shadow-sm">
+                    <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-[11px] font-black text-[#0B1228] mb-0.5">Need Help?</p>
+                    <p class="text-[10px] font-medium text-slate-500 leading-normal mb-2">Contact support for bulk
+                        orders over 50 units.</p>
+                    <a href="#" class="text-[10px] font-bold text-blue-600 hover:underline">Contact Sales Team</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

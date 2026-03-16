@@ -1,0 +1,197 @@
+<?php
+
+class ReportController extends Controller
+{
+    public function index()
+    {
+        AuthMiddleware::hasRole(['Super Admin', 'Admin']);
+
+        $db = Database::getConnection();
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $stmt = $db->prepare("SELECT COUNT(*) FROM generated_reports");
+        $stmt->execute();
+        $totalReports = $stmt->fetchColumn();
+
+        $stmt = $db->prepare("SELECT * FROM generated_reports ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $this->jsonResponse([
+            "reports" => $reports,
+            "total" => $totalReports,
+            "page" => $page,
+            "last_page" => ceil($totalReports / $limit)
+        ]);
+    }
+
+    public function generate()
+    {
+        AuthMiddleware::hasRole(['Super Admin', 'Admin']);
+
+        $type = isset($_POST['type']) ? $_POST['type'] : 'inventory';
+        $format = isset($_POST['format']) ? $_POST['format'] : 'pdf';
+        $startDate = isset($_POST['start_date']) ? $_POST['start_date'] : null;
+        $endDate = isset($_POST['end_date']) ? $_POST['end_date'] : null;
+
+        require_once __DIR__ . '/../helpers/report_pdf_helper.php';
+        require_once __DIR__ . '/../helpers/excel_helper.php';
+
+        $db = Database::getConnection();
+        $data = [];
+        $headers = [];
+        $title = "";
+
+        switch ($type) {
+            case 'inventory':
+                $title = "Inventory Report";
+                $headers = ['ID', 'Serial', 'Type', 'Capacity', 'Status', 'Client'];
+                $query = "SELECT f.id, f.serial_number, f.type, f.capacity, f.status, c.company_name 
+                          FROM fire_extinguishers f 
+                          LEFT JOIN clients c ON f.client_id = c.id";
+                $stmt = $db->prepare($query);
+                $stmt->execute();
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+
+            case 'expired':
+                $title = "Expired Extinguisher Report";
+                $headers = ['ID', 'Serial', 'Type', 'Capacity', 'Expiry Date', 'Client'];
+                $query = "SELECT f.id, f.serial_number, f.type, f.capacity, f.expiry_date, c.company_name 
+                          FROM fire_extinguishers f 
+                          LEFT JOIN clients c ON f.client_id = c.id 
+                          WHERE f.expiry_date < CURDATE()";
+                $stmt = $db->prepare($query);
+                $stmt->execute();
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+
+            case 'compliance':
+                $title = "Inspection Compliance Report";
+                $headers = ['Ext. ID', 'Serial', 'Type', 'Last Inspection', 'Next Due', 'Status'];
+                $query = "SELECT f.id, f.serial_number, f.type, MAX(i.inspection_date) as last_insp, i.next_due_date, f.status
+                          FROM fire_extinguishers f
+                          JOIN inspections i ON f.id = i.extinguisher_id
+                          GROUP BY f.id
+                          HAVING i.next_due_date < CURDATE() OR i.next_due_date IS NULL";
+                $stmt = $db->prepare($query);
+                $stmt->execute();
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+
+            case 'service':
+                $title = "Service & Maintenance History";
+                $headers = ['Ext. ID', 'Serial', 'Type', 'Service', 'Date', 'Admin'];
+                $query = "SELECT f.id, f.serial_number, f.type, m.service_type, m.service_date, u.name 
+                          FROM maintenance_records m
+                          JOIN fire_extinguishers f ON m.extinguisher_id = f.id
+                          JOIN users u ON m.performed_by = u.id";
+
+                if ($startDate && $endDate) {
+                    $query .= " WHERE m.service_date BETWEEN :start AND :end";
+                }
+
+                $stmt = $db->prepare($query);
+                if ($startDate && $endDate) {
+                    $stmt->bindParam(':start', $startDate);
+                    $stmt->bindParam(':end', $endDate);
+                }
+                $stmt->execute();
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+
+            default:
+                $this->jsonResponse(["message" => "Invalid report type"], 400);
+        }
+
+        $reportName = $title . ($startDate && $endDate ? " - ($startDate to $endDate)" : " - " . date('Y-m-d'));
+        $fileName = str_replace([' ', '/', '\\'], '_', strtolower($reportName)) . '_' . time() . '.' . $format;
+        $uploadDir = __DIR__ . '/../uploads/reports/';
+        
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $filePath = '/uploads/reports/' . $fileName;
+        $fullPath = $uploadDir . $fileName;
+
+        if ($format === 'csv') {
+            $output = fopen($fullPath, 'w');
+            fputcsv($output, $headers);
+            foreach ($data as $row) {
+                fputcsv($output, $row);
+            }
+            fclose($output);
+        } else {
+            // Assuming ReportPDFHelper handles full path or returns one
+            // Existing code used: $pdfPath = ReportPDFHelper::generate($title, $headers, $data);
+            // We'll modify the helper or wrap it if needed, but let's assume it returns relative path or we can move it
+            $generatedPath = ReportPDFHelper::generate($title, $headers, $data);
+            // Move if it's not in our target dir
+            $fileName = basename($generatedPath);
+            $filePath = '/uploads/reports/' . $fileName;
+        }
+
+        // Save to DB
+        $stmt = $db->prepare("INSERT INTO generated_reports (name, type, file_path, format, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$reportName, $title, $filePath, $format, $startDate, $endDate]);
+
+        $this->jsonResponse([
+            "message" => "Report generated successfully",
+            "report" => [
+                "name" => $reportName,
+                "file_path" => $filePath
+            ]
+        ]);
+    }
+
+    public function exportZip()
+    {
+        AuthMiddleware::hasRole(['Super Admin']);
+
+        $uploadDir = __DIR__ . '/../uploads/reports/';
+        $zipName = 'fems_reports_' . date('Ymd_His') . '.zip';
+        $zipPath = $uploadDir . $zipName;
+
+        if (!file_exists($uploadDir)) {
+            $this->jsonResponse(["message" => "No reports found"], 404);
+        }
+
+        $zip = new ZipArchive();
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TRUE) {
+            $this->jsonResponse(["message" => "Could not create ZIP file"], 500);
+        }
+
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($uploadDir),
+            RecursiveIteratorIterator::LEAVES_ONLY
+        );
+
+        foreach ($files as $name => $file) {
+            if (!$file->isDir()) {
+                $filePath = $file->getRealPath();
+                $relativePath = substr($filePath, strlen($uploadDir));
+                
+                // Skip the ZIP itself if it was already partially created
+                if (basename($filePath) !== $zipName) {
+                    $zip->addFile($filePath, $relativePath);
+                }
+            }
+        }
+
+        $zip->close();
+
+        if (file_exists($zipPath)) {
+            $this->jsonResponse([
+                "message" => "ZIP exported successfully",
+                "file_path" => "/uploads/reports/" . $zipName
+            ]);
+        } else {
+            $this->jsonResponse(["message" => "Failed to generate ZIP"], 500);
+        }
+    }
+}

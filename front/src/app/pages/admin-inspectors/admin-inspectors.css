@@ -1,0 +1,67 @@
+:host {
+    display: block;
+    height: 100vh;
+}
+
+/* ── Lucide icons ── */
+:host ::ng-deep [data-lucide] {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+:host ::ng-deep .icon-xs {
+    width: 12px !important;
+    height: 12px !important;
+}
+
+/* ── Scrollbar hide (sidebar) ── */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* ── Thin scrollbar for main and panel ── */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+}
+
+/* ── Right panel slide-in animation ── */
+.panel-slide {
+    animation: slideIn 0.25s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ── Row highlight when selected ── */
+.bg-indigo-50 {
+    background-color: #EEF2FF !important;
+}

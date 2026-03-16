@@ -1,0 +1,77 @@
+############################
+# custom
+############################
+cookies.txt
+admin_cookies.txt
+client_cookies.txt
+test_cookies.txt
+test_login.php
+test_db.php
+check_db.php
+seed_test.php
+
+############################
+# Environment / Secrets
+############################
+.env
+.env.*
+config/database.php
+config/*.local.php
+
+############################
+# Logs
+############################
+/logs/
+/*.log
+error_log
+
+############################
+# Uploads (User files)
+############################
+*.pdf
+*.csv
+*.png
+
+############################
+# Cache / Temp
+############################
+/cache/
+/tmp/
+/sessions/
+
+############################
+# Vendor (if using Composer)
+############################
+/vendor/
+
+############################
+# Node (if frontend build exists)
+############################
+/node_modules/
+
+############################
+# OS Generated Files
+############################
+.DS_Store
+Thumbs.db
+
+############################
+# IDE Files
+############################
+.vscode/
+.idea/
+*.swp
+
+############################
+# Backup Files
+############################
+*.bak
+*.zip
+*.tar
+*.gz
+
+############################
+# Generated Reports
+############################
+*.pdf
+*.xlsx

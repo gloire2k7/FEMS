@@ -1,0 +1,83 @@
+import { Routes } from '@angular/router';
+import { SignupComponent } from './pages/signup/signup';
+import { SigninComponent } from './pages/signin/signin';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { ExtinguishersComponent } from './pages/extinguishers/extinguishers.component';
+import { ServiceRequestsComponent } from './pages/service-requests/service-requests.component';
+import { InspectorsOverviewComponent } from './pages/inspectors-overview/inspectors-overview.component';
+import { LocationsDashboardComponent } from './pages/locations-dashboard/locations-dashboard.component';
+import { Reports } from './pages/reports/reports';
+import { Shop } from './pages/shop/shop';
+import { Cart } from './pages/cart/cart';
+import { Checkout } from './pages/checkout/checkout';
+
+import { ViewExtinguisherComponent } from './pages/view-extinguisher/view-extinguisher.component';
+import { SettingsComponent } from './pages/settings/settings.component';
+import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { ClientsDashboard } from './pages/clients-dashboard/clients-dashboard';
+import { AdminLocationsDashboard } from './pages/admin-locations-dashboard/admin-locations-dashboard';
+import { AdminLocationDetails } from './pages/admin-location-details/admin-location-details';
+import { AdminAddExtinguisher } from './pages/admin-add-extinguisher/admin-add-extinguisher';
+
+import { AdminViewExtinguisherComponent } from './pages/admin-view-extinguisher/admin-view-extinguisher.component';
+import { AdminInspectionLabel } from './pages/admin-inspection-label/admin-inspection-label';
+import { AdminAssignedInspections } from './pages/admin-assigned-inspections/admin-assigned-inspections';
+import { AdminInventoryComponent } from './pages/admin-inventory/admin-inventory';
+import { AdminInspectors } from './pages/admin-inspectors/admin-inspectors';
+import { AdminCompliance } from './pages/admin-compliance/admin-compliance';
+
+import { AdminRefills } from './pages/admin-refills/admin-refills';
+import { AdminSettings } from './pages/admin-settings/admin-settings';
+import { AdminOrders } from './pages/admin-orders/admin-orders';
+import { SuperAdminDashboard } from './pages/super-admin-dashboard/super-admin-dashboard';
+import { SuperAdminAddAdmin } from './pages/super-admin-add-admin/super-admin-add-admin';
+import { SuperAdminAdmins } from './pages/super-admin-admins/super-admin-admins';
+import { SuperAdminAdminDetails } from './pages/super-admin-admin-details/super-admin-admin-details';
+import { SuperAdminClientDetails } from './pages/super-admin-client-details/super-admin-client-details';
+import { SuperAdminClients } from './pages/super-admin-clients/super-admin-clients';
+import { SuperAdminReports } from './pages/super-admin-reports/super-admin-reports';
+import { SuperAdminLogs } from './pages/super-admin-logs/super-admin-logs';
+import { ClientClientsComponent } from './pages/client-clients/client-clients';
+
+export const routes: Routes = [
+  { path: '', component: SignupComponent },
+  { path: 'signin', component: SigninComponent },
+  { path: 'dashboard', component: DashboardComponent },
+  { path: 'admin-dashboard', component: AdminDashboardComponent },
+  { path: 'super-admin-dashboard', component: SuperAdminDashboard },
+  { path: 'super-admin-add-admin', component: SuperAdminAddAdmin },
+  { path: 'super-admin-admins', component: SuperAdminAdmins },
+  { path: 'super-admin-clients', component: SuperAdminClients },
+  { path: 'super-admin-client-details', component: SuperAdminClientDetails },
+  { path: 'super-admin-reports', component: SuperAdminReports },
+  { path: 'super-admin-logs', component: SuperAdminLogs },
+
+  { path: 'super-admin-admin-details/:id', component: SuperAdminAdminDetails },
+  { path: 'admin-assigned-inspections', component: AdminAssignedInspections },
+  { path: 'admin-inventory', component: AdminInventoryComponent },
+  { path: 'admin-inspectors', component: AdminInspectors },
+  { path: 'admin-compliance', component: AdminCompliance },
+  { path: 'admin-refills', component: AdminRefills },
+  { path: 'admin-settings', component: AdminSettings },
+  { path: 'admin-orders', component: AdminOrders },
+  { path: 'clients', component: ClientsDashboard },
+  { path: 'client-clients', component: ClientClientsComponent },
+  { path: 'admin-locations', component: AdminLocationsDashboard },
+  { path: 'admin-location-details', component: AdminLocationDetails },
+  { path: 'admin-view-extinguisher/:id', component: AdminViewExtinguisherComponent },
+  { path: 'admin-inspection-label/:id', component: AdminInspectionLabel },
+  { path: 'admin-add-extinguisher', component: AdminAddExtinguisher },
+  { path: 'extinguishers', component: ExtinguishersComponent },
+  { path: 'service-requests', component: ServiceRequestsComponent },
+  { path: 'inspectors', component: InspectorsOverviewComponent },
+  { path: 'locations', component: LocationsDashboardComponent },
+  { path: 'view-extinguisher/:id', component: ViewExtinguisherComponent },
+  { path: 'settings', component: SettingsComponent },
+  { path: 'notifications', component: NotificationsComponent },
+  { path: 'reports', component: Reports },
+  { path: 'shop', component: Shop },
+  { path: 'cart', component: Cart },
+  { path: 'checkout', component: Checkout }
+];
+

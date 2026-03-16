@@ -1,0 +1,237 @@
+<div class="p-6 bg-[#F6F8FC] min-h-screen font-sans">
+
+    <!-- ERROR BANNER -->
+    <div class="flex items-start gap-3 bg-[#FEF2F2] border border-[#FECACA] rounded-xl px-5 py-4 mb-8 mx-2">
+        <svg class="w-4 h-4 text-[#EF4444] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <div>
+            <p class="text-[11px] font-extrabold text-[#991B1B] mb-0.5">Review Required: Out of Stock Items</p>
+            <p class="text-[11px] font-medium text-[#B91C1C]">"CO2 Extinguisher - 5kg" is currently out of stock. It has
+                been removed from your active cart.</p>
+        </div>
+    </div>
+
+    <!-- STEPPER -->
+    <div class="flex items-center gap-4 mb-10 ml-4 max-w-sm">
+        <div class="flex flex-col items-center gap-1">
+            <div class="w-7 h-7 rounded-full bg-[#0B1228] flex items-center justify-center text-white">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+            </div>
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Cart</span>
+        </div>
+        <div class="flex-1 h-0.5 bg-slate-200 -mt-4"></div>
+        <div class="flex flex-col items-center gap-1">
+            <div
+                class="w-7 h-7 rounded-full bg-[#0B1228] flex items-center justify-center text-white ring-4 ring-[#0B1228]/10">
+                <span class="text-[11px] font-black">2</span>
+            </div>
+            <span class="text-[9px] font-bold text-[#0B1228] uppercase tracking-tighter">Details</span>
+        </div>
+        <div class="flex-1 h-0.5 bg-slate-200 -mt-4"></div>
+        <div class="flex flex-col items-center gap-1">
+            <div
+                class="w-7 h-7 rounded-full bg-white border-2 border-slate-200 flex items-center justify-center text-slate-300">
+                <span class="text-[11px] font-black">3</span>
+            </div>
+            <span class="text-[9px] font-bold text-slate-300 uppercase tracking-tighter">Complete</span>
+        </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="flex gap-6 items-start mx-2">
+
+        <!-- LEFT COLUMN: FORMS -->
+        <div class="flex-1 flex flex-col gap-6">
+
+            <!-- DELIVERY DETAILS CARD -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-[15px] font-black text-[#0B1228]">Delivery Details</h2>
+                    <span class="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">* Required
+                        fields</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-x-6 gap-y-5">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Company
+                            Name</label>
+                        <input type="text" [(ngModel)]="deliveryForm.company_name" [readonly]="!!user?.company_name"
+                            class="px-4 py-2.5 rounded-lg border border-slate-200 text-xs font-semibold placeholder:text-slate-300 outline-none focus:border-slate-400 shadow-sm transition-all"
+                            [ngClass]="{'bg-slate-50 text-slate-500 cursor-not-allowed': !!user?.company_name}">
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Contact Person
+                            <span class="text-red-500">*</span></label>
+                        <input type="text" [(ngModel)]="deliveryForm.full_name"
+                            class="px-4 py-2.5 rounded-lg border border-slate-200 text-xs font-semibold placeholder:text-slate-300 outline-none focus:border-slate-400 shadow-sm transition-all">
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Phone Number <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" [(ngModel)]="deliveryForm.phone"
+                            class="px-4 py-2.5 rounded-lg border border-slate-200 text-xs font-semibold placeholder:text-slate-300 outline-none focus:border-slate-400 shadow-sm transition-all">
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Email Address
+                            <span class="text-red-500">*</span></label>
+                        <input type="email" [(ngModel)]="deliveryForm.email" [readonly]="!!user?.email"
+                            class="px-4 py-2.5 rounded-lg border border-slate-200 text-xs font-semibold placeholder:text-slate-300 outline-none focus:border-slate-400 shadow-sm transition-all"
+                            [ngClass]="{'bg-slate-50 text-slate-500 cursor-not-allowed': !!user?.email}">
+                    </div>
+                    <div class="col-span-2 flex flex-col gap-1.5">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Delivery Address
+                            <span class="text-red-500">*</span></label>
+                        <textarea [(ngModel)]="deliveryForm.delivery_address" rows="3"
+                            class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold placeholder:text-slate-300 outline-none focus:border-slate-400 shadow-sm transition-all resize-none"></textarea>
+                    </div>
+                    <div class="col-span-2 flex flex-col gap-1.5">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Delivery Instructions</label>
+                        <input type="text" [(ngModel)]="deliveryForm.notes" placeholder="e.g., Use rear entrance, call upon arrival"
+                            class="px-4 py-2.5 rounded-lg border border-slate-200 text-xs font-semibold placeholder:text-slate-300 outline-none focus:border-slate-400 shadow-sm transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAYMENT METHOD CARD -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+                <h2 class="text-[15px] font-black text-[#0B1228] mb-8">Payment Method</h2>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Method 1 -->
+                    <div (click)="paymentMethod = 'card'"
+                        [ngClass]="paymentMethod === 'card' ? 'border-[#0B1228] bg-slate-50' : 'border-slate-100'"
+                        class="flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all hover:bg-slate-50">
+                        <span class="text-[11px] font-black text-[#0B1228]">Card Payment</span>
+                        <svg class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                            <line x1="1" y1="10" x2="23" y2="10" />
+                        </svg>
+                    </div>
+                    <!-- Method 2 -->
+                    <div (click)="paymentMethod = 'mobile'"
+                        [ngClass]="paymentMethod === 'mobile' ? 'border-[#0B1228] bg-slate-50' : 'border-slate-100'"
+                        class="flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all hover:bg-slate-50">
+                        <span class="text-[11px] font-black text-[#0B1228]">Mobile Money</span>
+                        <svg class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                            <line x1="12" y1="18" x2="12.01" y2="18" />
+                        </svg>
+                    </div>
+                    <!-- Method 3 -->
+                    <div (click)="paymentMethod = 'bank'"
+                        [ngClass]="paymentMethod === 'bank' ? 'border-[#0B1228] bg-slate-50' : 'border-slate-100'"
+                        class="flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all hover:bg-slate-50">
+                        <span class="text-[11px] font-black text-[#0B1228]">Bank Transfer</span>
+                        <svg class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                        </svg>
+                    </div>
+                    <!-- Method 4 -->
+                    <div (click)="paymentMethod = 'cash'"
+                        [ngClass]="paymentMethod === 'cash' ? 'border-[#0B1228] bg-slate-50' : 'border-slate-100'"
+                        class="flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all hover:bg-slate-50">
+                        <span class="text-[11px] font-black text-[#0B1228]">Cash on Delivery</span>
+                        <svg class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="6" width="20" height="12" rx="2" />
+                            <circle cx="12" cy="12" r="2" />
+                            <path d="M6 12h.01M18 12h.01" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6 mt-8">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Payment Reference
+                            (If applicable)</label>
+                        <input type="text" placeholder="REF-12345678"
+                            class="px-4 py-2.5 rounded-lg border border-slate-200 text-xs font-semibold placeholder:text-slate-300 outline-none focus:border-slate-400 shadow-sm transition-all">
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Payment
+                            Status</label>
+                        <input type="text" value="Pending" readonly
+                            class="px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-100 text-xs font-bold text-slate-500 outline-none cursor-not-allowed">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: SUMMARY -->
+        <div class="w-[380px] shrink-0 sticky top-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="bg-[#0B1228] p-5 flex items-center gap-3">
+                    <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg>
+                    <h3 class="text-[14px] font-black text-white uppercase tracking-wider">Order Summary</h3>
+                </div>
+
+                <div class="p-6">
+                    <!-- ITEMS -->
+                    <div class="flex flex-col gap-5 mb-8">
+                        <div *ngFor="let item of orderItems" class="flex items-center gap-4">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-[12px] font-black text-[#0B1228] leading-tight">{{ item.type }} Extinguisher</h4>
+                                <p class="text-[10px] font-medium text-slate-400 mb-0.5">Capacity: {{ item.capacity }}</p>
+                                <p class="text-[10px] font-bold text-slate-500">Qty {{ item.quantity }} @ {{ item.price | number:'1.0-0' }} RWF</p>
+                            </div>
+                            <span class="text-[12px] font-black text-[#0B1228] shrink-0">{{ (item.price * item.quantity) | number:'1.0-0' }} RWF</span>
+                        </div>
+                    </div>
+
+                    <!-- TOTALS -->
+                    <div class="flex flex-col gap-3 py-6 border-y border-slate-100 mb-6">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[12px] font-medium text-slate-500">Subtotal</span>
+                            <span class="text-[12px] font-black text-[#0B1228]">{{ subtotal | number:'1.0-0' }} RWF</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[12px] font-medium text-slate-500">Taxes (VAT 10%)</span>
+                            <span class="text-[12px] font-black text-[#0B1228]">{{ taxes | number:'1.0-0' }} RWF</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[12px] font-medium text-slate-500">Delivery Fee</span>
+                            <span class="text-[12px] font-black text-[#0B1228]">{{ deliveryFee | number:'1.0-0' }} RWF</span>
+                        </div>
+                    </div>
+
+                    <!-- GRAND TOTAL -->
+                    <div class="flex items-end justify-between mb-8">
+                        <span class="text-[13px] font-black text-[#0B1228] mb-1">Grand Total</span>
+                        <span class="text-[26px] font-black text-[#0B1228] leading-none">{{ grandTotal | number:'1.0-0' }} RWF</span>
+                    </div>
+
+                    <div class="text-center mb-6">
+                        <p class="text-[11px] font-black text-slate-600 mb-1">I agree to the terms and conditions</p>
+                        <p class="text-[10px] font-medium text-slate-400">By checking this, you agree to our Purchase &
+                            Return Policy</p>
+                    </div>
+
+                    <button (click)="placeOrder()"
+                        class="w-full py-3.5 bg-[#0B1230] text-white rounded-xl text-[12px] font-black hover:bg-black transition-all mb-3 shadow-lg shadow-slate-200">
+                        Place Order
+                    </button>
+                    <button (click)="backToCart()"
+                        class="w-full py-3.5 border border-slate-200 text-[#0B1228] rounded-xl text-[12px] font-black hover:bg-slate-50 transition-all">
+                        Back to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

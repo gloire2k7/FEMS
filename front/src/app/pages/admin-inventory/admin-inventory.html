@@ -1,0 +1,345 @@
+﻿<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
+
+    <!-- ═══ SIDEBAR (matches admin-dashboard exactly) ═══ -->
+    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0">
+
+        <!-- LOGO -->
+        <div class="px-4 py-4 mb-6 flex items-center gap-5">
+            <div
+                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
+                <i data-lucide="flame" class="icon-xs text-white"></i>
+            </div>
+            <span class="text-xs font-black text-white tracking-[0.2em] leading-none">FEM</span>
+        </div>
+
+        <!-- NAV -->
+        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
+            <div>
+                <a routerLink="/admin-dashboard" routerLinkActive="bg-white/10 text-white"
+                    [routerLinkActiveOptions]="{exact: true}"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="layout-grid" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Dashboard</span>
+                </a>
+            </div>
+
+            <div class="mt-8 mb-6 pt-2">
+                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">Operations</p>
+                <div class="space-y-3">
+                    <a routerLink="/clients" routerLinkActive="bg-white/10 text-white"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                        <i data-lucide="users" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                        <span class="text-[13px] tracking-wide font-semibold">Clients</span>
+                    </a>
+                    <a routerLink="/admin-locations" routerLinkActive="bg-white/10 text-white"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                        <i data-lucide="map-pin" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                        <span class="text-[13px] tracking-wide font-semibold">Locations</span>
+                    </a>
+                    <a routerLink="/admin-location-details"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="flame" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-semibold">Fire Extinguishers</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                    </a>
+                    <div class="space-y-3">
+                        <a (click)="toggleInspections()"
+                            class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-white hover:bg-white/20 transition-all justify-between group cursor-pointer"
+                            [class.bg-white/15]="inspectionsOpen">
+                            <div class="flex items-center gap-5.5">
+                                <i data-lucide="clipboard-check"
+                                    class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                                <span class="text-[13px] tracking-wide font-semibold">Inspections</span>
+                            </div>
+                            <i [attr.data-lucide]="inspectionsOpen ? 'chevron-up' : 'chevron-down'"
+                                class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                        </a>
+
+                        <div *ngIf="inspectionsOpen" class="pl-9 space-y-3 mt-1">
+                            <a routerLink="/admin-assigned-inspections" routerLinkActive="text-white !font-black"
+                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
+                                Assigned
+                            </a>
+                            <a routerLink="/admin-inspection-label/LE-2023-894"
+                                routerLinkActive="text-white !font-black"
+                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
+                                Inspection Label
+                            </a>
+                            <a routerLink="/admin-inspectors" routerLinkActive="text-white !font-black"
+                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
+                                Inspectors
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 mb-6 pt-2">
+                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">Management</p>
+                <div class="space-y-3">
+                    <a routerLink="/admin-compliance"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="shield-check"
+                                class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-semibold">Compliance</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                    </a>
+                    <a
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="repeat" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-semibold">Refills</span>
+                        </div>
+                        <i data-lucide="chevron-down" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                    </a>
+                    <a routerLink="/admin-settings"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-100 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="settings" class="icon-xs opacity-80 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-semibold">Settings</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-50 group-hover:opacity-100"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- PROFILE BLOCK -->
+        <div class="px-3 pb-6 mt-auto">
+            <div
+                class="bg-white/5 rounded-xl p-3 flex items-center gap-5.5 border border-white/5 transition-all hover:bg-white/10 cursor-pointer group">
+                <div
+                    class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10 shadow-sm transition-transform group-hover:scale-105">
+                    <img src="https://ui-avatars.com/api/?name=Usanase&background=FFC107&color=fff" alt="Profile"
+                        class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[11px] font-black text-slate-300 uppercase tracking-widest">ADMIN</p>
+                    <p class="text-[13px] font-black text-white truncate">Usanase</p>
+                </div>
+                <i data-lucide="log-out"
+                    class="icon-xs text-slate-400 ml-auto opacity-40 group-hover:opacity-100 group-hover:text-red-400 transition-all"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <main class="flex-1 flex flex-col bg-[#F8FAFC] overflow-y-auto">
+
+        <!-- TOPBAR (matches admin-dashboard exactly) -->
+        <header
+            class="h-12 bg-white flex items-center justify-between px-6 sticky top-0 z-10 w-full border-b border-slate-100 shadow-sm shadow-slate-200/50">
+            <div class="relative w-64">
+                <i data-lucide="search"
+                    class="icon-xs absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/50 shrink-0"></i>
+                <input type="text" placeholder="Search for something..."
+                    class="w-full pl-9 pr-4 py-2 bg-slate-50 border-none rounded-xl text-[13px] focus:outline-none focus:ring-1 focus:ring-blue-500/10 transition-all placeholder:text-slate-400 font-medium">
+            </div>
+            <div class="flex items-center gap-5">
+                <div class="relative">
+                    <button
+                        class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 relative hover:bg-slate-50 hover:text-slate-600 transition-all shadow-sm">
+                        <i data-lucide="shopping-cart" class="icon-xs shrink-0"></i>
+                        <span
+                            class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                </div>
+                <div class="relative">
+                    <button
+                        class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-red-500/80 relative hover:bg-red-50 hover:text-red-600 transition-all shadow-sm">
+                        <i data-lucide="bell" class="icon-xs shrink-0"></i>
+                        <span
+                            class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                </div>
+                <button routerLink="/admin-settings"
+                    class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-blue-500/80 hover:bg-blue-50 hover:text-blue-600 transition-all shadow-sm">
+                    <i data-lucide="settings" class="icon-xs shrink-0"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="p-8 space-y-5 bg-[#F8FAFC]">
+
+            <!-- ALERTS -->
+            <div class="space-y-3">
+                <!-- Red Alert -->
+                <div
+                    class="bg-white rounded-xl p-8 flex items-center justify-between border-l-4 border-[#814545] shadow-sm">
+                    <div class="flex items-center gap-5">
+                        <div class="w-9 h-9 rounded-full bg-red-50 flex items-center justify-center shrink-0">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-[#814545]"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-[15px] font-black text-[#5C2B2B]">Action Required: 3 Extinguishers have no
+                                label</h4>
+                            <p class="text-[13px] font-bold text-[#814545]/70 mt-0.5">Review the inspections submitted
+                                by Inspector J. Doe before end of day.</p>
+                        </div>
+                    </div>
+                    <button
+                        class="ml-4 px-5 py-3 border border-[#814545]/30 rounded-xl text-[13px] font-black text-[#814545] hover:bg-[#814545]/5 transition-all whitespace-nowrap">
+                        View Items
+                    </button>
+                </div>
+
+                <!-- Yellow Alert -->
+                <div
+                    class="bg-[#FFFDF5] rounded-xl p-8 flex items-center justify-between border-l-4 border-[#EB9A2D] shadow-sm">
+                    <div class="flex items-center gap-5">
+                        <div class="w-9 h-9 rounded-full bg-amber-50 flex items-center justify-center shrink-0">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-[#EB9A2D]"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-[15px] font-black text-[#A35200]">Action Required: 5 Extinguishers need
+                                regenerenation</h4>
+                            <p class="text-[13px] font-bold text-[#BC7D39] mt-0.5">Review the inspections submitted by
+                                Inspector J. Doe before end of day.</p>
+                        </div>
+                    </div>
+                    <button
+                        class="ml-4 px-5 py-3 border border-[#EB9A2D]/40 rounded-xl text-[13px] font-black text-[#A35200] bg-[#F5EED4] hover:bg-[#EDE3BF] transition-all whitespace-nowrap">
+                        Regenerate
+                    </button>
+                </div>
+            </div>
+
+            <!-- SEARCH / FILTER BAR -->
+            <div class="flex items-center gap-5">
+                <div class="relative w-72">
+                    <i data-lucide="search" class="icon-xs absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" placeholder="Search by extinguisher Id"
+                        class="w-full bg-[#E2E8F0] border-none pl-9 pr-4 py-2 rounded-lg text-[13px] focus:outline-none placeholder:text-slate-500 font-bold text-slate-700">
+                </div>
+                <button
+                    class="px-5 py-3 bg-[#E2E8F0] rounded-lg flex items-center gap-5 text-slate-500 font-bold text-[13px] hover:bg-slate-300 transition-all">
+                    <i data-lucide="filter" class="icon-xs"></i>
+                    Filter
+                </button>
+                <div class="flex-1"></div>
+                <button (click)="generateLabel()"
+                    class="px-6 py-2 bg-[#0B1437] text-white rounded-lg text-[13px] font-black tracking-tight shadow-lg shadow-blue-900/20 hover:bg-blue-900 transition-all">
+                    Generate Label
+                </button>
+            </div>
+
+            <!-- MAIN GRID: Table + Preview -->
+            <div class="flex gap-5 items-start">
+
+                <!-- TABLE CARD -->
+                <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <!-- Table Header -->
+                    <div
+                        class="flex items-center px-6 py-3 border-b border-slate-50 text-[12px] font-black text-slate-400 uppercase tracking-[0.15em]">
+                        <span class="w-[35%]">ID / Location</span>
+                        <span class="w-[20%]">Status</span>
+                        <span class="w-[30%]">Dates</span>
+                        <span class="w-[15%] text-right">Actions</span>
+                    </div>
+
+                    <!-- Table Rows -->
+                    <div class="divide-y divide-slate-50">
+                        <div *ngFor="let item of extinguishers"
+                            class="flex items-center px-6 py-4 hover:bg-slate-50/60 transition-colors group">
+
+                            <!-- ID / Location -->
+                            <div class="w-[35%]">
+                                <h4 class="text-[15px] font-black text-[#0B1437]">{{item.id}}</h4>
+                                <p class="text-[12px] font-bold text-slate-400 mt-0.5 truncate">{{item.location}}</p>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="w-[20%]">
+                                <span [class]="getStatusClass(item.status)"
+                                    class="px-3 py-1 rounded-full text-[12px] font-black whitespace-nowrap inline-block">
+                                    {{item.status}}
+                                </span>
+                            </div>
+
+                            <!-- Dates -->
+                            <div class="w-[30%]">
+                                <div class="space-y-0.5">
+                                    <p class="text-[12px] text-slate-500 font-bold">
+                                        <span class="text-slate-400 font-black">Last:</span>
+                                        &nbsp;{{item.lastDate}}
+                                    </p>
+                                    <p class="text-[12px] font-black" [class]="item.nextDateColor">
+                                        <span class="text-slate-400 font-black">Next:</span>
+                                        &nbsp;{{item.nextDate}}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="w-[15%] flex justify-end items-center gap-5">
+                                <ng-container *ngIf="item.status !== 'No label'">
+                                    <button
+                                        class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:bg-slate-100 hover:text-slate-600 transition-all">
+                                        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                    <button
+                                        class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:bg-slate-100 hover:text-slate-600 transition-all">
+                                        <i data-lucide="cloud-download" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                    <button
+                                        class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:bg-slate-100 hover:text-slate-600 transition-all">
+                                        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </ng-container>
+                                <ng-container *ngIf="item.status === 'No label'">
+                                    <button (click)="generateLabel()"
+                                        class="px-4 py-1.5 bg-[#0B1437] text-white rounded-lg text-[12px] font-black hover:bg-blue-900 transition-all shadow-sm">
+                                        Generate
+                                    </button>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="px-6 py-4 border-t border-slate-50 flex items-center justify-between">
+                        <p class="text-[12px] font-bold text-slate-400">Showing 1 to 4 of 455 entries</p>
+                        <div class="flex items-center gap-5">
+                            <button
+                                class="px-4 py-1.5 rounded-lg bg-slate-100 text-slate-500 text-[12px] font-black hover:bg-slate-200 transition-colors">Previous</button>
+                            <button
+                                class="px-4 py-1.5 rounded-lg bg-slate-200 text-slate-500 text-[12px] font-black hover:bg-slate-300 transition-colors">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LABEL PREVIEW CARD -->
+                <div class="w-52 shrink-0 sticky top-20">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                        <!-- Card inner: grey background -->
+                        <div class="bg-[#F0F2F7] m-2 rounded-xl p-7 relative overflow-hidden">
+                            <!-- Decorative elements -->
+                            <div class="absolute -right-6 -top-6 w-20 h-20 rounded-full bg-slate-200/60"></div>
+                            <div class="absolute -left-4 -bottom-4 w-14 h-14 rounded-full bg-slate-200/40"></div>
+
+                            <!-- Header row -->
+                            <div class="flex items-start justify-between relative z-10 mb-6">
+                                <span
+                                    class="text-[7px] font-black text-slate-400 tracking-[0.15em] uppercase leading-tight">FIRE<br>EXTINGUISHER</span>
+                                <span
+                                    class="bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-wide">ACTIVE</span>
+                            </div>
+
+                            <!-- ID -->
+                            <div class="relative z-10 text-center py-2">
+                                <h3 class="text-[16px] font-black text-[#0B1437] tracking-tight leading-none">
+                                    EXT-2023-001</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>

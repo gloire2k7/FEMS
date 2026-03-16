@@ -1,0 +1,22 @@
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.donut-segment {
+    transform-origin: 50px 50px;
+    transition: all 1s ease-out;
+}
+
+/* Custom Table Row Borders */
+tr {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+tr:last-child {
+    border-bottom: none;
+}

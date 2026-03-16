@@ -1,0 +1,122 @@
+:host {
+    display: block;
+    height: 100vh;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* FORCING SIZES ON LUCIDE ICONS */
+:host ::ng-deep [data-lucide] {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+:host ::ng-deep .icon-xs {
+    width: 12px !important;
+    height: 12px !important;
+}
+
+:host ::ng-deep .icon-sm {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+:host ::ng-deep .icon-md {
+    width: 20px !important;
+    height: 20px !important;
+}
+
+/* Sidebar Styles */
+.sidebar-link-active {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Stat Cards */
+.stat-card {
+    border-radius: 16px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Table Customization */
+.inspection-row {
+    transition: all 0.2s ease;
+}
+
+.inspection-row:hover {
+    background-color: #F8FAFC;
+    transform: scale(0.998);
+}
+
+.selected-inspection {
+    border: 2px solid #0B1437 !important;
+    background-color: #F0F4FF !important;
+    box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* Right Panel Buttons */
+.btn-approve {
+    box-shadow: 0 8px 20px -6px rgba(11, 20, 55, 0.3);
+}
+
+.btn-approve:hover {
+    background-color: #1a2d6e;
+    transform: translateY(-1px);
+}
+
+.btn-secondary:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}

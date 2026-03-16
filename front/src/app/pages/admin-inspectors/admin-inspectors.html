@@ -1,0 +1,421 @@
+﻿<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
+
+    <!-- ═══ SIDEBAR (exact match of admin-dashboard) ═══ -->
+    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0">
+        <div class="px-4 py-4 mb-6 flex items-center gap-5">
+            <div
+                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
+                <i data-lucide="flame" class="icon-xs text-white"></i>
+            </div>
+            <span class="text-xs font-black text-white tracking-[0.2em] leading-none">FEM</span>
+        </div>
+
+        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
+            <div>
+                <a routerLink="/admin-dashboard" routerLinkActive="bg-white/10 text-white"
+                    [routerLinkActiveOptions]="{exact: true}"
+                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                    <i data-lucide="layout-grid" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                    <span class="text-[13px] tracking-wide font-semibold">Dashboard</span>
+                </a>
+            </div>
+
+            <div class="mt-8 mb-6 pt-2">
+                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">Operations</p>
+                <div class="space-y-3">
+                    <a routerLink="/clients" routerLinkActive="bg-white/10 text-white"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                        <i data-lucide="users" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                        <span class="text-[13px] tracking-wide font-semibold">Clients</span>
+                    </a>
+                    <a routerLink="/admin-locations" routerLinkActive="bg-white/10 text-white"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
+                        <i data-lucide="map-pin" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                        <span class="text-[13px] tracking-wide font-semibold">Locations</span>
+                    </a>
+                    <a routerLink="/admin-location-details"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="flame" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-semibold">Fire Extinguishers</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                    </a>
+                    <div class="space-y-3">
+                        <a (click)="toggleInspections()"
+                            class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-white hover:bg-white/20 transition-all justify-between group cursor-pointer"
+                            [class.bg-white/15]="inspectionsOpen">
+                            <div class="flex items-center gap-5.5">
+                                <i data-lucide="clipboard-check"
+                                    class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                                <span class="text-[13px] tracking-wide font-semibold">Inspections</span>
+                            </div>
+                            <i [attr.data-lucide]="inspectionsOpen ? 'chevron-up' : 'chevron-down'"
+                                class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                        </a>
+                        <div *ngIf="inspectionsOpen" class="pl-9 space-y-3 mt-1">
+                            <a routerLink="/admin-assigned-inspections" routerLinkActive="text-white !font-black"
+                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
+                                Assigned
+                            </a>
+                            <a routerLink="/admin-inspection-label/LE-2023-894"
+                                routerLinkActive="text-white !font-black"
+                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
+                                Inspection Label
+                            </a>
+                            <a routerLink="/admin-inspectors" routerLinkActive="text-white !font-black"
+                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
+                                Inspectors
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 mb-6 pt-2">
+                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">Management</p>
+                <div class="space-y-3">
+                    <a routerLink="/admin-compliance"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="shield-check"
+                                class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-semibold">Compliance</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                    </a>
+                    <a
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="repeat" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-semibold">Refills</span>
+                        </div>
+                        <i data-lucide="chevron-down" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
+                    </a>
+                    <a routerLink="/admin-settings"
+                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-100 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
+                        <div class="flex items-center gap-5.5">
+                            <i data-lucide="settings" class="icon-xs opacity-80 group-hover:opacity-100 shrink-0"></i>
+                            <span class="text-[13px] tracking-wide font-semibold">Settings</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-50 group-hover:opacity-100"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="px-3 pb-6 mt-auto">
+            <div
+                class="bg-white/5 rounded-xl p-3 flex items-center gap-5.5 border border-white/5 transition-all hover:bg-white/10 cursor-pointer group">
+                <div
+                    class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10 shadow-sm transition-transform group-hover:scale-105">
+                    <img src="https://ui-avatars.com/api/?name=Usanase&background=FFC107&color=fff" alt="Profile"
+                        class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[11px] font-black text-slate-300 uppercase tracking-widest">ADMIN</p>
+                    <p class="text-[13px] font-black text-white truncate">Usanase</p>
+                </div>
+                <i data-lucide="log-out"
+                    class="icon-xs text-slate-400 ml-auto opacity-40 group-hover:opacity-100 group-hover:text-red-400 transition-all"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ═══ MAIN ═══ -->
+    <main class="flex-1 flex flex-col bg-[#F8FAFC] overflow-hidden">
+
+        <!-- TOPBAR -->
+        <header
+            class="h-12 bg-white flex items-center justify-between px-6 sticky top-0 z-10 border-b border-slate-100 shadow-sm">
+            <div class="relative w-64">
+                <i data-lucide="search" class="icon-xs absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/50"></i>
+                <input type="text" placeholder="Search for something..."
+                    class="w-full pl-9 pr-4 py-2 bg-slate-50 border-none rounded-xl text-[13px] focus:outline-none placeholder:text-slate-400 font-medium">
+            </div>
+            <div class="flex items-center gap-5">
+                <div class="relative">
+                    <button
+                        class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
+                        <i data-lucide="shopping-cart" class="icon-xs shrink-0"></i>
+                        <span
+                            class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                </div>
+                <div class="relative">
+                    <button
+                        class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-red-500/80 hover:bg-red-50 transition-all shadow-sm">
+                        <i data-lucide="bell" class="icon-xs shrink-0"></i>
+                        <span
+                            class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                </div>
+                <button routerLink="/admin-settings"
+                    class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-blue-500/80 hover:bg-blue-50 transition-all shadow-sm">
+                    <i data-lucide="settings" class="icon-xs shrink-0"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Two-column layout below the topbar -->
+        <div class="flex flex-1 overflow-hidden">
+
+            <!-- LEFT: page content -->
+            <div class="flex-1 overflow-y-auto p-7 space-y-4">
+
+                <!-- ALERT -->
+                <div class="bg-[#FFFBF2] border border-[#F5D376] rounded-xl p-3 flex items-center gap-5">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 text-[#EB9A2D] shrink-0"></i>
+                    <div>
+                        <p class="text-[14px] font-black text-[#7A4F00]">Action Required: Overdue Tasks</p>
+                        <p class="text-[13px] font-bold text-[#9A6A20]">Inspector J. Doe has 3 overdue inspections in
+                            the Downtown District.</p>
+                    </div>
+                </div>
+
+                <!-- STAT CARDS -->
+                <div class="grid grid-cols-3 gap-5">
+                    <!-- Total Inspectors -->
+                    <div
+                        class="bg-white rounded-2xl p-7 border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total
+                                Inspectors</p>
+                            <h3 class="text-[30px] font-black text-[#0B1437] leading-none">{{inspectors.length}}</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center">
+                            <i data-lucide="users-round" class="w-5 h-5 text-slate-400"></i>
+                        </div>
+                    </div>
+                    <!-- Active -->
+                    <div
+                        class="bg-white rounded-2xl p-7 border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active</p>
+                            <h3 class="text-[30px] font-black text-emerald-500 leading-none">{{totalActive}}</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <i data-lucide="clipboard-check" class="w-5 h-5 text-emerald-400"></i>
+                        </div>
+                    </div>
+                    <!-- Available -->
+                    <div
+                        class="bg-white rounded-2xl p-7 border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-[12px] font-bold text-slate-400 uppercase tracking-widest mb-1">Available Now
+                            </p>
+                            <h3 class="text-[30px] font-black text-blue-500 leading-none">{{totalAvailable}}</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                            <i data-lucide="user-check" class="w-5 h-5 text-blue-400"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEARCH ROW -->
+                <div class="flex items-center gap-5">
+                    <div class="relative flex-1 max-w-xs">
+                        <i data-lucide="search"
+                            class="icon-xs absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" [(ngModel)]="searchTerm" placeholder="Search by name or ID..."
+                            class="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-[13px] focus:outline-none placeholder:text-slate-400 font-bold">
+                    </div>
+                    <button
+                        class="px-5 py-3 bg-white border border-slate-200 rounded-xl text-[13px] font-bold text-slate-500 flex items-center gap-1.5 hover:bg-slate-50 transition-all">
+                        <i data-lucide="filter" class="icon-xs"></i> Filter
+                    </button>
+                    <button
+                        class="px-5 py-3 bg-white border border-slate-200 rounded-xl text-[13px] font-bold text-slate-500 flex items-center gap-1.5 hover:bg-slate-50 transition-all">
+                        <i data-lucide="arrow-down-wide-narrow" class="icon-xs"></i> Sort
+                    </button>
+                </div>
+
+                <!-- TABLE -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <!-- Header -->
+                    <div
+                        class="grid grid-cols-[2fr_1fr_2fr_1fr_80px] px-5 py-3 border-b border-slate-50 text-[12px] font-black text-slate-400 uppercase tracking-[0.15em]">
+                        <span>Inspector</span>
+                        <span>ID</span>
+                        <span>Contact</span>
+                        <span>Status</span>
+                        <span></span>
+                    </div>
+
+                    <!-- Rows -->
+                    <div class="divide-y divide-slate-50">
+                        <div *ngFor="let insp of filteredInspectors" (click)="selectInspector(insp)"
+                            class="grid grid-cols-[2fr_1fr_2fr_1fr_80px] px-5 py-4 items-center cursor-pointer hover:bg-slate-50/70 transition-colors group"
+                            [class.bg-indigo-50]="selectedInspector?.id === insp.id">
+
+                            <!-- Inspector -->
+                            <div class="flex items-center gap-5">
+                                <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-100">
+                                    <img [src]="insp.avatar" class="w-full h-full object-cover">
+                                </div>
+                                <span class="text-[15px] font-black text-[#0B1437]">{{insp.name}}</span>
+                            </div>
+
+                            <!-- ID -->
+                            <span class="text-[14px] font-bold text-slate-500">{{insp.id}}</span>
+
+                            <!-- Contact -->
+                            <div class="space-y-0.5">
+                                <p class="text-[13px] font-bold text-slate-600">{{insp.email}}</p>
+                                <p class="text-[13px] font-bold text-slate-400">{{insp.phone}}</p>
+                            </div>
+
+                            <!-- Status -->
+                            <span [class]="getStatusClass(insp.status)"
+                                class="px-3 py-1 rounded-full text-[12px] font-black w-fit">
+                                {{insp.status}}
+                            </span>
+
+                            <!-- Action -->
+                            <div class="flex justify-end">
+                                <button (click)="$event.stopPropagation(); selectInspector(insp)"
+                                    class="px-3 py-1 rounded-lg bg-slate-100 text-slate-500 text-[12px] font-black hover:bg-[#0B1437] hover:text-white transition-all">
+                                    View
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="px-5 py-3 border-t border-slate-50 flex items-center justify-between">
+                        <p class="text-[12px] font-bold text-slate-400">Showing 1-{{filteredInspectors.length}} of 42
+                            inspectors</p>
+                        <div class="flex items-center gap-1">
+                            <button
+                                class="px-4 py-2 rounded-lg bg-slate-100 text-slate-500 text-[12px] font-black hover:bg-slate-200 transition-colors">Previous</button>
+                            <button
+                                class="px-4 py-2 rounded-lg bg-slate-200 text-slate-500 text-[12px] font-black hover:bg-slate-300 transition-colors">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT PANEL: Inspector Detail -->
+            <div *ngIf="selectedInspector"
+                class="w-[320px] shrink-0 border-l border-slate-100 bg-white overflow-y-auto shadow-xl panel-slide">
+
+                <!-- Panel Header -->
+                <div class="flex items-center justify-between px-5 py-4 border-b border-slate-50">
+                    <div class="flex items-center gap-5">
+                        <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-100 shrink-0">
+                            <img [src]="selectedInspector.avatar" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-[18px] font-black text-[#0B1437]">{{selectedInspector.name}}</h3>
+                            <p class="text-[13px] font-bold text-slate-400">ID: {{selectedInspector.id}}</p>
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <span [class]="getStatusClass(selectedInspector.status)"
+                                    class="px-2 py-0.5 rounded text-[11px] font-black">
+                                    {{selectedInspector.status}}
+                                </span>
+                                <span [class]="getAvailClass(selectedInspector.availability)"
+                                    class="px-2 py-0.5 rounded text-[11px] font-black">
+                                    {{selectedInspector.availability}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <button (click)="closePanel()"
+                        class="text-[12px] font-black text-slate-400 hover:text-slate-700 transition-colors px-3 py-1.5 rounded hover:bg-slate-50">
+                        x-y
+                    </button>
+                </div>
+
+                <div class="p-7 space-y-5">
+
+                    <!-- CONTACT INFORMATION -->
+                    <div>
+                        <p class="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Contact
+                            Information</p>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-5 p-3 rounded-xl bg-slate-50/80 border border-slate-100">
+                                <i data-lucide="mail" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                                <span class="text-[14px] font-bold text-slate-600">{{selectedInspector.email}}</span>
+                            </div>
+                            <div class="flex items-center gap-5 p-3 rounded-xl bg-slate-50/80 border border-slate-100">
+                                <i data-lucide="phone" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                                <span class="text-[14px] font-bold text-slate-600">{{selectedInspector.phone}}</span>
+                            </div>
+                            <div class="flex items-center gap-5 p-3 rounded-xl bg-slate-50/80 border border-slate-100">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                                <span class="text-[14px] font-bold text-slate-600">{{selectedInspector.base}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PERFORMANCE SUMMARY -->
+                    <div>
+                        <p class="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Performance
+                            Summary</p>
+                        <div class="grid grid-cols-2 gap-5">
+                            <div class="bg-slate-50 rounded-2xl p-8 border border-slate-100 text-center">
+                                <h3 class="text-[26px] font-black text-[#0B1437] leading-none">
+                                    {{selectedInspector.totalInspections}}</h3>
+                                <p class="text-[12px] font-bold text-slate-400 mt-1">Total Inspections</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-2xl p-8 border border-slate-100 text-center">
+                                <h3 class="text-[26px] font-black text-emerald-500 leading-none">
+                                    {{selectedInspector.completionRate}}%</h3>
+                                <p class="text-[12px] font-bold text-slate-400 mt-1">Completion Rate</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RECENT ACTIVITY -->
+                    <div>
+                        <p class="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Recent Activity
+                        </p>
+                        <div class="space-y-3">
+                            <div *ngFor="let act of selectedInspector.recentActivity"
+                                class="flex items-start gap-5 p-3 rounded-xl border border-slate-100 bg-white">
+                                <div class="w-2 h-2 rounded-full bg-slate-300 shrink-0 mt-1.5"></div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-5">
+                                        <p class="text-[14px] font-black text-[#0B1437]">{{act.label}}</p>
+                                        <span *ngIf="act.result" class="text-[11px] font-black px-2 py-0.5 rounded"
+                                            [class.bg-emerald-100]="act.result === 'Passed'"
+                                            [class.text-emerald-600]="act.result === 'Passed'"
+                                            [class.bg-red-100]="act.result === 'Failed'"
+                                            [class.text-red-600]="act.result === 'Failed'">
+                                            {{act.result}}
+                                        </span>
+                                    </div>
+                                    <p *ngIf="act.client" class="text-[12px] font-bold text-slate-400 mt-0.5 truncate">
+                                        {{act.client}}</p>
+                                    <p *ngIf="act.datetime" class="text-[12px] text-slate-400 mt-0.5">{{act.datetime}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM ACTIONS — sticky -->
+                <div class="sticky bottom-0 bg-white border-t border-slate-100 p-8 space-y-3">
+                    <button routerLink="/admin-assigned-inspections"
+                        class="w-full h-11 bg-[#0B1437] rounded-xl flex items-center justify-center gap-5 text-white text-[15px] font-black hover:bg-blue-900 transition-all shadow-lg shadow-blue-900/20">
+                        <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                        Assign New Inspection
+                    </button>
+                    <div class="grid grid-cols-2 gap-5">
+                        <button
+                            class="h-10 bg-white border border-slate-200 rounded-xl text-[14px] font-black text-[#0B1437] hover:bg-slate-50 transition-all">
+                            Edit Profile
+                        </button>
+                        <button
+                            class="h-10 bg-white border border-slate-200 rounded-xl text-[14px] font-black text-red-500 hover:bg-red-50 hover:border-red-100 transition-all">
+                            Deactivate
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
