@@ -88,6 +88,9 @@ $router->get('/api/reports', ['ReportController', 'index']);
 $router->post('/api/reports', ['ReportController', 'generate']);
 $router->get('/api/reports/export-zip', ['ReportController', 'exportZip']);
 
+// AI assistant
+$router->post('/api/ai/chat', ['AiController', 'chat']);
+
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
 $router->dispatch($method, $uri);

@@ -1,0 +1,76 @@
+<div class="ai-root" [class.ai-root--page]="fullPage" [class.ai-root--open]="open || fullPage">
+
+  <!-- Floating trigger -->
+  <button *ngIf="!fullPage && !open" type="button" (click)="toggle()" class="ai-fab" title="FEMS Assistant">
+    <span class="ai-fab-ring"></span>
+    <i data-lucide="sparkles" class="w-6 h-6"></i>
+  </button>
+
+  <!-- Chat panel -->
+  <div *ngIf="open || fullPage" class="ai-panel" [class.ai-panel--expanded]="expanded || fullPage">
+
+    <header class="ai-header">
+      <div class="ai-header-info">
+        <span class="ai-header-icon">
+          <i data-lucide="bot" class="w-5 h-5"></i>
+        </span>
+        <div>
+          <h2 class="ai-header-title">FEMS Assistant</h2>
+          <p class="ai-header-sub">{{ roleLabel() }} · Ask anything about the portal</p>
+        </div>
+      </div>
+      <div class="ai-header-actions">
+        <button *ngIf="!fullPage" type="button" (click)="toggleExpand()" class="ai-icon-btn" [title]="expanded ? 'Compact' : 'Expand'">
+          <i [attr.data-lucide]="expanded ? 'minimize-2' : 'maximize-2'" class="w-4 h-4"></i>
+        </button>
+        <button *ngIf="!fullPage" type="button" (click)="openFullPage()" class="ai-icon-btn" title="Open full page">
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </button>
+        <button type="button" (click)="close()" class="ai-icon-btn" [title]="fullPage ? 'Back' : 'Close'">
+          <i [attr.data-lucide]="fullPage ? 'arrow-left' : 'x'" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </header>
+
+    <div #scrollArea class="ai-messages">
+      <div *ngFor="let m of messages" class="ai-msg" [class.ai-msg--user]="m.role === 'user'">
+        <span *ngIf="m.role === 'bot'" class="ai-avatar ai-avatar--bot">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+        </span>
+
+        <div class="ai-bubble-wrap">
+          <div class="ai-bubble" [class.ai-bubble--user]="m.role === 'user'" [class.ai-bubble--bot]="m.role === 'bot'"
+            [innerHTML]="formatText(m.text)"></div>
+
+          <div *ngIf="m.role === 'bot' && m.suggestions?.length" class="ai-suggestions">
+            <button type="button" *ngFor="let s of m.suggestions" (click)="useSuggestion(s)" class="ai-chip">
+              {{ s }}
+            </button>
+          </div>
+
+          <button *ngIf="m.role === 'bot' && m.action" type="button" (click)="runAction(m.action!)" class="ai-action-btn">
+            {{ m.action.label }}
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <span *ngIf="m.role === 'user'" class="ai-avatar ai-avatar--user">{{ userInitials() }}</span>
+      </div>
+
+      <div *ngIf="loading" class="ai-msg ai-msg--bot">
+        <span class="ai-avatar ai-avatar--bot"><i data-lucide="sparkles" class="w-4 h-4"></i></span>
+        <div class="ai-bubble ai-bubble--bot ai-typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="ai-footer">
+      <input type="text" [(ngModel)]="input" (keyup.enter)="send()" [disabled]="loading"
+        placeholder="Ask about orders, stock, clients…" class="ai-input" autocomplete="off">
+      <button type="button" (click)="send()" [disabled]="loading || !input.trim()" class="ai-send">
+        <i data-lucide="send" class="w-4 h-4"></i>
+      </button>
+    </footer>
+  </div>
+</div>

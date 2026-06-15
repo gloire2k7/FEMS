@@ -43,10 +43,12 @@ import { ClientClientsComponent } from './pages/client-clients/client-clients';
 import { MyOrdersComponent } from './pages/my-orders/my-orders';
 import { AdminShellComponent } from '../layout/admin/admin-shell.component';
 import { SuperAdminShellComponent } from '../layout/super-admin/super-admin-shell.component';
+import { AiAssistantPageComponent } from './pages/ai-assistant-page/ai-assistant-page.component';
 
 export const routes: Routes = [
   { path: '', component: SignupComponent },
   { path: 'signin', component: SigninComponent },
+  { path: 'assistant', component: AiAssistantPageComponent },
   { path: 'dashboard', component: DashboardComponent },
 
   {
