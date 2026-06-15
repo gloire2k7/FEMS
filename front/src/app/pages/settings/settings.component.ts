@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -9,29 +9,70 @@ import { AuthService } from '../../auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   template: `
-    <div class="max-w-lg mx-auto p-6 space-y-6">
-      <h1 class="text-2xl font-black text-[#0B1437]">Settings</h1>
-      <div class="bg-white rounded-2xl border border-slate-100 p-6 space-y-4">
-        <h2 class="font-bold text-sm uppercase text-slate-500">Change Password</h2>
-        <input type="password" [(ngModel)]="current" placeholder="Current password" class="w-full border rounded-xl px-4 py-2 text-sm" />
-        <input type="password" [(ngModel)]="newPass" placeholder="New password" class="w-full border rounded-xl px-4 py-2 text-sm" />
-        <button (click)="changePassword()" class="w-full py-2 bg-[#0B1437] text-white rounded-xl text-sm font-bold">Update Password</button>
-        <p *ngIf="msg" class="text-sm" [class.text-emerald-600]="ok" [class.text-red-600]="!ok">{{ msg }}</p>
-      </div>
+    <div class="client-page max-w-2xl">
+      <section class="client-hero">
+        <div class="client-hero-inner">
+          <p class="client-hero-eyebrow">Account</p>
+          <h1 class="client-hero-title">Settings</h1>
+          <p class="client-hero-sub">Manage your profile and security preferences.</p>
+        </div>
+      </section>
+
+      <section class="client-card client-card--lift p-6">
+        <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Account</h2>
+        <dl class="space-y-4 text-base">
+          <div class="flex flex-col sm:flex-row sm:gap-4">
+            <dt class="text-slate-500 sm:w-32 shrink-0">Name</dt>
+            <dd class="font-medium text-[#0B1437]">{{ user?.name || '—' }}</dd>
+          </div>
+          <div class="flex flex-col sm:flex-row sm:gap-4">
+            <dt class="text-slate-500 sm:w-32 shrink-0">Email</dt>
+            <dd class="font-medium text-[#0B1437]">{{ user?.email || '—' }}</dd>
+          </div>
+          <div class="flex flex-col sm:flex-row sm:gap-4" *ngIf="user?.company_name">
+            <dt class="text-slate-500 sm:w-32 shrink-0">Company</dt>
+            <dd class="font-medium text-[#0B1437]">{{ user.company_name }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="client-card client-card--lift p-6 space-y-5">
+        <div>
+          <h2 class="text-lg font-semibold text-[#0B1437]">Change password</h2>
+          <p class="text-base text-slate-500 mt-1">Use a strong password you don't use elsewhere.</p>
+        </div>
+        <div>
+          <label class="client-label">Current password</label>
+          <input type="password" [(ngModel)]="current" class="client-input" autocomplete="current-password" />
+        </div>
+        <div>
+          <label class="client-label">New password</label>
+          <input type="password" [(ngModel)]="newPass" class="client-input" autocomplete="new-password" />
+        </div>
+        <button type="button" (click)="changePassword()" class="client-btn-primary w-full sm:w-auto">
+          Update password
+        </button>
+        <p *ngIf="msg" class="text-base" [class.text-emerald-600]="ok" [class.text-red-600]="!ok">{{ msg }}</p>
+      </section>
     </div>
   `
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit {
   private auth = inject(AuthService);
+  user: any = null;
   current = '';
   newPass = '';
   msg = '';
   ok = false;
 
+  ngOnInit() {
+    this.user = this.auth.getUser();
+  }
+
   changePassword() {
     this.auth.changePassword(this.current, this.newPass).subscribe({
-      next: () => { this.msg = 'Password updated.'; this.ok = true; this.current = ''; this.newPass = ''; },
-      error: (e) => { this.msg = e.error?.message || 'Failed.'; this.ok = false; }
+      next: () => { this.msg = 'Password updated successfully.'; this.ok = true; this.current = ''; this.newPass = ''; },
+      error: (e) => { this.msg = e.error?.message || 'Failed to update password.'; this.ok = false; }
     });
   }
 }

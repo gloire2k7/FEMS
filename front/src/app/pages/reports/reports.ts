@@ -2,75 +2,137 @@ import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
+declare const lucide: { createIcons: () => void } | undefined;
 
 @Component({
   selector: 'app-reports',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './reports.html',
-  styleUrl: './reports.css',
+  template: `
+    <div class="client-page">
+      <section class="client-hero">
+        <div class="client-hero-inner">
+          <p class="client-hero-eyebrow">Compliance</p>
+          <h1 class="client-hero-title">Reports</h1>
+          <p class="client-hero-sub">Inspection and compliance reports for your locations.</p>
+        </div>
+      </section>
+
+      <section class="client-stat-grid">
+        <div class="client-stat client-stat--primary">
+          <div class="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p class="client-stat-label">Total reports</p>
+              <p class="client-stat-value">{{ reports.length }}</p>
+              <p class="client-stat-hint">Available to download</p>
+            </div>
+            <span class="client-stat-icon"><i data-lucide="file-text" class="w-5 h-5"></i></span>
+          </div>
+        </div>
+        <div class="client-stat client-stat--featured">
+          <div class="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p class="client-stat-label">Latest</p>
+              <p class="client-stat-value">{{ reports.length ? '1' : '0' }}</p>
+              <p class="client-stat-hint">New this quarter</p>
+            </div>
+            <span class="client-stat-icon"><i data-lucide="sparkles" class="w-5 h-5"></i></span>
+          </div>
+        </div>
+        <div class="client-stat client-stat--info">
+          <div class="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p class="client-stat-label">Formats</p>
+              <p class="client-stat-value">PDF</p>
+              <p class="client-stat-hint">Export ready</p>
+            </div>
+            <span class="client-stat-icon"><i data-lucide="download" class="w-5 h-5"></i></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="client-card client-card--lift p-5 flex flex-col sm:flex-row gap-4 sm:items-center">
+        <div class="relative flex-1 max-w-md">
+          <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" [(ngModel)]="search" placeholder="Search reports…" class="client-input pl-10" />
+        </div>
+        <select [(ngModel)]="activeFilter" class="client-input sm:w-48">
+          <option *ngFor="let f of filters" [value]="f">{{ f }}</option>
+        </select>
+      </section>
+
+      <section class="space-y-4" *ngIf="filteredReports.length > 0">
+        <article *ngFor="let r of filteredReports" class="client-card client-card--lift p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+          <span class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+            [ngClass]="r.iconClass">
+            <i [attr.data-lucide]="r.icon" class="w-6 h-6"></i>
+          </span>
+          <div class="flex-1 min-w-0">
+            <h3 class="text-lg font-semibold text-[#0B1437]">{{ r.name }}</h3>
+            <p class="text-base text-slate-500 mt-1">{{ r.description }}</p>
+            <p class="text-sm text-slate-400 mt-2">{{ r.date }} · {{ r.type }}</p>
+          </div>
+          <button type="button" class="client-btn-secondary shrink-0">
+            <i data-lucide="download" class="w-5 h-5"></i>
+            Download {{ r.format }}
+          </button>
+        </article>
+      </section>
+
+      <section *ngIf="filteredReports.length === 0" class="client-card client-empty">
+        <div class="client-empty-icon">
+          <i data-lucide="file-text" class="w-8 h-8"></i>
+        </div>
+        <p class="text-lg font-semibold text-[#0B1437]">No reports yet</p>
+        <p class="text-base text-slate-500 mt-2 max-w-md mx-auto">
+          Reports will appear here after inspections are completed at your locations.
+        </p>
+      </section>
+    </div>
+  `
 })
 export class Reports implements AfterViewInit {
-  reports = [
-    {
-      name: 'Monthly Compliance Report - Q1 2024',
-      description: 'Complete facility audit results',
-      type: 'Inspection Compliance',
-      typeClass: 'bg-blue-100 text-blue-700',
-      iconClass: 'bg-blue-500 text-white',
-      icon: 'file-text',
-      date: 'Jan 15, 2024',
-      time: '09:30 AM',
-      author: 'Sarah Johnson',
-      role: 'Safety Manager',
-      authorAvatar: 'https://i.pravatar.cc/150?u=sarah',
-      format: 'PDF',
-      formatClass: 'bg-[#EF4444] text-white',
-      formatIcon: 'file'
-    },
-    {
-      name: 'Expired Extinguisher Inventory - 2024',
-      description: 'Units requiring immediate replacement',
-      type: 'Expired',
-      typeClass: 'bg-red-100 text-red-700',
-      iconClass: 'bg-[#EF4444] text-white',
-      icon: 'alert-triangle',
-      date: 'Jan 12, 2024',
-      time: '02:45 PM',
-      author: 'Michael Chen',
-      role: 'Compliance Officer',
-      authorAvatar: 'https://i.pravatar.cc/150?u=michael',
-      format: 'Excel',
-      formatClass: 'bg-[#10B981] text-white',
-      formatIcon: 'file-spreadsheet'
-    },
-    {
-      name: 'Warehouse A - Location Summary',
-      description: 'Equipment distribution by zone',
-      type: 'Location Summary',
-      typeClass: 'bg-yellow-100 text-yellow-700',
-      iconClass: 'bg-[#F59E0B] text-white',
-      icon: 'map',
-      date: 'Jan 10, 2024',
-      time: '11:20 AM',
-      author: 'Emily Rodriguez',
-      role: 'Facility Manager',
-      authorAvatar: 'https://i.pravatar.cc/150?u=emily',
-      format: 'PDF',
-      formatClass: 'bg-[#EF4444] text-white',
-      formatIcon: 'file'
-    }
-  ];
-
-  filters = ['All Reports', 'Inventory', 'Expired', 'Inspection', 'Location'];
+  search = '';
+  filters = ['All Reports', 'Inspection', 'Compliance', 'Inventory'];
   activeFilter = 'All Reports';
 
+  reports = [
+    {
+      name: 'Quarterly Compliance Summary',
+      description: 'Overview of extinguisher status across all locations',
+      type: 'Compliance',
+      iconClass: 'bg-blue-50 text-blue-600',
+      icon: 'file-text',
+      date: 'Jan 15, 2024',
+      format: 'PDF'
+    },
+    {
+      name: 'Warehouse A Inspection Report',
+      description: 'Detailed inspection results and recommendations',
+      type: 'Inspection',
+      iconClass: 'bg-emerald-50 text-emerald-600',
+      icon: 'clipboard-check',
+      date: 'Dec 8, 2023',
+      format: 'PDF'
+    },
+  ];
+
+  get filteredReports() {
+    let list = this.reports;
+    if (this.activeFilter !== 'All Reports') {
+      list = list.filter(r => r.type === this.activeFilter);
+    }
+    const q = this.search.trim().toLowerCase();
+    if (q) {
+      list = list.filter(r =>
+        r.name.toLowerCase().includes(q) ||
+        r.description.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }
+
   ngAfterViewInit() {
-    setTimeout(() => {
-      if (typeof lucide !== 'undefined' && lucide.createIcons) {
-        lucide.createIcons();
-      }
-    }, 100);
+    setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 50);
   }
 }

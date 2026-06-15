@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 
-declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
+declare const lucide: { createIcons: () => void } | undefined;
 
 export interface CartItem {
   type: string;
@@ -28,30 +28,21 @@ export class Shop implements AfterViewInit, OnInit {
   isLoading = false;
   products: any[] = [];
   filteredProducts: any[] = [];
-
+  searchQuery = '';
   filterType = '';
-  maxPrice = 9999999;
-
-  // Legacy filter fields still referenced in shop.html
-  filterCapacity = '';
-  filterAvailability = '';
-  filterSupplier = '';
-  currentPage = 1;
-  totalPages = [1];
-
-  /** Alias so shop.html {{ quantity }} still works */
-  get quantity() { return this.modalQty; }
-
-  /** Alias so shop.html addToCartAndGo() still works */
-  addToCartAndGo() { this.addToCart(); }
 
   showModal = false;
   selectedProduct: any = null;
   modalQty = 1;
-
   cart: CartItem[] = [];
 
+  categories = ['Water', 'CO2', 'Powder', 'Foam'];
+
   ngOnInit() {
+    const saved = sessionStorage.getItem('fems_cart');
+    if (saved) {
+      try { this.cart = JSON.parse(saved); } catch { this.cart = []; }
+    }
     this.loadProducts();
   }
 
@@ -61,11 +52,8 @@ export class Shop implements AfterViewInit, OnInit {
       next: (data: any[]) => {
         this.products = data.map(p => ({
           ...p,
-          badge: p.type,
           price: Number(p.price) || 0,
           soldOut: p.total_in_stock <= 0,
-          status: p.total_in_stock > 0 ? 'In Stock' : 'Sold Out',
-          statusClass: p.total_in_stock > 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600',
           imgBg: this.getImgBg(p.type),
           badgeClass: this.getBadgeClass(p.type)
         }));
@@ -73,17 +61,18 @@ export class Shop implements AfterViewInit, OnInit {
         this.applyFilter();
         this.initIcons();
       },
-      error: () => {
-        this.isLoading = false;
-      }
+      error: () => { this.isLoading = false; }
     });
   }
 
   applyFilter() {
+    const q = this.searchQuery.trim().toLowerCase();
     this.filteredProducts = this.products.filter(p => {
       const matchType = !this.filterType || p.type === this.filterType;
-      const matchPrice = p.price <= this.maxPrice;
-      return matchType && matchPrice;
+      const matchSearch = !q ||
+        (p.type || '').toLowerCase().includes(q) ||
+        (p.capacity || '').toLowerCase().includes(q);
+      return matchType && matchSearch;
     });
   }
 
@@ -92,6 +81,7 @@ export class Shop implements AfterViewInit, OnInit {
     this.selectedProduct = p;
     this.modalQty = 1;
     this.showModal = true;
+    setTimeout(() => this.initIcons(), 50);
   }
 
   closeModal() {
@@ -101,7 +91,9 @@ export class Shop implements AfterViewInit, OnInit {
 
   addToCart() {
     if (!this.selectedProduct) return;
-    const existing = this.cart.find(c => c.type === this.selectedProduct.type && c.capacity === this.selectedProduct.capacity);
+    const existing = this.cart.find(c =>
+      c.type === this.selectedProduct.type && c.capacity === this.selectedProduct.capacity
+    );
     if (existing) {
       existing.quantity = Math.min(existing.quantity + this.modalQty, this.selectedProduct.total_in_stock);
     } else {
@@ -113,9 +105,8 @@ export class Shop implements AfterViewInit, OnInit {
         total_in_stock: this.selectedProduct.total_in_stock
       });
     }
-    this.closeModal();
-    // Persist cart to sessionStorage for checkout page
     sessionStorage.setItem('fems_cart', JSON.stringify(this.cart));
+    this.closeModal();
     this.router.navigate(['/cart']);
   }
 
@@ -134,8 +125,6 @@ export class Shop implements AfterViewInit, OnInit {
   goToCart() {
     this.router.navigate(['/cart']);
   }
-
-  categories = ['Water', 'CO2', 'Powder', 'Foam'];
 
   ngAfterViewInit() {
     this.initIcons();

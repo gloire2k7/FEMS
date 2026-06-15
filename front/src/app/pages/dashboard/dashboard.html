@@ -1,82 +1,79 @@
-<div class="max-w-6xl mx-auto space-y-8 pb-8">
+<div class="client-page max-w-6xl mx-auto space-y-8 pb-8">
 
   <!-- Hero -->
-  <section class="dash-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
-    <div class="relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
+    <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
       <div>
-        <p class="text-sm font-medium text-white/70 mb-1">{{ greeting() }}</p>
-        <h1 class="text-3xl md:text-4xl font-bold tracking-tight">{{ userName }}</h1>
-        <p class="text-white/75 mt-2 text-sm md:text-base max-w-md" *ngIf="companyName">
+        <p class="client-hero-eyebrow">{{ greeting() }}</p>
+        <h1 class="client-hero-title">{{ userName }}</h1>
+        <p class="client-hero-sub" *ngIf="companyName">
           {{ companyName }} · Fire safety overview
         </p>
-        <p class="text-white/75 mt-2 text-sm md:text-base max-w-md" *ngIf="!companyName">
+        <p class="client-hero-sub" *ngIf="!companyName">
           Your fire extinguisher portal — order units, track requests, and manage your fleet.
         </p>
       </div>
-      <a routerLink="/shop"
-        class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-white text-[#0B1437] text-sm font-semibold shadow-lg hover:bg-white/95 transition-colors shrink-0">
-        <i data-lucide="plus" class="w-4 h-4"></i>
+      <a routerLink="/shop" class="client-hero-btn shrink-0">
+        <i data-lucide="plus" class="w-5 h-5"></i>
         New order
       </a>
     </div>
   </section>
 
   <!-- Stats -->
-  <section>
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" *ngIf="loading">
-      <div class="h-28 skeleton" *ngFor="let _ of [1,2,3,4]"></div>
-    </div>
+  <section *ngIf="loading" class="client-stat-grid client-stat-grid--4">
+    <div class="h-28 skeleton" *ngFor="let _ of [1,2,3,4]"></div>
+  </section>
 
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" *ngIf="!loading">
-      <div class="stat-card bg-white rounded-2xl p-5 border border-slate-100/80 shadow-sm">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">My units</span>
-          <span class="w-9 h-9 rounded-xl bg-[#0B1437]/5 flex items-center justify-center">
-            <i data-lucide="flame" class="w-4 h-4 text-[#0B1437]"></i>
-          </span>
+  <section *ngIf="!loading" class="client-stat-grid client-stat-grid--4">
+      <div class="client-stat client-stat--primary">
+        <div class="relative z-10 flex items-start justify-between gap-3">
+          <div>
+            <p class="client-stat-label">My units</p>
+            <p class="client-stat-value">{{ stats.myUnits }}</p>
+            <p class="client-stat-hint">Assigned to you</p>
+          </div>
+          <span class="client-stat-icon"><i data-lucide="flame" class="w-5 h-5"></i></span>
         </div>
-        <p class="text-3xl font-bold text-[#0B1437] tabular-nums">{{ stats.myUnits }}</p>
-        <p class="text-xs text-slate-500 mt-1">Assigned to you</p>
       </div>
 
-      <div class="stat-card bg-white rounded-2xl p-5 border border-slate-100/80 shadow-sm">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Pending</span>
-          <span class="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center">
-            <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
-          </span>
+      <div class="client-stat client-stat--featured">
+        <div class="relative z-10 flex items-start justify-between gap-3">
+          <div>
+            <p class="client-stat-label">Pending</p>
+            <p class="client-stat-value">{{ stats.pendingOrders }}</p>
+            <p class="client-stat-hint">Awaiting review</p>
+          </div>
+          <span class="client-stat-icon"><i data-lucide="clock" class="w-5 h-5"></i></span>
         </div>
-        <p class="text-3xl font-bold text-amber-600 tabular-nums">{{ stats.pendingOrders }}</p>
-        <p class="text-xs text-slate-500 mt-1">Awaiting review</p>
       </div>
 
-      <div class="stat-card bg-white rounded-2xl p-5 border border-slate-100/80 shadow-sm">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Approved</span>
-          <span class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center">
-            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
-          </span>
+      <div class="client-stat client-stat--success">
+        <div class="relative z-10 flex items-start justify-between gap-3">
+          <div>
+            <p class="client-stat-label">Approved</p>
+            <p class="client-stat-value">{{ stats.approvedOrders }}</p>
+            <p class="client-stat-hint">Ready for delivery</p>
+          </div>
+          <span class="client-stat-icon"><i data-lucide="check-circle" class="w-5 h-5"></i></span>
         </div>
-        <p class="text-3xl font-bold text-emerald-600 tabular-nums">{{ stats.approvedOrders }}</p>
-        <p class="text-xs text-slate-500 mt-1">Ready for delivery</p>
       </div>
 
-      <div class="stat-card bg-white rounded-2xl p-5 border border-slate-100/80 shadow-sm">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Delivered</span>
-          <span class="w-9 h-9 rounded-xl bg-sky-50 flex items-center justify-center">
-            <i data-lucide="truck" class="w-4 h-4 text-sky-600"></i>
-          </span>
+      <div class="client-stat client-stat--info">
+        <div class="relative z-10 flex items-start justify-between gap-3">
+          <div>
+            <p class="client-stat-label">Delivered</p>
+            <p class="client-stat-value">{{ stats.deliveredOrders }}</p>
+            <p class="client-stat-hint">Completed orders</p>
+          </div>
+          <span class="client-stat-icon"><i data-lucide="truck" class="w-5 h-5"></i></span>
         </div>
-        <p class="text-3xl font-bold text-sky-600 tabular-nums">{{ stats.deliveredOrders }}</p>
-        <p class="text-xs text-slate-500 mt-1">Completed orders</p>
       </div>
-    </div>
   </section>
 
   <!-- Quick actions -->
   <section>
-    <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Quick actions</h2>
+    <h2 class="text-base font-semibold text-slate-500 uppercase tracking-wider mb-4">Quick actions</h2>
     <div class="grid sm:grid-cols-2 gap-4">
       <a *ngFor="let action of quickActions" [routerLink]="action.route"
         class="action-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
@@ -89,7 +86,7 @@
             <h3 class="font-semibold text-[#0B1437]">{{ action.title }}</h3>
             <i data-lucide="arrow-right" class="action-arrow w-4 h-4 text-slate-300 group-hover:text-[#0B1437] shrink-0"></i>
           </div>
-          <p class="text-sm text-slate-500 mt-0.5">{{ action.description }}</p>
+          <p class="text-base text-slate-500 mt-0.5">{{ action.description }}</p>
         </div>
       </a>
     </div>

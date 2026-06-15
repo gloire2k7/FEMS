@@ -1,263 +1,126 @@
-<div class="p-6 bg-[#F6F8FC] min-h-screen font-sans">
+<div class="client-page">
 
-    <div class="flex items-center justify-between mb-8">
-        <h1 class="text-2xl font-black text-[#0B1228] tracking-tight">Available Units</h1>
-        <div class="text-[13px] font-bold text-slate-500 bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">
-            {{ products.length }} items available
-        </div>
+  <section class="client-hero">
+    <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <div>
+        <p class="client-hero-eyebrow">Order supplies</p>
+        <h1 class="client-hero-title">Shop</h1>
+        <p class="client-hero-sub">Order fire extinguishers for your business. Delivery after admin approval.</p>
+      </div>
+      <button type="button" (click)="goToCart()" class="client-hero-btn shrink-0">
+        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+        Cart ({{ cartCount }})
+      </button>
     </div>
+  </section>
 
-    <!-- SEARCH & FILTERS -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-6">
-        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">Search Products</p>
-        <input type="text" [(ngModel)]="filterType" placeholder="Search by product name or type..."
-            class="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-xs font-semibold placeholder:text-slate-400 outline-none focus:border-slate-300 mb-5 shadow-sm">
-
-        <div class="grid grid-cols-5 gap-4">
-            <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Type</label>
-                <input type="text" [(ngModel)]="filterType"
-                    class="px-3 py-2 rounded-lg border border-slate-200 text-xs outline-none focus:border-slate-300 shadow-sm">
-            </div>
-            <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Capacity</label>
-                <input type="text" [(ngModel)]="filterCapacity"
-                    class="px-3 py-2 rounded-lg border border-slate-200 text-xs outline-none focus:border-slate-300 shadow-sm">
-            </div>
-            <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Availability</label>
-                <input type="text" [(ngModel)]="filterAvailability"
-                    class="px-3 py-2 rounded-lg border border-slate-200 text-xs outline-none focus:border-slate-300 shadow-sm">
-            </div>
-            <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Supplier</label>
-                <input type="text" [(ngModel)]="filterSupplier"
-                    class="px-3 py-2 rounded-lg border border-slate-200 text-xs outline-none focus:border-slate-300 shadow-sm">
-            </div>
-            <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Max Price: <span
-                        class="text-[#0B1228]">RWF{{ maxPrice }}</span></label>
-                <input type="range" [(ngModel)]="maxPrice" min="0" max="90000" step="10"
-                    class="w-full accent-[#0B1228] mt-2">
-            </div>
-        </div>
+  <!-- Filters -->
+  <section class="client-card client-card--lift p-5">
+    <div class="flex flex-col sm:flex-row gap-4">
+      <div class="relative flex-1">
+        <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applyFilter()"
+          placeholder="Search by type or capacity…" class="client-input pl-10" />
+      </div>
+      <select [(ngModel)]="filterType" (ngModelChange)="applyFilter()" class="client-input sm:w-44">
+        <option value="">All types</option>
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
     </div>
+  </section>
 
-    <!-- PRODUCT GRID -->
-    <div class="grid grid-cols-3 gap-4 mb-8">
-        <div *ngFor="let p of products"
-            class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-            <!-- Image area -->
-            <div class="relative h-40 flex items-center justify-center" [ngClass]="p.imgBg">
-                <img *ngIf="p.image" [src]="p.image" class="w-full h-full object-cover" alt="">
-                <!-- Placeholder extinguisher for cards without photo -->
-                <div *ngIf="!p.image" class="flex items-center justify-center w-full h-full">
-                    <div class="relative flex flex-col items-center">
-                        <!-- cylinder body -->
-                        <div class="w-10 h-[72px] bg-[#EF4444] rounded-2xl shadow-md relative">
-                            <!-- nozzle -->
-                            <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-3 h-4 bg-[#DC2626] rounded-sm">
-                            </div>
-                            <!-- handle ring -->
-                            <div
-                                class="absolute top-2 left-1/2 -translate-x-1/2 w-6 h-2 border-2 border-[#B91C1C] rounded-full">
-                            </div>
-                            <!-- label band -->
-                            <div class="absolute bottom-4 left-0 right-0 h-3 bg-white/20 rounded"></div>
-                        </div>
-                        <!-- base -->
-                        <div class="w-12 h-2 bg-[#B91C1C] rounded-b-xl mt-0.5"></div>
-                    </div>
-                </div>
-                <!-- BOTH badges stacked top-right -->
-                <div class="absolute top-2.5 right-2.5 flex flex-col items-end gap-1">
-                    <span class="px-2 py-0.5 rounded text-[8px] font-extrabold tracking-wider" [ngClass]="p.badgeClass">
-                        {{ p.badge }}
-                    </span>
-                    <span class="px-2 py-0.5 rounded-full text-[8px] font-extrabold" [ngClass]="p.statusClass">
-                        {{ p.status }}
-                    </span>
-                </div>
-            </div>
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-16 text-base text-slate-400">Loading products…</div>
 
-            <!-- Content -->
-            <div class="p-4 flex flex-col flex-1">
-                <h3 class="text-[16px] font-black text-[#0B1228] mb-1 leading-tight">{{ p.type }} Extinguisher</h3>
-                
-                <div class="flex items-center gap-2 mt-4 mb-3">
-                    <span class="px-2 py-1 rounded bg-slate-100 text-[#0B1228] text-[11px] font-extrabold">{{ p.capacity }}</span>
-                    <span class="px-2 py-1 rounded bg-blue-50 text-blue-600 text-[11px] font-extrabold uppercase">{{ p.type }}</span>
-                </div>
-
-                <!-- Price -->
-                <div class="mb-5 mt-auto">
-                    <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Price</p>
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-[24px] font-black text-[#0B1228] leading-none">{{ p.price | number:'1.0-0' }}</span>
-                        <span class="text-[12px] font-bold text-slate-500">RWF</span>
-                    </div>
-                </div>
-
-                <!-- Buttons -->
-                <div class="flex items-center gap-2 mt-auto">
-                    <button *ngIf="!p.soldOut" routerLink="/cart"
-                        class="flex-1 flex items-center justify-center gap-1.5 py-2 bg-[#0B1228] text-white rounded-xl text-[11px] font-bold hover:bg-slate-800 transition-colors">
-                        <svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round">
-                            <circle cx="9" cy="21" r="1" />
-                            <circle cx="20" cy="21" r="1" />
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                        </svg>
-                        Add
-                    </button>
-                    <button *ngIf="p.soldOut"
-                        class="flex-1 flex items-center justify-center gap-1.5 py-2 bg-slate-100 text-slate-400 rounded-xl text-[11px] font-bold cursor-not-allowed border border-slate-200">
-                        <svg class="w-3 h-3 shrink-0 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round">
-                            <circle cx="9" cy="21" r="1" />
-                            <circle cx="20" cy="21" r="1" />
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                        </svg>
-                        Sold Out
-                    </button>
-                    <button (click)="openProductModal(p)"
-                        class="flex-1 py-2 border border-slate-200 text-[#0B1228] rounded-xl text-[11px] font-bold hover:bg-slate-50 transition-colors">
-                        View
-                    </button>
-                </div>
-            </div>
-        </div>
+  <!-- Empty -->
+  <section *ngIf="!isLoading && filteredProducts.length === 0" class="client-card client-empty">
+    <div class="client-empty-icon">
+      <i data-lucide="shopping-bag" class="w-8 h-8"></i>
     </div>
+    <p class="text-lg font-semibold text-[#0B1437]">No products available</p>
+    <p class="text-base text-slate-500 mt-2">Check back later or adjust your filters.</p>
+  </section>
 
+  <!-- Product grid -->
+  <section *ngIf="!isLoading && filteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <article *ngFor="let p of filteredProducts"
+      class="client-card client-card--lift overflow-hidden flex flex-col">
+      <div class="h-44 flex items-center justify-center relative" [ngClass]="p.imgBg">
+        <div *ngIf="!p.image" class="flex flex-col items-center">
+          <div class="w-12 h-20 bg-red-500 rounded-2xl shadow-md"></div>
+          <div class="w-14 h-2 bg-red-700 rounded-b-lg mt-1"></div>
+        </div>
+        <img *ngIf="p.image" [src]="p.image" class="w-full h-full object-cover" alt="" />
+        <span class="absolute top-3 right-3 client-badge text-sm" [ngClass]="p.badgeClass">{{ p.type }}</span>
+      </div>
 
-    <!-- PAGINATION -->
-    <div class="flex items-center justify-end gap-2">
-        <button
-            class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
-            <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6" />
-            </svg>
-            Previous
+      <div class="p-5 flex flex-col flex-1">
+        <h3 class="text-lg font-semibold text-[#0B1437]">{{ p.type }} Extinguisher</h3>
+        <p class="text-base text-slate-500 mt-1">{{ p.capacity }} capacity</p>
+
+        <div class="mt-4 flex items-baseline gap-1">
+          <span class="text-2xl font-bold text-[#0B1437]">{{ p.price | number:'1.0-0' }}</span>
+          <span class="text-base text-slate-500">RWF</span>
+        </div>
+
+        <p class="text-sm mt-2"
+          [class.text-emerald-600]="!p.soldOut"
+          [class.text-red-500]="p.soldOut">
+          {{ p.soldOut ? 'Out of stock' : p.total_in_stock + ' in stock' }}
+        </p>
+
+        <div class="flex gap-2 mt-5 mt-auto pt-4">
+          <button *ngIf="!p.soldOut" type="button" (click)="openProductModal(p)"
+            class="client-btn-primary flex-1 text-sm py-2.5">
+            Add to cart
+          </button>
+          <button *ngIf="p.soldOut" type="button" disabled
+            class="client-btn-secondary flex-1 opacity-50 cursor-not-allowed text-sm py-2.5">
+            Sold out
+          </button>
+          <button type="button" (click)="openProductModal(p)"
+            class="client-btn-secondary px-4 text-sm py-2.5">
+            Details
+          </button>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- Modal -->
+  <div *ngIf="showModal && selectedProduct" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0B1437]/50 backdrop-blur-sm" (click)="closeModal()"></div>
+    <div class="relative client-card w-full max-w-lg p-8 shadow-xl">
+      <button type="button" (click)="closeModal()"
+        class="absolute top-4 right-4 w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <h2 class="text-2xl font-bold text-[#0B1437]">{{ selectedProduct.type }} Extinguisher</h2>
+      <p class="text-base text-slate-500 mt-1">{{ selectedProduct.capacity }} · {{ selectedProduct.type }}</p>
+
+      <div class="flex items-baseline gap-2 mt-6">
+        <span class="text-3xl font-bold text-[#0B1437]">{{ selectedProduct.price | number:'1.0-0' }}</span>
+        <span class="text-base text-slate-500">RWF</span>
+      </div>
+
+      <p class="text-base text-slate-600 mt-4">
+        {{ selectedProduct.total_in_stock }} units available. Orders are reviewed by our team before delivery.
+      </p>
+
+      <div class="flex items-center gap-4 mt-8">
+        <div class="flex items-center border border-slate-200 rounded-xl overflow-hidden">
+          <button type="button" (click)="decreaseQty()"
+            class="w-11 h-11 flex items-center justify-center text-xl text-slate-500 hover:bg-slate-50">−</button>
+          <span class="w-12 text-center text-lg font-semibold">{{ modalQty }}</span>
+          <button type="button" (click)="increaseQty()"
+            class="w-11 h-11 flex items-center justify-center text-xl text-slate-500 hover:bg-slate-50">+</button>
+        </div>
+        <button type="button" (click)="addToCart()" class="client-btn-primary flex-1">
+          Add to cart
         </button>
-        <button *ngFor="let page of totalPages"
-            [ngClass]="currentPage === page ? 'bg-[#0B1228] text-white border-[#0B1228]' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'"
-            (click)="currentPage = page"
-            class="w-8 h-8 flex items-center justify-center rounded-lg border text-xs font-bold transition-colors shadow-sm">
-            {{ page }}
-        </button>
-        <button
-            class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
-            Next
-            <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6" />
-            </svg>
-        </button>
+      </div>
     </div>
+  </div>
 
-    <!-- PRODUCT MODAL -->
-    <div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-[#0b1437]/60 backdrop-blur-sm" (click)="closeModal()"></div>
-
-        <!-- Modal Content -->
-        <div
-            class="relative bg-white w-full max-w-4xl rounded-[32px] shadow-2xl overflow-hidden flex animate-in fade-in zoom-in duration-300">
-            <!-- Close button -->
-            <button (click)="closeModal()"
-                class="absolute top-6 right-6 z-10 w-10 h-10 flex items-center justify-center bg-white/80 hover:bg-white rounded-full text-slate-400 hover:text-red-500 shadow-sm transition-all">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-
-            <!-- Left side: Image -->
-            <div class="w-1/2 relative bg-slate-50/50 flex items-center justify-center p-12">
-                <div
-                    class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-100 via-transparent to-transparent">
-                </div>
-                <img *ngIf="selectedProduct?.image" [src]="selectedProduct.image"
-                    class="w-full h-auto object-contain relative z-10 drop-shadow-2xl scale-110" alt="">
-                <div *ngIf="!selectedProduct?.image" class="relative z-10 flex flex-col items-center">
-                    <div class="w-32 h-52 bg-[#EF4444] rounded-2xl shadow-xl relative">
-                        <div class="absolute top-4 left-0 right-0 h-4 bg-white/20"></div>
-                        <div
-                            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 border-4 border-white/10 rounded-full">
-                        </div>
-                    </div>
-                    <div class="w-32 h-4 bg-black/5 rounded-full blur-lg mt-8"></div>
-                </div>
-            </div>
-
-            <!-- Right side: Details -->
-            <div class="flex-1 p-10 flex flex-col bg-white">
-                <div class="mb-6">
-                    <div class="flex items-center gap-3 mb-4 mt-2">
-                        <h2 class="text-[32px] font-black text-[#0B1228] leading-tight">{{ selectedProduct?.type }} Fire Extinguisher</h2>
-                        <span
-                            class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-green-100 text-green-600 uppercase tracking-tighter">In
-                            Stock</span>
-                    </div>
-
-                    <div class="flex items-center gap-4 text-[13px] font-bold text-slate-400 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100 inline-flex">
-                        <span>Capacity: <span class="text-[#0B1228] font-extrabold">{{ selectedProduct?.capacity }}</span></span>
-                        <span class="text-slate-300">•</span>
-                        <span>Category: <span class="text-[#0B1228] font-extrabold uppercase">{{ selectedProduct?.type }}</span></span>
-                    </div>
-                </div>
-
-                <!-- Price -->
-                <div class="flex items-center gap-4 mb-10 mt-4">
-                    <div class="flex items-baseline gap-2">
-                        <span class="text-[40px] font-black text-[#0B1228] leading-none">{{ selectedProduct?.price | number:'1.0-0' }}</span>
-                        <span class="text-[18px] font-bold text-slate-500">RWF</span>
-                    </div>
-                </div>
-
-                <!-- Description -->
-                <p class="text-[12px] font-medium text-slate-500 leading-relaxed mb-10">
-                    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nulla
-                    nibh diam, blandit vel consequat nec, ultrices et ipsum. Nulla varius magna a consequat pulvinar.
-                </p>
-
-                <!-- Footer Controls -->
-                <div class="mt-auto flex items-center gap-5">
-                    <div
-                        class="flex items-center bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden p-1 shadow-inner">
-                        <button (click)="decreaseQty()"
-                            class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#0B1228] transition-colors text-lg font-bold">−</button>
-                        <span class="w-10 text-center text-[13px] font-black text-[#0B1228]">{{ quantity }}</span>
-                        <button (click)="increaseQty()"
-                            class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#0B1228] transition-colors text-lg font-bold">+</button>
-                    </div>
-
-                    <button (click)="addToCartAndGo()"
-                        class="flex-1 flex items-center justify-center gap-3 py-4 bg-[#0B1228] text-white rounded-[20px] text-[13px] font-black hover:bg-black hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-blue-900/10">
-                        Add to Cart
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                        </svg>
-                    </button>
-
-                    <button
-                        class="w-14 h-14 flex items-center justify-center rounded-[20px] bg-green-50 text-green-500 hover:text-white hover:bg-green-500 transition-all shadow-sm">
-                        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                            <path
-                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="mt-8 flex items-center gap-2">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Category:</span>
-                    <span class="text-[11px] font-black text-slate-600 uppercase">{{ selectedProduct?.badge }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>

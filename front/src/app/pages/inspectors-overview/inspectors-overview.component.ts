@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
-export interface Inspector {
+declare const lucide: { createIcons: () => void } | undefined;
+
+interface Inspector {
   id: string;
   name: string;
   title: string;
@@ -10,185 +13,150 @@ export interface Inspector {
   status: 'available' | 'busy';
   phone: string;
   email: string;
-  yearsExperience: number;
-  inspectionsCompleted: number;
-  certifications: string[];
-  lastInspectionDate: string;
-  avatar?: string;
 }
 
 @Component({
   selector: 'app-inspectors-overview',
   standalone: true,
-  imports: [FormsModule, CommonModule],
-  templateUrl: './inspectors-overview.component.html',
-  styleUrls: ['./inspectors-overview.component.css']
+  imports: [FormsModule, CommonModule, RouterModule],
+  template: `
+    <div class="client-page">
+      <section class="client-hero">
+        <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div>
+            <p class="client-hero-eyebrow">Your team</p>
+            <h1 class="client-hero-title">Inspectors</h1>
+            <p class="client-hero-sub">Certified inspectors assigned to support your fire safety compliance.</p>
+          </div>
+          <a routerLink="/service-requests" class="client-hero-btn shrink-0">
+            <i data-lucide="calendar" class="w-5 h-5"></i>
+            Schedule service
+          </a>
+        </div>
+      </section>
+
+      <section class="client-stat-grid">
+        <div class="client-stat client-stat--primary">
+          <div class="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p class="client-stat-label">Total inspectors</p>
+              <p class="client-stat-value">{{ inspectors.length }}</p>
+              <p class="client-stat-hint">On your account</p>
+            </div>
+            <span class="client-stat-icon"><i data-lucide="users" class="w-5 h-5"></i></span>
+          </div>
+        </div>
+        <div class="client-stat client-stat--featured">
+          <div class="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p class="client-stat-label">Available</p>
+              <p class="client-stat-value">{{ availableCount }}</p>
+              <p class="client-stat-hint">Ready to assign</p>
+            </div>
+            <span class="client-stat-icon"><i data-lucide="user-check" class="w-5 h-5"></i></span>
+          </div>
+        </div>
+        <div class="client-stat client-stat--warning">
+          <div class="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p class="client-stat-label">On assignment</p>
+              <p class="client-stat-value">{{ busyCount }}</p>
+              <p class="client-stat-hint">Currently booked</p>
+            </div>
+            <span class="client-stat-icon"><i data-lucide="briefcase" class="w-5 h-5"></i></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="client-card client-card--lift p-5">
+        <div class="relative max-w-md">
+          <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Search by name or location…"
+            class="client-input pl-10" />
+        </div>
+      </section>
+
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <article *ngFor="let i of filteredInspectors" class="client-card client-card--lift p-6">
+          <div class="flex items-start gap-4">
+            <img [src]="'https://ui-avatars.com/api/?name=' + i.name + '&background=0B1437&color=fff&size=96'"
+              [alt]="i.name" class="w-14 h-14 rounded-xl shrink-0" />
+            <div class="min-w-0 flex-1">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <h3 class="text-lg font-semibold text-[#0B1437]">{{ i.name }}</h3>
+                  <p class="text-base text-slate-500">{{ i.title }}</p>
+                </div>
+                <span class="client-badge shrink-0"
+                  [class.bg-emerald-50]="i.status === 'available'"
+                  [class.text-emerald-700]="i.status === 'available'"
+                  [class.bg-amber-50]="i.status === 'busy'"
+                  [class.text-amber-700]="i.status === 'busy'">
+                  {{ i.status === 'available' ? 'Available' : 'On assignment' }}
+                </span>
+              </div>
+              <p class="text-base text-slate-600 mt-3 flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                {{ i.location }}
+              </p>
+              <div class="flex flex-wrap gap-3 mt-4 text-sm text-slate-500">
+                <a [href]="'tel:' + i.phone" class="hover:text-[#0B1437]">{{ i.phone }}</a>
+                <span class="text-slate-300">·</span>
+                <a [href]="'mailto:' + i.email" class="hover:text-[#0B1437] truncate">{{ i.email }}</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section *ngIf="filteredInspectors.length === 0" class="client-card client-empty">
+        <p class="text-lg font-semibold text-[#0B1437]">No inspectors match your search</p>
+        <p class="text-base text-slate-500 mt-2">Try a different name or location.</p>
+      </section>
+
+      <section class="client-card p-6 bg-slate-50/50">
+        <div class="flex items-start gap-4">
+          <span class="w-12 h-12 rounded-xl bg-[#0B1437] flex items-center justify-center shrink-0">
+            <i data-lucide="calendar" class="w-6 h-6 text-white"></i>
+          </span>
+          <div>
+            <h2 class="text-lg font-semibold text-[#0B1437]">Need to schedule an inspection?</h2>
+            <p class="text-base text-slate-600 mt-1">Contact our team or submit a service request and we'll assign the right inspector.</p>
+            <a routerLink="/service-requests" class="client-btn-primary mt-4 inline-flex">Request service</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  `
 })
-export class InspectorsOverviewComponent {
-  selectedInspector: Inspector | null = null;
+export class InspectorsOverviewComponent implements AfterViewInit {
   searchTerm = '';
-  currentPage = 1;
-  itemsPerPage = 6;
 
   inspectors: Inspector[] = [
-    {
-      id: '1',
-      name: 'Sarah Johnson',
-      title: 'Senior Fire Safety Inspector',
-      location: 'New York, NY',
-      status: 'available',
-      phone: '+1 (555) 123-4567',
-      email: 'sarah.j@company.com',
-      yearsExperience: 8,
-      inspectionsCompleted: 1247,
-      certifications: ['ISO 9001 Lead', 'OSHA Certified', 'Safety First L2'],
-      lastInspectionDate: '2023-10-15',
-      avatar: 'https://i.pravatar.cc/150?u=sarah'
-    },
-    {
-      id: '2',
-      name: 'Michael Chen',
-      title: 'Structural Engineer',
-      location: 'Industrial District',
-      status: 'busy',
-      phone: '+1 (555) 012-3456',
-      email: 'inspector@company.com',
-      yearsExperience: 8,
-      inspectionsCompleted: 1200,
-      certifications: ['ISO 9001 Lead', 'OSHA Certified', 'Safety First L2'],
-      lastInspectionDate: '2023-10-24',
-      avatar: 'https://i.pravatar.cc/150?u=michael'
-    },
-    {
-      id: '3',
-      name: 'Emily Rodriguez',
-      title: 'Safety Compliance Officer',
-      location: 'Houston, TX',
-      status: 'available',
-      phone: '+1 (555) 345-6789',
-      email: 'emily.r@company.com',
-      yearsExperience: 5,
-      inspectionsCompleted: 656,
-      certifications: ['OSHA Certified', 'Hazard Analysis L2'],
-      lastInspectionDate: '2023-10-13',
-      avatar: 'https://i.pravatar.cc/150?u=emily'
-    },
-    {
-      id: '4',
-      name: 'David Kim',
-      title: 'Fire Extinguisher Expert',
-      location: 'Chicago, IL',
-      status: 'busy',
-      phone: '+1 (555) 456-7890',
-      email: 'david.k@company.com',
-      yearsExperience: 10,
-      inspectionsCompleted: 1523,
-      certifications: ['ISO 9001 Lead', 'NFPA Certified', 'Safety First L2'],
-      lastInspectionDate: '2023-10-12',
-      avatar: 'https://i.pravatar.cc/150?u=david'
-    },
-    {
-      id: '5',
-      name: 'Lisa Thompson',
-      title: 'Emergency Systems Inspector',
-      location: 'Phoenix, AZ',
-      status: 'available',
-      phone: '+1 (555) 567-8901',
-      email: 'lisa.t@company.com',
-      yearsExperience: 7,
-      inspectionsCompleted: 987,
-      certifications: ['Emergency Systems L2', 'OSHA Certified'],
-      lastInspectionDate: '2023-10-11',
-      avatar: 'https://i.pravatar.cc/150?u=lisa'
-    },
-    {
-      id: '6',
-      name: 'James Wilson',
-      title: 'Industrial Safety Inspector',
-      location: 'Philadelphia, PA',
-      status: 'available',
-      phone: '+1 (555) 678-9012',
-      email: 'james.w@company.com',
-      yearsExperience: 9,
-      inspectionsCompleted: 1434,
-      certifications: ['Industrial Safety L3', 'ISO 9001 Lead'],
-      lastInspectionDate: '2023-10-10',
-      avatar: 'https://i.pravatar.cc/150?u=james'
-    }
+    { id: '1', name: 'Sarah Johnson', title: 'Senior Fire Safety Inspector', location: 'Kigali', status: 'available', phone: '+250 788 000 001', email: 'sarah.j@fems.com' },
+    { id: '2', name: 'Michael Chen', title: 'Compliance Inspector', location: 'Gasabo', status: 'busy', phone: '+250 788 000 002', email: 'michael.c@fems.com' },
+    { id: '3', name: 'Emily Rodriguez', title: 'Safety Compliance Officer', location: 'Kicukiro', status: 'available', phone: '+250 788 000 003', email: 'emily.r@fems.com' },
   ];
 
   get filteredInspectors() {
-    const filtered = this.inspectors.filter(inspector =>
-      inspector.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      inspector.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      inspector.location.toLowerCase().includes(this.searchTerm.toLowerCase())
+    const q = this.searchTerm.trim().toLowerCase();
+    if (!q) return this.inspectors;
+    return this.inspectors.filter(i =>
+      i.name.toLowerCase().includes(q) ||
+      i.location.toLowerCase().includes(q) ||
+      i.title.toLowerCase().includes(q)
     );
-
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    const end = start + this.itemsPerPage;
-    return filtered.slice(start, end);
   }
 
-  get totalPages() {
-    const filtered = this.inspectors.filter(inspector =>
-      inspector.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      inspector.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      inspector.location.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
-    return Math.ceil(filtered.length / this.itemsPerPage);
-  }
-
-  get totalInspectors() {
-    return this.inspectors.length;
-  }
-
-  get availableInspectors() {
+  get availableCount() {
     return this.inspectors.filter(i => i.status === 'available').length;
   }
 
-  get busyInspectors() {
+  get busyCount() {
     return this.inspectors.filter(i => i.status === 'busy').length;
   }
 
-  selectInspector(inspector: Inspector) {
-    this.selectedInspector = inspector;
-  }
-
-  closeInspectorDetails() {
-    this.selectedInspector = null;
-  }
-
-  bookInspector() {
-    if (this.selectedInspector) {
-      console.log('Booking inspector:', this.selectedInspector.name);
-      // Here you would typically navigate to a booking form or open a modal
-    }
-  }
-
-  changePage(page: number) {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-    }
-  }
-
-  getStatusColor(status: string) {
-    return status;
-  }
-
-  getCertificationColor(certification: string) {
-    const colors: { [key: string]: string } = {
-      'ISO 9001 Lead': 'bg-blue-100 text-blue-700',
-      'OSHA Certified': 'bg-orange-100 text-orange-700',
-      'Safety First L2': 'bg-purple-100 text-purple-700',
-      'NFPA Certified': 'bg-red-100 text-red-700',
-      'Electrical Safety L1': 'bg-yellow-100 text-yellow-700',
-      'Hazard Analysis L2': 'bg-indigo-100 text-indigo-700',
-      'Extinguisher Specialist L3': 'bg-green-100 text-green-700',
-      'Emergency Systems L2': 'bg-pink-100 text-pink-700',
-      'Industrial Safety L3': 'bg-gray-100 text-gray-700',
-      'Prevention Specialist L2': 'bg-teal-100 text-teal-700',
-      'Chief Inspector L4': 'bg-violet-100 text-violet-700'
-    };
-    return colors[certification] || 'bg-gray-100 text-gray-700';
+  ngAfterViewInit() {
+    setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 50);
   }
 }

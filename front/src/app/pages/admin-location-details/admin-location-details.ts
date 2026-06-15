@@ -44,7 +44,7 @@ export class AdminLocationDetails implements OnInit, AfterViewInit {
     this.isLoading = true;
     this.extinguisherService.getExtinguishers().subscribe({
       next: (data) => {
-        this.allExtinguishers = data;
+        this.allExtinguishers = data.data ?? data ?? [];
         this.applyFilter();
         this.isLoading = false;
         this.cdr.detectChanges();

@@ -1,92 +1,77 @@
 <div class="sticky top-0 h-screen shrink-0 flex font-['Poppins']">
-  <!-- SIDEBAR: icons left of text, color #CBD5E1 -->
-  <aside class="w-64 bg-gradient-to-b from-[#0B1437] to-[#020617] p-6 overflow-y-auto">
-    <!-- LOGO: Flame icon + FEM text -->
-    <div class="flex items-center gap-3 mb-10 pl-2">
-      <div class="w-10 h-10 flex items-center justify-center">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white">
-          <path d="M12 2C12 2 15 5 15 8.5C15 11 13 12 12 13C11 12 9 11 9 8.5C9 5 12 2 12 2Z" fill="white" />
-          <path
-            d="M12 21C16.9706 21 21 16.9706 21 12C21 10.3333 20.3333 8.83333 19.5 7.5C18 10 16 11.5 14 12C16 9 15.5 5.5 14 3.5C12.5 5.5 11.5 8 12 11C10 10.5 8 9.5 6.5 7C5.83333 8.33333 5 9.83333 5 11.5C5 16.9706 9.02944 21 14 21"
-            fill="white" fill-opacity="0.8" />
-          <path
-            d="M12 17C13.6569 17 15 15.6569 15 14C15 12.5 13.5 11.5 12 11C10.5 11.5 9 12.5 9 14C9 15.6569 10.3431 17 12 17Z"
-            fill="white" />
-        </svg>
+  <aside class="w-64 bg-gradient-to-b from-[#0B1437] to-[#020617] p-6 flex flex-col overflow-y-auto">
+    <div class="flex items-center gap-3 mb-10 pl-1">
+      <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center">
+        <i data-lucide="flame" class="w-5 h-5 text-white"></i>
       </div>
-      <span class="text-3xl font-black text-white tracking-widest">FEM</span>
+      <span class="text-2xl font-bold text-white tracking-wide">FEMS</span>
     </div>
 
-    <div class="text-sm">
-      <a routerLink="/dashboard" routerLinkActive="bg-white/10" [routerLinkActiveOptions]="{ exact: true }"
-        class="flex items-center gap-3 px-4 py-2 rounded hover:bg-white/5 transition-colors">
-        <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
-        <span>Dashboard</span>
+    <nav class="space-y-1 text-base">
+      <a routerLink="/dashboard" routerLinkActive="bg-white/10 text-white" [routerLinkActiveOptions]="{ exact: true }"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">Dashboard</span>
       </a>
 
-      <p class="text-xs text-[#94A3B8] mt-8 mb-4">OPERATIONS</p>
+      <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">My account</p>
 
-      <div class="flex flex-col gap-5">
-        <a routerLink="/extinguishers" routerLinkActive="bg-white/10"
-          class="flex items-center gap-3 px-4 py-2 rounded hover:bg-white/5 transition-colors">
-          <i data-lucide="fire-extinguisher" class="w-4 h-4 shrink-0"></i>
-          <span>My extinguishers</span>
-        </a>
-        <a routerLink="/service-requests" routerLinkActive="bg-white/10"
-          class="flex items-center gap-3 px-4 py-2 rounded hover:bg-white/5 transition-colors">
-          <i data-lucide="wrench" class="w-4 h-4 shrink-0"></i>
-          <span>Service Requests</span>
-        </a>
-        <a routerLink="/inspectors" routerLinkActive="bg-white/10"
-          class="flex items-center gap-3 px-4 py-2 rounded hover:bg-white/5 transition-colors">
-          <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
-          <span>Inspectors</span>
-        </a>
-        <a routerLink="/locations" routerLinkActive="bg-white/10"
-          class="flex items-center gap-3 px-4 py-2 rounded hover:bg-white/5 transition-colors">
-          <i data-lucide="map-pin" class="w-4 h-4 shrink-0"></i>
-          <span>My Locations</span>
-        </a>
-        <a routerLink="/reports" routerLinkActive="bg-white/10"
-          class="flex items-center gap-3 px-4 py-2 rounded hover:bg-white/5 transition-colors">
-          <i data-lucide="file-text" class="w-4 h-4 shrink-0"></i>
-          <span>Reports</span>
-        </a>
-        <a routerLink="/shop" routerLinkActive="bg-white/10"
-          class="flex items-center gap-3 px-4 py-2 rounded hover:bg-white/5 transition-colors">
-          <i data-lucide="shopping-cart" class="w-4 h-4 shrink-0"></i>
-          <span>Shop</span>
-        </a>
-        <a routerLink="/my-orders" routerLinkActive="bg-white/10"
-          class="flex items-center gap-3 px-4 py-2 rounded hover:bg-white/5 transition-colors">
-          <i data-lucide="package" class="w-4 h-4 shrink-0"></i>
-          <span>My Orders</span>
-        </a>
-        <a [routerLink]="settingsLink" routerLinkActive="bg-white/10"
-          class="flex items-center gap-3 px-4 py-2 rounded hover:bg-white/5 transition-colors">
-          <i data-lucide="settings" class="w-4 h-4 shrink-0"></i>
-          <span>Settings</span>
-        </a>
-      </div>
+      <a routerLink="/extinguishers" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="flame" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">My extinguishers</span>
+      </a>
+      <a routerLink="/locations" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="map-pin" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">My locations</span>
+      </a>
+      <a routerLink="/shop" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="shopping-bag" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">Shop</span>
+      </a>
+      <a routerLink="/my-orders" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="package" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">My orders</span>
+      </a>
 
-    </div>
+      <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">Support</p>
 
-    <!-- PROFILE BLOCK -->
-    <div class="mt-auto pt-10 px-2 pb-4">
-      <div
-        class="bg-white/5 rounded-xl p-3 flex items-center gap-3 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
-        <div
-          class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10">
-          <img [src]="'https://ui-avatars.com/api/?name=' + userName + '&background=FFC107&color=fff'" alt="Profile"
-            class="w-full h-full object-cover">
-        </div>
+      <a routerLink="/service-requests" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="wrench" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">Service requests</span>
+      </a>
+      <a routerLink="/inspectors" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="user-check" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">Inspectors</span>
+      </a>
+      <a routerLink="/reports" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="file-text" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">Reports</span>
+      </a>
+      <a routerLink="/settings" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="settings" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">Settings</span>
+      </a>
+    </nav>
+
+    <div class="mt-auto pt-8">
+      <div class="bg-white/5 rounded-xl p-4 flex items-center gap-3 border border-white/5">
+        <img [src]="'https://ui-avatars.com/api/?name=' + userName + '&background=3B82F6&color=fff'" alt=""
+          class="w-10 h-10 rounded-full shrink-0">
         <div class="min-w-0 flex-1">
-          <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Welcome</p>
-          <p class="text-[13px] font-black text-white truncate">{{ userName }}</p>
+          <p class="text-sm text-slate-400">Signed in as</p>
+          <p class="text-base font-semibold text-white truncate">{{ userName }}</p>
         </div>
-        <button (click)="onLogout()" title="Logout"
-          class="p-2 rounded-lg hover:bg-white/10 text-slate-400 hover:text-red-400 transition-all">
-          <i data-lucide="log-out" class="w-4 h-4"></i>
+        <button (click)="onLogout()" title="Sign out"
+          class="p-2 rounded-lg hover:bg-white/10 text-slate-400 hover:text-red-400 transition-colors">
+          <i data-lucide="log-out" class="w-5 h-5"></i>
         </button>
       </div>
     </div>

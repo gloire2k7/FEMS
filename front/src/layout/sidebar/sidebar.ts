@@ -37,9 +37,11 @@ export class SidebarComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
-    }
+    this.refreshIcons();
+  }
+
+  private refreshIcons(): void {
+    if (typeof lucide !== 'undefined') lucide.createIcons();
   }
 
   ngOnDestroy(): void {
