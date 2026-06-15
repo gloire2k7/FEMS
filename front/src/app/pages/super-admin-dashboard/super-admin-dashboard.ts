@@ -1,18 +1,26 @@
 import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../auth.service';
 import { DashboardService } from '../../services/dashboard.service';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
+interface QuickAction {
+  title: string;
+  description: string;
+  route: string;
+  queryParams?: Record<string, string>;
+  icon: string;
+  accent: string;
+}
+
 @Component({
   selector: 'app-super-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './super-admin-dashboard.html',
-  styleUrls: ['./super-admin-dashboard.css']
+  styleUrls: ['./super-admin-dashboard.css'],
 })
 export class SuperAdminDashboard implements AfterViewInit, OnInit {
   private authService = inject(AuthService);
@@ -20,11 +28,43 @@ export class SuperAdminDashboard implements AfterViewInit, OnInit {
   private router = inject(Router);
 
   userName = 'Super Admin';
+  loading = true;
   stats: any = {};
-  statsCards: any[] = [];
-  criticalIssues: any[] = [];
-  chartData: any[] = [];
-  distribution: any[] = [];
+  stockByType: { type: string; capacity?: string; count: number }[] = [];
+  ordersByStatus: { status: string; count: number }[] = [];
+  alerts: { title: string; subtitle: string; type: string; icon: string; route: string; queryParams?: Record<string, string> }[] = [];
+
+  quickActions: QuickAction[] = [
+    {
+      title: 'Create admin',
+      description: 'Grant platform access with permissions',
+      route: '/super-admin-add-admin',
+      icon: 'user-plus',
+      accent: 'from-violet-500/10 to-violet-600/5 text-violet-600',
+    },
+    {
+      title: 'Review clients',
+      description: 'Approve pending company registrations',
+      route: '/super-admin-clients',
+      queryParams: { tab: 'pending' },
+      icon: 'building-2',
+      accent: 'from-amber-500/10 to-amber-600/5 text-amber-600',
+    },
+    {
+      title: 'Manage admins',
+      description: 'View and update administrator accounts',
+      route: '/super-admin-admins',
+      icon: 'shield',
+      accent: 'from-blue-500/10 to-blue-600/5 text-blue-600',
+    },
+    {
+      title: 'Generate reports',
+      description: 'Export inventory and compliance data',
+      route: '/super-admin-reports',
+      icon: 'file-bar-chart',
+      accent: 'from-emerald-500/10 to-emerald-600/5 text-emerald-600',
+    },
+  ];
 
   ngOnInit() {
     const user = this.authService.getUser();
@@ -33,29 +73,60 @@ export class SuperAdminDashboard implements AfterViewInit, OnInit {
     this.dashboard.getStats().subscribe({
       next: (s) => {
         this.stats = s;
-        this.statsCards = [
-          { label: 'Active Clients', value: s.clients, route: '/super-admin-clients', sub: `${s.pending_clients} pending approval` },
-          { label: 'Admins', value: s.admins, route: '/super-admin-admins', sub: 'Manage personnel' },
-          { label: 'Units In Stock', value: s.extinguishers_in_stock, route: '/admin-inventory', sub: `${s.total_extinguishers} total registered` },
-          { label: 'Pending Orders', value: s.pending_orders, route: '/admin-orders', sub: `${s.orders_this_month} this month` },
-        ];
+        this.stockByType = (s.stock_by_type || []).slice(0, 6);
+        this.ordersByStatus = s.orders_by_status || [];
+        this.alerts = [];
         if (s.pending_clients > 0) {
-          this.criticalIssues = [{ title: 'Clients awaiting approval', subtitle: `${s.pending_clients} registrations need review`, type: 'warning', actionName: 'Review', route: '/super-admin-clients' }];
+          this.alerts.push({
+            title: 'Clients awaiting approval',
+            subtitle: `${s.pending_clients} registration${s.pending_clients > 1 ? 's' : ''} need review`,
+            type: 'warning',
+            icon: 'user-plus',
+            route: '/super-admin-clients',
+            queryParams: { tab: 'pending' },
+          });
         }
-        this.chartData = (s.orders_by_status || []).map((o: any) => ({ month: o.status, value: o.count }));
-        this.distribution = (s.stock_by_type || []).map((t: any) => ({ label: t.type, percentage: t.count, color: 'bg-blue-500' }));
-      }
+        if (s.pending_orders > 0) {
+          this.alerts.push({
+            title: 'Pending orders',
+            subtitle: `${s.pending_orders} order${s.pending_orders > 1 ? 's' : ''} awaiting admin action`,
+            type: 'info',
+            icon: 'shopping-bag',
+            route: '/admin-orders',
+            queryParams: { status: 'pending' },
+          });
+        }
+        this.loading = false;
+        this.refreshIcons();
+      },
+      error: () => {
+        this.loading = false;
+      },
     });
   }
 
-  goCard(route: string) { this.router.navigate([route]); }
-
-  onLogout() {
-    this.authService.logout().subscribe({
-      next: () => { this.authService.clearUser(); this.router.navigate(['/signin']); },
-      error: () => { this.authService.clearUser(); this.router.navigate(['/signin']); }
-    });
+  greeting(): string {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
   }
 
-  ngAfterViewInit() { lucide?.createIcons?.(); }
+  maxOrderCount(): number {
+    const max = Math.max(...this.ordersByStatus.map(o => o.count), 1);
+    return max;
+  }
+
+  barHeight(count: number): number {
+    return Math.max(8, (count / this.maxOrderCount()) * 100);
+  }
+
+  ngAfterViewInit() {
+    this.refreshIcons();
+  }
+
+  private refreshIcons() {
+    setTimeout(() => lucide?.createIcons?.(), 0);
+    setTimeout(() => lucide?.createIcons?.(), 120);
+  }
 }

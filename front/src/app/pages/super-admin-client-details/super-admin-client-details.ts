@@ -1,13 +1,13 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 declare const lucide: any;
 
 @Component({
     selector: 'app-super-admin-client-details',
     standalone: true,
-    imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive],
+    imports: [CommonModule, RouterModule],
     templateUrl: './super-admin-client-details.html',
     styleUrl: './super-admin-client-details.css'
 })

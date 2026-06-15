@@ -1,391 +1,89 @@
-<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
-    <!-- SIDEBAR -->
-    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0 z-50">
-        <div class="px-4 py-4 mb-6 flex items-center gap-5">
-            <div
-                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
-                <i data-lucide="flame" class="w-3 h-3 text-white"></i>
-            </div>
-            <span class="text-xs font-black text-white tracking-[0.2em] leading-none uppercase">FEM</span>
+<div class="client-page max-w-3xl pb-8">
+
+  <a routerLink="/super-admin-admins" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#0B1437] mb-4 no-underline">
+    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to admins
+  </a>
+
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-violet-900/20"
+    style="background: linear-gradient(135deg, #1a0f2e 0%, #0B1437 100%);">
+    <div class="client-hero-inner">
+      <p class="client-hero-eyebrow">New account</p>
+      <h1 class="client-hero-title">Create admin</h1>
+      <p class="client-hero-sub">Grant platform access and set permissions for a new administrator.</p>
+    </div>
+  </section>
+
+  <div *ngIf="error" class="client-card p-4 border-red-100 bg-red-50 flex items-center gap-3 text-red-700 text-sm">
+    <i data-lucide="alert-circle" class="w-5 h-5 shrink-0"></i>
+    {{ error }}
+  </div>
+
+  <section *ngIf="successData" class="client-card p-6 border-emerald-100 bg-emerald-50/50">
+    <div class="flex items-start gap-4 mb-5">
+      <span class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+        <i data-lucide="check-circle" class="w-5 h-5"></i>
+      </span>
+      <div>
+        <h3 class="font-semibold text-[#0B1437]">Account created</h3>
+        <p class="text-sm text-slate-500 mt-0.5">Share these credentials with the new admin.</p>
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div class="bg-white rounded-xl p-4 border border-emerald-100">
+        <p class="text-xs font-semibold text-slate-400 uppercase mb-1">Email</p>
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-sm font-medium text-[#0B1437] truncate">{{ successData.email }}</span>
+          <button type="button" (click)="copyToClipboard(successData.email)" class="text-violet-600 hover:text-violet-800 p-1">
+            <i data-lucide="copy" class="w-4 h-4"></i>
+          </button>
         </div>
-
-        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
-            <div class="space-y-3">
-                <a routerLink="/super-admin-dashboard" routerLinkActive="bg-white/10 text-white"
-                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                    <i data-lucide="layout-grid" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-semibold">Dashboard</span>
-                </a>
-                <a routerLink="/super-admin-admins" routerLinkActive="bg-white/10 text-white"
-                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-white bg-white/10 transition-all group cursor-pointer">
-                    <i data-lucide="users" class="w-3 h-3 opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-semibold">Admins</span>
-                </a>
-                <a routerLink="/super-admin-clients" routerLinkActive="bg-white/10 text-white"
-                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                    <i data-lucide="briefcase" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-semibold">Clients</span>
-                </a>
-            </div>
-
-            <p class="text-[12px] font-black text-slate-500 uppercase tracking-[0.15em] px-3 mt-8 mb-6">Management</p>
-            <div class="space-y-3">
-                <a routerLink="/super-admin-reports" routerLinkActive="bg-white/10 text-white"
-                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                    <i data-lucide="file-text" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-semibold">Reports</span>
-                </a>
-                <a routerLink="/super-admin-logs" routerLinkActive="bg-white/10 text-white"
-                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                    <i data-lucide="activity" class="w-3 h-3 opacity-70 group-hover:opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-semibold">Logs</span>
-                </a>
-            </div>
-        </nav>
-
-        <!-- PROFILE BLOCK -->
-        <div class="px-3 pb-6 mt-auto">
-            <div
-                class="bg-white/5 rounded-xl p-3 flex items-center gap-5.5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
-                <div
-                    class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10">
-                    <img src="https://ui-avatars.com/api/?name=Aurore&background=FFC107&color=fff" alt="Profile"
-                        class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Welcome
-                        Back</p>
-                    <p class="text-[13px] font-black text-white truncate">Aurore</p>
-                </div>
-                <i data-lucide="chevron-right"
-                    class="w-3 h-3 text-slate-500 ml-auto opacity-40 group-hover:opacity-100"></i>
-            </div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-emerald-100">
+        <p class="text-xs font-semibold text-slate-400 uppercase mb-1">Temporary password</p>
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-sm font-mono font-bold text-violet-600">{{ successData.password }}</span>
+          <button type="button" (click)="copyToClipboard(successData.password)" class="text-violet-600 hover:text-violet-800 p-1">
+            <i data-lucide="copy" class="w-4 h-4"></i>
+          </button>
         </div>
-    </aside>
+      </div>
+    </div>
+  </section>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col bg-white overflow-y-auto scrollbar-hide">
-        <!-- TOPBAR -->
-        <header
-            class="h-12 flex items-center justify-between px-6 bg-white border-b border-slate-100 shrink-0 sticky top-0 z-40">
-            <div class="relative w-64">
-                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" placeholder="Search for something..."
-                    class="w-full pl-9 pr-4 py-2 bg-[#F6F8FC] border-none rounded-xl text-[13px] focus:outline-none placeholder:text-slate-400 font-medium tracking-tight">
-            </div>
-            <div class="flex items-center gap-5">
-                <button
-                    class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-slate-400 relative">
-                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
-                    <span
-                        class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
-                <button
-                    class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-red-500/80 relative">
-                    <i data-lucide="bell" class="w-3.5 h-3.5 text-red-500/70"></i>
-                    <span
-                        class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
-                <button class="w-8 h-8 rounded-xl bg-[#F6F8FC] flex items-center justify-center text-slate-400">
-                    <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-                </button>
-            </div>
-        </header>
+  <form class="space-y-6" (ngSubmit)="onCreateAdmin()">
+    <section class="client-card p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-[#0B1437]">Personal information</h2>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">Full name</label>
+        <input type="text" name="name" [(ngModel)]="name" required placeholder="Jane Doe" class="client-input w-full">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">Email address</label>
+        <input type="email" name="email" [(ngModel)]="email" required placeholder="admin@company.com" class="client-input w-full">
+      </div>
+    </section>
 
-        <!-- PAGE CONTENT -->
-        <div class="p-7 space-y-6 bg-[#F8FAFC] min-h-screen">
+    <section class="client-card p-6">
+      <h2 class="text-lg font-semibold text-[#0B1437] mb-1">Permissions</h2>
+      <p class="text-sm text-slate-500 mb-4">Select what this admin can manage on the platform.</p>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <label *ngFor="let p of permissionOptions"
+          class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+          <input type="checkbox" class="mt-1" [checked]="hasPermission(p.key)" (change)="togglePermission(p.key)">
+          <div>
+            <span class="text-sm font-semibold text-[#0B1437]">{{ p.label }}</span>
+            <p class="text-xs text-slate-500 mt-0.5">{{ p.description }}</p>
+          </div>
+        </label>
+      </div>
+    </section>
 
-            <!-- HERO HEADER -->
-            <div
-                class="bg-[#0B1437] rounded-2xl p-8 text-white relative overflow-hidden flex items-center justify-between">
-                <div class="relative z-10">
-                    <h1 class="text-3xl font-black mb-1">Create Administrative Account</h1>
-                    <p class="text-[13px] text-slate-400 font-medium">Use this form to grant system access to new
-                        administrators. Ensure all permissions are set correctly according to the company security
-                        policy.</p>
-                </div>
-                <div
-                    class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 flex items-center gap-5 relative z-10">
-                    <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
-                    <span class="text-[12px] font-black uppercase tracking-widest text-slate-300">System Status:
-                        Secure</span>
-                </div>
-                <!-- Abstract decorations -->
-                <div
-                    class="absolute right-0 top-0 w-64 h-64 bg-blue-600/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl">
-                </div>
-                <div class="absolute right-10 top-2 opacity-10">
-                    <i data-lucide="shield-check" class="w-24 h-24"></i>
-                </div>
-            </div>
+    <div class="flex flex-wrap gap-3">
+      <button type="submit" [disabled]="isLoading" class="client-btn-primary px-8 py-3">
+        {{ isLoading ? 'Creating…' : 'Create admin account' }}
+      </button>
+      <a routerLink="/super-admin-admins" class="client-btn-secondary px-8 py-3 no-underline inline-flex items-center">Cancel</a>
+    </div>
+  </form>
 
-            <div class="grid grid-cols-12 gap-6">
-                <!-- LEFT COLUMN: FORM SECTIONS -->
-                <div class="col-span-8 space-y-6">
-
-                    <!-- Success/Error Message -->
-                    <div *ngIf="error" class="bg-red-50 border border-red-100 text-red-600 px-6 py-4 rounded-xl text-xs font-bold mb-6 flex items-center gap-4">
-                        <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                        {{ error }}
-                    </div>
-
-                    <div *ngIf="successData" class="bg-emerald-50 border border-emerald-100 p-8 rounded-2xl mb-8 relative overflow-hidden">
-                        <div class="relative z-10">
-                            <div class="flex items-center gap-4 mb-6">
-                                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                                    <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider">Account Created Successfully</h3>
-                                    <p class="text-[12px] font-medium text-slate-500">Please copy and share these temporary credentials with the admin.</p>
-                                </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-2 gap-6">
-                                <div class="bg-white/60 p-5 rounded-xl border border-emerald-100/50">
-                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Username / Email</p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[13px] font-bold text-[#0B1437]">{{ successData.email }}</span>
-                                        <button (click)="copyToClipboard(successData.email)" class="text-blue-600 hover:text-blue-700 p-1">
-                                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="bg-white/60 p-5 rounded-xl border border-emerald-100/50">
-                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Temporary Password</p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[13px] font-mono font-bold text-blue-600 tracking-wider">{{ successData.password }}</span>
-                                        <button (click)="copyToClipboard(successData.password)" class="text-blue-600 hover:text-blue-700 p-1">
-                                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Decoration -->
-                        <div class="absolute -right-10 -bottom-10 opacity-5">
-                            <i data-lucide="shield-check" class="w-32 h-32"></i>
-                        </div>
-                    </div>
-
-                    <!-- PERSONAL INFORMATION -->
-                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
-                        <div class="flex items-center gap-5 mb-8">
-                            <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                                <i data-lucide="user" class="w-5 h-5 text-blue-600"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider">Personal
-                                    Information</h3>
-                                <p class="text-[12px] font-medium text-slate-400">Basic identification details for the
-                                    new admin.</p>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-6">
-                            <div class="space-y-3.5">
-                                <label class="text-[12px] font-black text-slate-500 uppercase tracking-widest">Full Name
-                                    <span class="text-red-500">*</span></label>
-                                <input type="text" name="name" [(ngModel)]="name" placeholder="e.g. Jane Doe"
-                                    class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-5 py-3.5 text-xs font-semibold focus:outline-none focus:border-blue-500/30 transition-all">
-                            </div>
-                            <div class="space-y-3.5">
-                                <label class="text-[12px] font-black text-slate-500 uppercase tracking-widest">Email
-                                    Address <span class="text-red-500">*</span></label>
-                                <input type="email" name="email" [(ngModel)]="email" placeholder="admin@company.com"
-                                    class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-5 py-3.5 text-xs font-semibold focus:outline-none focus:border-blue-500/30 transition-all">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- PERMISSIONS -->
-                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
-                        <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider mb-4">Permissions</h3>
-                        <div class="grid grid-cols-2 gap-3">
-                            <label *ngFor="let p of permissionOptions" class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl cursor-pointer">
-                                <input type="checkbox" [checked]="hasPermission(p.key)" (change)="togglePermission(p.key)">
-                                <div>
-                                    <span class="text-xs font-bold text-[#0B1437]">{{ p.label }}</span>
-                                    <p class="text-[10px] text-slate-400">{{ p.description }}</p>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- COMPANY & TERRITORY -->
-                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
-                        <div class="flex items-center gap-5 mb-8">
-                            <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-                                <i data-lucide="building-2" class="w-5 h-5 text-amber-600"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider">Company &
-                                    Territory</h3>
-                                <p class="text-[12px] font-medium text-slate-400">Assign the admin to specific client
-                                    entities.</p>
-                            </div>
-                        </div>
-
-                        <div class="space-y-6">
-                            <div class="space-y-3">
-                                <label class="text-[12px] font-black text-slate-500 uppercase tracking-widest">Assigned
-                                    Companies</label>
-                                <div
-                                    class="grid grid-cols-1 gap-1 border-2 border-slate-100 rounded-xl p-2 bg-slate-50 max-h-40 overflow-y-auto">
-                                    <label
-                                        class="flex items-center gap-5 p-2 hover:bg-white rounded-lg cursor-pointer transition-all">
-                                        <input type="checkbox"
-                                            class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                        <span class="text-xs font-semibold text-slate-600">Global Tech Industries</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center gap-5 p-2 hover:bg-white rounded-lg cursor-pointer transition-all">
-                                        <input type="checkbox"
-                                            class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                        <span class="text-xs font-semibold text-slate-600">SafeKeep Logistics</span>
-                                    </label>
-                                    <label
-                                        class="flex items-center gap-5 p-2 hover:bg-white rounded-lg cursor-pointer transition-all">
-                                        <input type="checkbox"
-                                            class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                        <span class="text-xs font-semibold text-slate-600">Metro Fire Safety</span>
-                                    </label>
-                                </div>
-                                <p class="text-[11px] text-slate-400 italic">Select multiple companies if this admin
-                                    manages a group.</p>
-                            </div>
-
-                            <div class="space-y-3.5">
-                                <label class="text-[12px] font-black text-slate-500 uppercase tracking-widest">Locations
-                                    / Regions (Optional)</label>
-                                <input type="text" placeholder="e.g. North America, East Africa"
-                                    class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-5 py-3.5 text-xs font-semibold focus:outline-none focus:border-blue-500/30 transition-all">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RIGHT COLUMN: SIDE OPTIONS -->
-                <div class="col-span-4 space-y-6">
-
-                    <!-- ROLE & ACCESS -->
-                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
-                        <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider mb-6">Role & Access</h3>
-                        <div class="space-y-4">
-                            <div class="space-y-3.5">
-                                <label
-                                    class="text-[12px] font-black text-slate-500 uppercase tracking-widest">Role</label>
-                                <select
-                                    class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-5 py-3.5 text-xs font-semibold focus:outline-none focus:border-blue-500/30 transition-all appearance-none cursor-pointer">
-                                    <option>Administrator</option>
-                                    <option>Manager</option>
-                                    <option>Supervisor</option>
-                                </select>
-                            </div>
-                            <div class="space-y-3.5">
-                                <label class="text-[12px] font-black text-slate-500 uppercase tracking-widest">Account
-                                    Status</label>
-                                <select
-                                    class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-5 py-3.5 text-xs font-semibold focus:outline-none focus:border-blue-500/30 transition-all appearance-none cursor-pointer">
-                                    <option>Active</option>
-                                    <option>Suspended</option>
-                                    <option>Pending Activation</option>
-                                </select>
-                            </div>
-                            <div class="space-y-3.5">
-                                <label class="text-[12px] font-black text-slate-500 uppercase tracking-widest">Permission
-                                    Level</label>
-                                <div class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3">
-                                    <div class="flex items-center justify-between mb-6">
-                                        <span class="text-[13px] font-bold text-[#0B1437]">Level 4</span>
-                                        <span class="text-[12px] font-bold text-emerald-500 uppercase">High Access</span>
-                                    </div>
-                                    <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                                        <div class="bg-blue-600 h-full w-[80%]"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SECURITY -->
-                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
-                        <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider mb-6">Security</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <span class="text-[13px] font-bold text-slate-600">Force Password Change</span>
-                                <button class="w-10 h-5 bg-blue-600 rounded-full relative transition-all">
-                                    <div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div>
-                                </button>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-[13px] font-bold text-slate-600">Enable 2FA</span>
-                                <button class="w-10 h-5 bg-slate-200 rounded-full relative transition-all">
-                                    <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full"></div>
-                                </button>
-                            </div>
-                            <div class="space-y-3.5 pt-2">
-                                <label class="text-[12px] font-black text-slate-500 uppercase tracking-widest">Session
-                                    Timeout</label>
-                                <select
-                                    class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-5 py-3.5 text-xs font-semibold focus:outline-none focus:border-blue-500/30 transition-all appearance-none cursor-pointer">
-                                    <option>30 Minutes</option>
-                                    <option>1 Hour</option>
-                                    <option>4 Hours</option>
-                                    <option>No Timeout</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- NOTIFICATIONS -->
-                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
-                        <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider mb-6">Notifications</h3>
-                        <div class="space-y-3">
-                            <div
-                                class="flex items-center gap-5 p-3 bg-slate-50 rounded-xl border border-slate-100 cursor-pointer hover:border-blue-200 transition-all">
-                                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                                    <i data-lucide="mail" class="w-4 h-4 text-blue-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-[13px] font-black text-[#0B1437]">Send Welcome Email</p>
-                                    <p class="text-[11px] text-slate-500">Includes login link and guide.</p>
-                                </div>
-                                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-blue-600">
-                            </div>
-                            <div
-                                class="flex items-center gap-5 p-3 bg-slate-50 rounded-xl border border-slate-100 cursor-pointer hover:border-blue-200 transition-all">
-                                <div class="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center">
-                                    <i data-lucide="key" class="w-4 h-4 text-slate-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-[13px] font-black text-[#0B1437]">Email Credentials</p>
-                                    <p class="text-[11px] text-slate-500">Send password separately.</p>
-                                </div>
-                                <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ACTION BUTTONS -->
-                    <div class="flex flex-col gap-5 pt-4">
-                        <button (click)="onCreateAdmin()" [disabled]="isLoading"
-                            class="w-full bg-[#0B1437] text-white rounded-xl py-3.5 flex items-center justify-center gap-5 text-[13px] font-black uppercase tracking-widest hover:bg-[#1a2b5a] transition-all shadow-lg shadow-blue-900/10 disabled:opacity-50">
-                            {{ isLoading ? 'Creating...' : 'Create Admin Account' }}
-                        </button>
-                        <div class="grid grid-cols-2 gap-5">
-                            <button routerLink="/super-admin-dashboard"
-                                class="w-full bg-white border-2 border-slate-100 text-[#0B1437] rounded-xl py-3 flex items-center justify-center gap-5 text-[13px] font-black uppercase tracking-widest hover:border-red-200 hover:text-red-500 transition-all">
-                                Cancel
-                            </button>
-                            <button
-                                class="w-full bg-slate-50 text-slate-600 rounded-xl py-3 flex items-center justify-center gap-5 text-[13px] font-black uppercase tracking-widest hover:bg-slate-100 transition-all">
-                                Reset Form
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
 </div>

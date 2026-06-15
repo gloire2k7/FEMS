@@ -1,33 +1,67 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../auth.service';
 
-declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
+declare const lucide: { createIcons: () => void } | undefined;
 
 @Component({
   selector: 'app-super-admin-admin-details',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './super-admin-admin-details.html',
-  styleUrl: './super-admin-admin-details.css'
+  styleUrl: './super-admin-admin-details.css',
 })
-export class SuperAdminAdminDetails implements AfterViewInit {
-  adminId: string | null = null;
+export class SuperAdminAdminDetails implements OnInit, AfterViewInit {
+  private route = inject(ActivatedRoute);
+  private auth = inject(AuthService);
 
-  constructor(private route: ActivatedRoute) {
-    this.adminId = this.route.snapshot.paramMap.get('id');
+  adminId: number | null = null;
+  admin: any = null;
+  loading = true;
+  error = '';
+
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.adminId = id ? +id : null;
+    if (!this.adminId) {
+      this.loading = false;
+      return;
+    }
+    this.auth.getUserById(this.adminId).subscribe({
+      next: (user) => {
+        this.admin = user;
+        this.loading = false;
+        this.refreshIcons();
+      },
+      error: () => {
+        this.error = 'Could not load administrator.';
+        this.loading = false;
+      },
+    });
+  }
+
+  toggleStatus() {
+    if (!this.admin) return;
+    const next = this.admin.status === 'active' ? 'inactive' : 'active';
+    this.auth.setAdminStatus(this.admin.id, next).subscribe({
+      next: () => {
+        this.admin.status = next;
+        this.refreshIcons();
+      },
+    });
+  }
+
+  initials(name: string) {
+    return (name || 'A').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
   }
 
   ngAfterViewInit() {
-    this.initIcons();
+    this.refreshIcons();
   }
 
-  private initIcons() {
-    if (typeof lucide !== 'undefined' && lucide.createIcons) {
-      lucide.createIcons();
-      // Double check because sometimes fonts or dynamic content delays rendering
-      setTimeout(() => lucide.createIcons(), 100);
-      setTimeout(() => lucide.createIcons(), 500);
-    }
+  private refreshIcons() {
+    setTimeout(() => lucide?.createIcons?.(), 0);
+    setTimeout(() => lucide?.createIcons?.(), 120);
   }
 }

@@ -42,19 +42,27 @@ import { SuperAdminLogs } from './pages/super-admin-logs/super-admin-logs';
 import { ClientClientsComponent } from './pages/client-clients/client-clients';
 import { MyOrdersComponent } from './pages/my-orders/my-orders';
 import { AdminShellComponent } from '../layout/admin/admin-shell.component';
+import { SuperAdminShellComponent } from '../layout/super-admin/super-admin-shell.component';
 
 export const routes: Routes = [
   { path: '', component: SignupComponent },
   { path: 'signin', component: SigninComponent },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'super-admin-dashboard', component: SuperAdminDashboard },
-  { path: 'super-admin-add-admin', component: SuperAdminAddAdmin },
-  { path: 'super-admin-admins', component: SuperAdminAdmins },
-  { path: 'super-admin-clients', component: SuperAdminClients },
-  { path: 'super-admin-client-details', component: SuperAdminClientDetails },
-  { path: 'super-admin-reports', component: SuperAdminReports },
-  { path: 'super-admin-logs', component: SuperAdminLogs },
-  { path: 'super-admin-admin-details/:id', component: SuperAdminAdminDetails },
+
+  {
+    path: '',
+    component: SuperAdminShellComponent,
+    children: [
+      { path: 'super-admin-dashboard', component: SuperAdminDashboard },
+      { path: 'super-admin-add-admin', component: SuperAdminAddAdmin },
+      { path: 'super-admin-admins', component: SuperAdminAdmins },
+      { path: 'super-admin-clients', component: SuperAdminClients },
+      { path: 'super-admin-client-details', component: SuperAdminClientDetails },
+      { path: 'super-admin-reports', component: SuperAdminReports },
+      { path: 'super-admin-logs', component: SuperAdminLogs },
+      { path: 'super-admin-admin-details/:id', component: SuperAdminAdminDetails },
+    ],
+  },
 
   {
     path: '',

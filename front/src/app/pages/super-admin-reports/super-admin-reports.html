@@ -1,250 +1,104 @@
-<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
-    <!-- SIDEBAR -->
-    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0 z-50 overflow-x-hidden">
-        <div class="px-5 py-5 mb-6 flex items-center gap-5.5">
-            <div
-                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1.5 shadow-lg shadow-blue-500/20">
-                <i data-lucide="flame" class="w-3.5 h-3.5 text-white"></i>
-            </div>
-            <span class="text-[14px] font-black text-white tracking-[0.2em] leading-none uppercase">FEM</span>
+<div class="client-page max-w-6xl pb-8">
+
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-violet-900/20"
+    style="background: linear-gradient(135deg, #1a0f2e 0%, #0B1437 100%);">
+    <div class="client-hero-inner">
+      <p class="client-hero-eyebrow">Data export</p>
+      <h1 class="client-hero-title">Reports</h1>
+      <p class="client-hero-sub">Generate and download platform reports in PDF or CSV format.</p>
+    </div>
+  </section>
+
+  <section class="client-card p-6 space-y-6">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h2 class="text-lg font-semibold text-[#0B1437]">Generate new report</h2>
+        <p class="text-sm text-slate-500 mt-0.5">Choose type, date range, and format</p>
+      </div>
+      <div *ngIf="confirmationMessage" class="flex items-center gap-2 text-emerald-700 bg-emerald-50 px-4 py-2 rounded-xl text-sm font-medium border border-emerald-100">
+        <i data-lucide="check-circle" class="w-4 h-4"></i>
+        {{ confirmationMessage }}
+        <button *ngIf="generatedFilePath" type="button" (click)="downloadFile(generatedFilePath!)" class="underline ml-1 font-semibold">Download</button>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">Report type</label>
+        <select [(ngModel)]="reportForm.type" class="client-input w-full">
+          <option value="inventory">Inventory</option>
+          <option value="expired">Expired units</option>
+          <option value="compliance">Compliance</option>
+          <option value="service">Service history</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">From date</label>
+        <input type="date" [(ngModel)]="reportForm.start_date" class="client-input w-full">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">To date</label>
+        <input type="date" [(ngModel)]="reportForm.end_date" class="client-input w-full">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">Format</label>
+        <select [(ngModel)]="reportForm.format" class="client-input w-full">
+          <option value="pdf">PDF</option>
+          <option value="csv">CSV</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="flex justify-end pt-2">
+      <button type="button" (click)="generateReport()" [disabled]="loading" class="client-btn-primary px-8 py-3">
+        {{ loading ? 'Generating…' : 'Generate report' }}
+      </button>
+    </div>
+  </section>
+
+  <section class="client-card overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h2 class="text-lg font-semibold text-[#0B1437]">Generated reports</h2>
+        <p class="text-sm text-slate-500 mt-0.5">{{ totalReports }} report{{ totalReports !== 1 ? 's' : '' }} available</p>
+      </div>
+      <button type="button" (click)="exportAllZip()" class="client-btn-secondary px-4 py-2.5 text-sm inline-flex items-center gap-2">
+        <i data-lucide="archive" class="w-4 h-4"></i> Export all (ZIP)
+      </button>
+    </div>
+
+    <div *ngIf="loading && reports.length === 0" class="p-8 text-center text-slate-400">Loading reports…</div>
+
+    <div *ngIf="!loading && reports.length === 0" class="client-empty py-12">
+      <div class="client-empty-icon mx-auto"><i data-lucide="file-x" class="w-8 h-8"></i></div>
+      <p class="text-base text-slate-500 mt-4">No reports generated yet.</p>
+    </div>
+
+    <div *ngIf="reports.length" class="divide-y divide-slate-50">
+      <div *ngFor="let r of reports" class="px-6 py-4 flex flex-wrap items-center gap-4 hover:bg-slate-50/50">
+        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-white" [ngClass]="r.iconClass">
+          <i [attr.data-lucide]="r.icon" class="w-5 h-5"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <h3 class="font-semibold text-[#0B1437] truncate">{{ r.name }}</h3>
+          <p class="text-sm text-slate-500">{{ r.type }} · {{ r.created_at | date:'medium' }}</p>
         </div>
+        <span class="text-xs font-semibold uppercase px-2.5 py-1 rounded-lg text-white" [ngClass]="r.formatClass">{{ r.format }}</span>
+        <button type="button" (click)="downloadFile(r.file_path)" class="client-btn-primary px-4 py-2 text-sm inline-flex items-center gap-2">
+          <i data-lucide="download" class="w-4 h-4"></i> Download
+        </button>
+      </div>
+    </div>
 
-        <nav class="flex-1 px-4 flex flex-col pt-3 pb-8 overflow-y-auto scrollbar-hide">
-            <div class="space-y-3">
-                <a routerLink="/super-admin-dashboard" routerLinkActive="bg-white/10 text-white"
-                    class="flex items-center gap-5 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                    <i data-lucide="layout-grid" class="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-bold">Dashboard</span>
-                </a>
-                <a routerLink="/super-admin-admins" routerLinkActive="bg-white/10 text-white"
-                    class="flex items-center gap-5 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                    <i data-lucide="users" class="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-bold">Admins</span>
-                </a>
-                <a routerLink="/super-admin-clients" routerLinkActive="bg-white/10 text-white"
-                    class="flex items-center gap-5 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                    <i data-lucide="briefcase" class="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-bold">Clients</span>
-                </a>
-            </div>
+    <div *ngIf="lastPage > 1" class="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+      <span class="text-sm text-slate-500">Page {{ currentPage }} of {{ lastPage }}</span>
+      <div class="flex gap-2">
+        <button type="button" (click)="loadReports(currentPage - 1)" [disabled]="currentPage === 1"
+          class="client-btn-secondary px-4 py-2 text-sm disabled:opacity-50">Previous</button>
+        <button type="button" (click)="loadReports(currentPage + 1)" [disabled]="currentPage === lastPage"
+          class="client-btn-secondary px-4 py-2 text-sm disabled:opacity-50">Next</button>
+      </div>
+    </div>
+  </section>
 
-            <p class="text-[12px] font-black text-slate-500 uppercase tracking-[0.15em] px-3.5 mt-8 mb-6">Management</p>
-            <div class="space-y-3">
-                <a routerLink="/super-admin-reports" routerLinkActive="bg-white/10 text-white"
-                    class="flex items-center gap-5 px-3.5 py-2.5 rounded-xl text-white bg-white/10 transition-all group cursor-pointer">
-                    <i data-lucide="file-text" class="w-3.5 h-3.5 opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-bold">Reports</span>
-                </a>
-                <a routerLink="/super-admin-logs" routerLinkActive="bg-white/10 text-white"
-                    class="flex items-center gap-5 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                    <i data-lucide="activity" class="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-bold">Logs</span>
-                </a>
-            </div>
-        </nav>
-
-        <!-- PROFILE BLOCK -->
-        <div class="px-4 pb-6 mt-auto">
-            <div
-                class="bg-white/5 rounded-2xl p-3 flex items-center gap-5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
-                <div
-                    class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10">
-                    <img src="https://ui-avatars.com/api/?name=Aurore&background=FFC107&color=fff" alt="Profile"
-                        class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                    <p class="text-[13px] font-black text-white truncate">Aurore</p>
-                </div>
-            </div>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col bg-[#F8FAFC] overflow-y-auto scrollbar-hide min-w-0">
-        <!-- TOPBAR -->
-        <header
-            class="h-16 bg-white flex items-center justify-between px-8 sticky top-0 z-40 w-full shrink-0 border-b border-slate-100">
-            <div class="flex-1"></div>
-            <div class="relative w-72 mr-6">
-                <i data-lucide="search"
-                    class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 shrink-0"></i>
-                <input type="text" placeholder="Search for something..."
-                    class="w-full pl-11 pr-4 py-2.5 bg-[#F6F8FC] border-none rounded-2xl text-[14px] font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500/10 tracking-tight">
-            </div>
-            <div class="flex items-center gap-5">
-                <button
-                    class="w-9 h-9 rounded-2xl bg-[#F6F8FC] flex items-center justify-center text-slate-400 relative hover:bg-slate-100 transition-colors">
-                    <i data-lucide="shopping-cart" class="w-4.5 h-4.5 text-slate-400"></i>
-                    <span
-                        class="absolute top-2 right-2 w-1.5 h-1.5 bg-[#EF4444] rounded-full border-2 border-white"></span>
-                </button>
-                <button
-                    class="w-9 h-9 rounded-2xl bg-[#FEE2E2]/70 flex items-center justify-center relative hover:bg-red-50 transition-colors">
-                    <i data-lucide="bell" class="w-4.5 h-4.5 text-[#EF4444]"></i>
-                    <span
-                        class="absolute top-2 right-2 w-1.5 h-1.5 bg-[#EF4444] rounded-full border-2 border-white"></span>
-                </button>
-                <button
-                    class="w-9 h-9 rounded-2xl bg-[#F6F8FC] flex items-center justify-center hover:bg-blue-50 transition-colors">
-                    <i data-lucide="settings" class="w-4.5 h-4.5 text-slate-400"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- PAGE CONTENT -->
-        <div class="p-8 space-y-8 max-w-full overflow-x-hidden">
-
-            <!-- REPORT GENERATION FORM -->
-            <div class="bg-white rounded-[28px] shadow-sm border border-slate-100 p-8 flex flex-col gap-8">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-base font-black text-[#0B1437] tracking-tight uppercase tracking-widest">Generate New Report</h3>
-                    <div *ngIf="confirmationMessage" class="flex items-center gap-3 bg-green-50 text-green-600 px-4 py-2 rounded-xl border border-green-500/10">
-                        <i data-lucide="check-circle" class="w-4 h-4"></i>
-                        <span class="text-[13px] font-black uppercase tracking-wider">{{ confirmationMessage }}</span>
-                        <button (click)="downloadFile(generatedFilePath!)" class="ml-2 underline font-bold">Download Now</button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-4 gap-6">
-                    <div class="flex flex-col gap-2">
-                        <label class="text-[12px] font-black text-slate-400 uppercase tracking-widest px-2">Report Type</label>
-                        <select [(ngModel)]="reportForm.type"
-                            class="w-full px-5 py-3.5 rounded-2xl bg-[#F6F8FC] border-none text-[14px] font-semibold outline-none focus:ring-1 focus:ring-blue-500/10 tracking-tight appearance-none cursor-pointer">
-                            <option value="inventory">Inventory Report</option>
-                            <option value="expired">Expired Extinguisher Report</option>
-                            <option value="compliance">Inspection Compliance Report</option>
-                            <option value="service">Service & Maintenance History</option>
-                        </select>
-                    </div>
-
-                    <div class="flex flex-col gap-2">
-                        <label class="text-[12px] font-black text-slate-400 uppercase tracking-widest px-2">From Date</label>
-                        <input type="date" [(ngModel)]="reportForm.start_date"
-                            class="w-full px-5 py-3.5 rounded-2xl bg-[#F6F8FC] border-none text-[14px] font-semibold outline-none focus:ring-1 focus:ring-blue-500/10 tracking-tight">
-                    </div>
-
-                    <div class="flex flex-col gap-2">
-                        <label class="text-[12px] font-black text-slate-400 uppercase tracking-widest px-2">To Date</label>
-                        <input type="date" [(ngModel)]="reportForm.end_date"
-                            class="w-full px-5 py-3.5 rounded-2xl bg-[#F6F8FC] border-none text-[14px] font-semibold outline-none focus:ring-1 focus:ring-blue-500/10 tracking-tight">
-                    </div>
-
-                    <div class="flex flex-col gap-2">
-                        <label class="text-[12px] font-black text-slate-400 uppercase tracking-widest px-2">Format</label>
-                        <select [(ngModel)]="reportForm.format"
-                            class="w-full px-5 py-3.5 rounded-2xl bg-[#F6F8FC] border-none text-[14px] font-semibold outline-none focus:ring-1 focus:ring-blue-500/10 tracking-tight appearance-none cursor-pointer">
-                            <option value="pdf">PDF Document</option>
-                            <option value="csv">CSV Spreadsheet</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-end border-t border-slate-50 pt-8">
-                    <button (click)="generateReport()" [disabled]="loading"
-                        class="px-12 py-3.5 bg-[#0B1437] text-white rounded-2xl text-[13px] font-black uppercase tracking-[0.1em] hover:bg-slate-900 transition-all shadow-xl shadow-blue-900/10 disabled:opacity-50">
-                        {{ loading ? 'Generating...' : 'Generate Report' }}
-                    </button>
-                </div>
-            </div>
-
-            <!-- REPORTS LIST -->
-            <div class="bg-white rounded-[28px] shadow-sm border border-slate-100 overflow-hidden shrink-0">
-                <!-- Header -->
-                <div class="px-8 py-5 border-b border-slate-50 flex items-center justify-between">
-                    <h3 class="text-base font-black text-[#0B1437] tracking-tight">Generated Reports</h3>
-                    <button (click)="exportAllZip()"
-                        class="flex items-center gap-5 px-5 py-2.5 bg-[#F6F8FC] rounded-2xl text-[13px] font-black text-[#0B1437] uppercase tracking-widest hover:bg-slate-100 transition-all">
-                        <i data-lucide="archive" class="w-4 h-4 opacity-70"></i>
-                        <span>Export All (ZIP)</span>
-                    </button>
-                </div>
-
-                <!-- Table -->
-                <div class="overflow-x-auto min-w-0 scrollbar-hide">
-                    <table class="w-full text-left min-w-[900px]">
-                        <thead>
-                            <tr class="bg-slate-50/40">
-                                <th
-                                    class="py-4 px-8 text-[13px] font-black text-slate-400 uppercase tracking-widest w-[35%] whitespace-nowrap">
-                                    REPORT NAME</th>
-                                <th
-                                    class="py-4 px-4 text-[13px] font-black text-slate-400 uppercase tracking-widest w-[15%] whitespace-nowrap">
-                                    TYPE</th>
-                                <th
-                                    class="py-4 px-4 text-[13px] font-black text-slate-400 uppercase tracking-widest w-[20%] whitespace-nowrap">
-                                    GENERATED ON</th>
-                                <th
-                                    class="py-4 px-4 text-[13px] font-black text-slate-400 uppercase tracking-widest w-[15%] whitespace-nowrap">
-                                    FORMAT</th>
-                                <th
-                                    class="py-4 px-8 text-[13px] font-black text-slate-400 uppercase tracking-widest w-[15%] text-right whitespace-nowrap">
-                                    ACTION</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-50">
-                            <tr *ngFor="let r of reports" class="hover:bg-slate-50/40 transition-colors">
-                                <td class="py-7 px-8 min-w-0">
-                                    <div class="flex items-start gap-5 min-w-0 overflow-hidden">
-                                        <div class="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/10"
-                                            [ngClass]="r.iconClass">
-                                            <i [attr.data-lucide]="r.icon" class="w-4.5 h-4.5 text-white"></i>
-                                        </div>
-                                        <div class="flex flex-col gap-1 overflow-hidden min-w-0">
-                                            <span
-                                                class="text-[16px] font-black text-[#0B1437] leading-tight truncate">{{
-                                                r.name }}</span>
-                                            <span class="text-[14px] font-medium text-slate-400 truncate">Automatically generated report</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="py-7 px-4">
-                                    <span
-                                        class="inline-flex items-center gap-5 px-4 py-2 rounded-lg text-[12px] font-black uppercase tracking-wider border bg-blue-50 text-blue-600 border-blue-500/10">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-current"></div>
-                                        {{ r.type }}
-                                    </span>
-                                </td>
-                                <td class="py-7 px-4 whitespace-nowrap">
-                                    <div class="flex flex-col gap-1">
-                                        <span class="text-[15px] font-black text-[#0B1437] tracking-tight">{{ r.created_at | date:'mediumDate' }}</span>
-                                        <span class="text-[13px] font-bold text-slate-400 tracking-tighter">{{ r.created_at | date:'shortTime' }}</span>
-                                    </div>
-                                </td>
-                                <td class="py-7 px-4 whitespace-nowrap">
-                                    <button (click)="downloadFile(r.file_path)"
-                                        class="flex items-center gap-5 px-4 py-2 rounded-xl text-[12px] font-black text-white uppercase tracking-wider transition-all hover:scale-105 shadow-sm"
-                                        [ngClass]="r.formatClass">
-                                        <i [attr.data-lucide]="r.formatIcon" class="w-3.5 h-3.5 text-white"></i>
-                                        {{ r.format }}
-                                    </button>
-                                </td>
-                                <td class="py-7 px-8 text-right whitespace-nowrap">
-                                    <button (click)="downloadFile(r.file_path)"
-                                        class="inline-flex items-center gap-5 px-5 py-3.5 bg-[#0B1437] text-white rounded-2xl text-[13px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 hover:bg-slate-900 transition-all">
-                                        <i data-lucide="download" class="w-4 h-4 text-white"></i>
-                                        Download
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="px-8 py-5 border-t border-slate-50 flex items-center justify-between">
-                    <span class="text-[13px] font-bold text-slate-400 uppercase tracking-widest">Showing page {{ currentPage }} of {{ lastPage }}</span>
-                    <div class="flex gap-3">
-                        <button (click)="loadReports(currentPage - 1)" [disabled]="currentPage === 1"
-                            class="px-5 py-2.5 rounded-xl border border-slate-100 text-[13px] font-black uppercase tracking-widest disabled:opacity-50 hover:bg-slate-50 transition-all">
-                            Previous
-                        </button>
-                        <button (click)="loadReports(currentPage + 1)" [disabled]="currentPage === lastPage"
-                            class="px-5 py-2.5 rounded-xl border border-slate-100 text-[13px] font-black uppercase tracking-widest disabled:opacity-50 hover:bg-slate-50 transition-all">
-                            Next
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
 </div>
