@@ -1,11 +1,4 @@
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-
-.scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
+/* scrollbar-hide handled globally in styles.css */
 
 .donut-segment {
     transform-origin: 50px 50px;

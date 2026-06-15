@@ -75,24 +75,7 @@ select {
     background-image: none;
 }
 
-/* Custom scrollbar for a cleaner look */
-::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
+/* Custom scrollbar handled globally in styles.css */
 
 .sidebar-link-active {
     background-color: rgba(255, 255, 255, 0.15) !important;

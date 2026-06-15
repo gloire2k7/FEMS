@@ -1,7 +1,10 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../auth.service';
+import { Router } from '@angular/router';
+import { inject } from '@angular/core';
 
 declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
 
@@ -12,7 +15,11 @@ declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | 
     templateUrl: './super-admin-dashboard.html',
     styleUrls: ['./super-admin-dashboard.css']
 })
-export class SuperAdminDashboard implements AfterViewInit {
+export class SuperAdminDashboard implements AfterViewInit, OnInit {
+    private authService = inject(AuthService);
+    private router = inject(Router);
+
+    userName: string = 'Super Admin';
 
     stats = [
         { label: 'Total Companies', value: '124', trend: '+12 this month', trendType: 'positive' },
@@ -62,6 +69,27 @@ export class SuperAdminDashboard implements AfterViewInit {
         { label: 'Condemned', percentage: 10, color: 'bg-amber-400' },
         { label: 'Failed / Error', percentage: 5, color: 'bg-red-500' }
     ];
+
+    ngOnInit() {
+        const user = this.authService.getUser();
+        if (user && user.first_name) {
+            this.userName = user.first_name;
+        }
+    }
+
+    onLogout() {
+        this.authService.logout().subscribe({
+            next: () => {
+                this.authService.clearUser();
+                this.router.navigate(['/signin']);
+            },
+            error: (err: any) => {
+                console.error('Logout failed', err);
+                this.authService.clearUser();
+                this.router.navigate(['/signin']);
+            }
+        });
+    }
 
     ngAfterViewInit() {
         this.initIcons();

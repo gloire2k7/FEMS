@@ -2,6 +2,8 @@ import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
 import { OrderService } from '../../services/order.service';
+import { AuthService } from '../../auth.service';
+import { Router } from '@angular/router';
 
 declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
 
@@ -14,14 +16,37 @@ declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | 
 })
 export class AdminDashboardComponent implements AfterViewInit, OnInit {
     private orderService = inject(OrderService);
+    private authService = inject(AuthService);
+    private router = inject(Router);
+
+    userName: string = 'Admin';
     inspectionsOpen = true;
     orders: any[] = [];
     pendingCount = 0;
 
     ngOnInit() {
+        const user = this.authService.getUser();
+        if (user && user.first_name) {
+            this.userName = user.first_name;
+        }
+
         this.orderService.getOrders().subscribe(orders => {
             this.orders = orders;
             this.pendingCount = orders.filter((o: any) => o.status === 'pending').length;
+        });
+    }
+
+    onLogout() {
+        this.authService.logout().subscribe({
+            next: () => {
+                this.authService.clearUser();
+                this.router.navigate(['/signin']);
+            },
+            error: (err: any) => {
+                console.error('Logout failed', err);
+                this.authService.clearUser();
+                this.router.navigate(['/signin']);
+            }
         });
     }
 

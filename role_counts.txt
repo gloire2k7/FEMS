@@ -1,0 +1,12 @@
+﻿
+Warning: PHP Startup: Unable to load dynamic library 'oci8_12c' (tried: ext\oci8_12c (The specified module could not be found), ext\php_oci8_12c.dll (The specified module could not be found)) in Unknown on line 0
+
+Warning: PHP Startup: Unable to load dynamic library 'oci8_19' (tried: ext\oci8_19 (The specified module could not be found), ext\php_oci8_19.dll (The specified module could not be found)) in Unknown on line 0
+
+Warning: PHP Startup: Unable to load dynamic library 'pdo_firebird' (tried: ext\pdo_firebird (The specified module could not be found), ext\php_pdo_firebird.dll (The specified module could not be found)) in Unknown on line 0
+
+Warning: PHP Startup: Unable to load dynamic library 'pdo_oci' (tried: ext\pdo_oci (The specified module could not be found), ext\php_pdo_oci.dll (The specified module could not be found)) in Unknown on line 0
+
+Warning: Module "intl" is already loaded in Unknown on line 0
+
+Parse error: syntax error, unexpected token "=", expecting end of file in Command line code on line 1

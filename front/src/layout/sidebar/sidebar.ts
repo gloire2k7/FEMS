@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../app/auth.service';
 
 declare const lucide: { createIcons(): void };
 
@@ -15,10 +16,16 @@ export class SidebarComponent implements AfterViewInit, OnDestroy {
   /** Role-scoped destinations for shared (client layout) sidebar. */
   clientsLink: string = '/client-clients';
   settingsLink: string = '/settings';
+  userName: string = 'User';
 
   private unsubscribeFromRouterEvents?: () => void;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
+    const user = this.authService.getUser();
+    if (user && user.first_name) {
+      this.userName = user.first_name;
+    }
+
     const sub = this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => {
@@ -57,8 +64,22 @@ export class SidebarComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    // Default: Client module.
     this.clientsLink = '/client-clients';
     this.settingsLink = '/settings';
+  }
+
+  onLogout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.authService.clearUser();
+        this.router.navigate(['/signin']);
+      },
+      error: (err: any) => {
+        console.error('Logout failed', err);
+        // Even if the server call fails, we clear local session and redirect
+        this.authService.clearUser();
+        this.router.navigate(['/signin']);
+      }
+    });
   }
 }
