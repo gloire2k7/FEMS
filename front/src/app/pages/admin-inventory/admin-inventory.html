@@ -1,234 +1,89 @@
-﻿<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
+<div class="client-page max-w-6xl pb-8">
 
-    <!-- ═══ SIDEBAR (matches admin-dashboard exactly) ═══ -->
-    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0">
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
+    <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <div>
+        <p class="client-hero-eyebrow">Warehouse</p>
+        <h1 class="client-hero-title">Inventory</h1>
+        <p class="client-hero-sub">Track stock levels, register new units, and monitor recent movements.</p>
+      </div>
+      <button *ngIf="canManage" type="button" (click)="goRegister()" class="client-hero-btn shrink-0 border-0 cursor-pointer">
+        <i data-lucide="plus" class="w-5 h-5"></i>
+        Register units
+      </button>
+    </div>
+  </section>
 
-        <!-- LOGO -->
-        <div class="px-4 py-4 mb-6 flex items-center gap-5">
-            <div
-                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
-                <i data-lucide="flame" class="icon-xs text-white"></i>
-            </div>
-            <span class="text-xs font-black text-white tracking-[0.2em] leading-none">FEM</span>
+  <section *ngIf="summary" class="client-stat-grid client-stat-grid--4">
+    <div class="client-stat client-stat--primary">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">In stock</p>
+          <p class="client-stat-value">{{ summary.totals?.in_stock || 0 }}</p>
         </div>
-
-        <!-- NAV -->
-        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
-            <div>
-                <a routerLink="/admin-dashboard" routerLinkActive="bg-white/10 text-white"
-                    [routerLinkActiveOptions]="{exact: true}"
-                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                    <i data-lucide="layout-grid" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-semibold">Dashboard</span>
-                </a>
-            </div>
-
-            <div class="mt-8 mb-6 pt-2">
-                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">Operations</p>
-                <div class="space-y-3">
-                    <a routerLink="/clients" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                        <i data-lucide="users" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                        <span class="text-[13px] tracking-wide font-semibold">Clients</span>
-                    </a>
-                    <a routerLink="/admin-locations" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                        <i data-lucide="map-pin" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                        <span class="text-[13px] tracking-wide font-semibold">Locations</span>
-                    </a>
-                    <a routerLink="/admin-location-details"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
-                        <div class="flex items-center gap-5.5">
-                            <i data-lucide="flame" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[13px] tracking-wide font-semibold">Fire Extinguishers</span>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
-                    </a>
-                    <div class="space-y-3">
-                        <a (click)="toggleInspections()"
-                            class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-white hover:bg-white/20 transition-all justify-between group cursor-pointer"
-                            [class.bg-white/15]="inspectionsOpen">
-                            <div class="flex items-center gap-5.5">
-                                <i data-lucide="clipboard-check"
-                                    class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                                <span class="text-[13px] tracking-wide font-semibold">Inspections</span>
-                            </div>
-                            <i [attr.data-lucide]="inspectionsOpen ? 'chevron-up' : 'chevron-down'"
-                                class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
-                        </a>
-
-                        <div *ngIf="inspectionsOpen" class="pl-9 space-y-3 mt-1">
-                            <a routerLink="/admin-assigned-inspections" routerLinkActive="text-white !font-black"
-                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
-                                Assigned
-                            </a>
-                            <a routerLink="/admin-inspection-label/LE-2023-894"
-                                routerLinkActive="text-white !font-black"
-                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
-                                Inspection Label
-                            </a>
-                            <a routerLink="/admin-inspectors" routerLinkActive="text-white !font-black"
-                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
-                                Inspectors
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-8 mb-6 pt-2">
-                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">Management</p>
-                <div class="space-y-3">
-                    <a routerLink="/admin-compliance"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
-                        <div class="flex items-center gap-5.5">
-                            <i data-lucide="shield-check"
-                                class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[13px] tracking-wide font-semibold">Compliance</span>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
-                    </a>
-                    <a
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
-                        <div class="flex items-center gap-5.5">
-                            <i data-lucide="repeat" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[13px] tracking-wide font-semibold">Refills</span>
-                        </div>
-                        <i data-lucide="chevron-down" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
-                    </a>
-                    <a routerLink="/admin-settings"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-100 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
-                        <div class="flex items-center gap-5.5">
-                            <i data-lucide="settings" class="icon-xs opacity-80 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[13px] tracking-wide font-semibold">Settings</span>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-50 group-hover:opacity-100"></i>
-                    </a>
-                </div>
-            </div>
-        </nav>
-
-        <!-- PROFILE BLOCK -->
-        <div class="px-3 pb-6 mt-auto">
-            <div
-                class="bg-white/5 rounded-xl p-3 flex items-center gap-5.5 border border-white/5 transition-all hover:bg-white/10 cursor-pointer group">
-                <div
-                    class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10 shadow-sm transition-transform group-hover:scale-105">
-                    <img src="https://ui-avatars.com/api/?name=Usanase&background=FFC107&color=fff" alt="Profile"
-                        class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                    <p class="text-[11px] font-black text-slate-300 uppercase tracking-widest">ADMIN</p>
-                    <p class="text-[13px] font-black text-white truncate">Usanase</p>
-                </div>
-                <i data-lucide="log-out"
-                    class="icon-xs text-slate-400 ml-auto opacity-40 group-hover:opacity-100 group-hover:text-red-400 transition-all"></i>
-            </div>
+        <span class="client-stat-icon"><i data-lucide="package" class="w-5 h-5"></i></span>
+      </div>
+    </div>
+    <div class="client-stat client-stat--info">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Allocated</p>
+          <p class="client-stat-value">{{ summary.totals?.allocated || 0 }}</p>
         </div>
-    </aside>
-
-    <!-- ═══ MAIN CONTENT ═══ -->
-    <main class="flex-1 flex flex-col bg-[#F8FAFC] overflow-y-auto">
-
-        <!-- TOPBAR (matches admin-dashboard exactly) -->
-        <header
-            class="h-12 bg-white flex items-center justify-between px-6 sticky top-0 z-10 w-full border-b border-slate-100 shadow-sm shadow-slate-200/50">
-            <div class="relative w-64">
-                <i data-lucide="search"
-                    class="icon-xs absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/50 shrink-0"></i>
-                <input type="text" placeholder="Search for something..."
-                    class="w-full pl-9 pr-4 py-2 bg-slate-50 border-none rounded-xl text-[13px] focus:outline-none focus:ring-1 focus:ring-blue-500/10 transition-all placeholder:text-slate-400 font-medium">
-            </div>
-            <div class="flex items-center gap-5">
-                <div class="relative">
-                    <button
-                        class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 relative hover:bg-slate-50 hover:text-slate-600 transition-all shadow-sm">
-                        <i data-lucide="shopping-cart" class="icon-xs shrink-0"></i>
-                        <span
-                            class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
-                    </button>
-                </div>
-                <div class="relative">
-                    <button
-                        class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-red-500/80 relative hover:bg-red-50 hover:text-red-600 transition-all shadow-sm">
-                        <i data-lucide="bell" class="icon-xs shrink-0"></i>
-                        <span
-                            class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
-                    </button>
-                </div>
-                <button routerLink="/admin-settings"
-                    class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-blue-500/80 hover:bg-blue-50 hover:text-blue-600 transition-all shadow-sm">
-                    <i data-lucide="settings" class="icon-xs shrink-0"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- PAGE CONTENT -->
-        <div class="p-8 space-y-6 bg-[#F8FAFC]">
-
-            <!-- Stock summary cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" *ngIf="summary">
-                <div class="bg-[#0B1437] rounded-2xl p-6 text-white">
-                    <p class="text-xs font-bold uppercase text-slate-400 mb-1">In Stock</p>
-                    <p class="text-3xl font-black">{{ summary.totals?.in_stock || 0 }}</p>
-                </div>
-                <div class="bg-white rounded-2xl p-6 border border-slate-100">
-                    <p class="text-xs font-bold uppercase text-slate-400 mb-1">Allocated</p>
-                    <p class="text-3xl font-black text-[#0B1437]">{{ summary.totals?.allocated || 0 }}</p>
-                </div>
-                <div class="bg-white rounded-2xl p-6 border border-slate-100">
-                    <p class="text-xs font-bold uppercase text-slate-400 mb-1">Total Units</p>
-                    <p class="text-3xl font-black text-[#0B1437]">{{ summary.totals?.total_units || 0 }}</p>
-                </div>
-                <button *ngIf="canManage" (click)="goRegister()"
-                    class="bg-emerald-600 rounded-2xl p-6 text-white text-left hover:bg-emerald-700 transition-colors">
-                    <p class="text-xs font-bold uppercase opacity-80 mb-1">Quick Action</p>
-                    <p class="text-lg font-black">+ Register Units</p>
-                </button>
-            </div>
-
-            <!-- By type breakdown -->
-            <div class="bg-white rounded-2xl border border-slate-100 p-6" *ngIf="summary?.by_type?.length">
-                <h3 class="text-sm font-black text-[#0B1437] mb-4">Stock by Type</h3>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    <div *ngFor="let row of summary.by_type"
-                        class="p-4 bg-slate-50 rounded-xl flex justify-between items-center">
-                        <span class="font-bold text-sm">{{ row.type }} · {{ row.capacity }}</span>
-                        <span class="text-lg font-black text-[#0B1437]">{{ row.count }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent stock actions -->
-            <div class="bg-white rounded-2xl border border-slate-100 p-6" *ngIf="recent.length">
-                <h3 class="text-sm font-black text-[#0B1437] mb-4">Recent Stock Actions</h3>
-                <div class="space-y-2">
-                    <div *ngFor="let m of recent" class="flex justify-between text-sm py-2 border-b border-slate-50">
-                        <span><strong>{{ m.action }}</strong> · {{ m.serial_number || '—' }} by {{ m.performer_name }}</span>
-                        <span class="text-slate-400 text-xs">{{ m.created_at }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Units table -->
-            <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-50 flex justify-between items-center">
-                    <h3 class="text-sm font-black text-[#0B1437]">Units in Stock</h3>
-                    <span class="text-xs text-slate-400">{{ total }} units</span>
-                </div>
-                <div *ngIf="loading" class="p-8 text-center text-slate-400">Loading…</div>
-                <div class="divide-y divide-slate-50" *ngIf="!loading">
-                    <div *ngFor="let u of units" class="flex items-center px-6 py-4 gap-4 hover:bg-slate-50/50">
-                        <img *ngIf="u.qr_code_path" [src]="qrUrl(u.qr_code_path)" alt="QR" class="w-10 h-10 rounded border" />
-                        <div class="flex-1 min-w-0">
-                            <p class="font-black text-sm text-[#0B1437]">{{ u.serial_number }}</p>
-                            <p class="text-xs text-slate-500">{{ u.type }} · {{ u.capacity }} · {{ u.price | currency }}</p>
-                        </div>
-                        <span class="text-xs font-bold px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">{{ u.status }}</span>
-                    </div>
-                </div>
-                <app-pagination [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="load($event)" />
-            </div>
+        <span class="client-stat-icon"><i data-lucide="truck" class="w-5 h-5"></i></span>
+      </div>
+    </div>
+    <div class="client-stat client-stat--success">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Total units</p>
+          <p class="client-stat-value">{{ summary.totals?.total_units || 0 }}</p>
         </div>
-    </main>
+        <span class="client-stat-icon"><i data-lucide="layers" class="w-5 h-5"></i></span>
+      </div>
+    </div>
+  </section>
+
+  <section *ngIf="summary?.by_type?.length" class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+    <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Stock by type</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div *ngFor="let row of summary.by_type"
+        class="flex items-center justify-between px-4 py-3 bg-slate-50 rounded-xl">
+        <span class="font-medium text-slate-700">{{ row.type }} · {{ row.capacity }}</span>
+        <span class="text-lg font-bold text-[#0B1437]">{{ row.count }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section *ngIf="recent.length" class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+    <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Recent stock actions</h2>
+    <div class="space-y-2 divide-y divide-slate-50">
+      <div *ngFor="let m of recent" class="flex flex-wrap justify-between gap-2 py-3 text-sm">
+        <span><strong>{{ m.action }}</strong> · {{ m.serial_number || '—' }} by {{ m.performer_name }}</span>
+        <span class="text-slate-400">{{ m.created_at }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+      <div>
+        <h2 class="text-lg font-semibold text-[#0B1437]">Units in stock</h2>
+        <p class="text-sm text-slate-500">{{ total }} units available</p>
+      </div>
+    </div>
+    <div *ngIf="loading" class="p-12 text-center text-slate-400">Loading…</div>
+    <div *ngIf="!loading" class="divide-y divide-slate-50">
+      <div *ngFor="let u of units" class="flex items-center px-6 py-4 gap-4 hover:bg-slate-50/50">
+        <img *ngIf="u.qr_code_path" [src]="qrUrl(u.qr_code_path)" alt="QR" class="w-10 h-10 rounded border" />
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-[#0B1437]">{{ u.serial_number }}</p>
+          <p class="text-sm text-slate-500">{{ u.type }} · {{ u.capacity }} · {{ u.price | currency }}</p>
+        </div>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700">{{ u.status }}</span>
+      </div>
+    </div>
+    <app-pagination [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="load($event)" />
+  </section>
+
 </div>

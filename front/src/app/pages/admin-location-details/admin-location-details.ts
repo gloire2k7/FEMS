@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterModule, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ExtinguisherService } from '../../services/extinguisher.service';
 
@@ -9,7 +9,7 @@ declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | 
 @Component({
   selector: 'app-admin-location-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive, FormsModule],
+  imports: [CommonModule, RouterModule, RouterLink, FormsModule],
   templateUrl: './admin-location-details.html',
   styleUrl: './admin-location-details.css',
 })
@@ -17,8 +17,9 @@ export class AdminLocationDetails implements OnInit, AfterViewInit {
   protected Math = Math;
   private extinguisherService = inject(ExtinguisherService);
   private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
 
-  inspectionsOpen = true;
+  siteName = 'Main Hall';
   isLoading = false;
   searchExtinguisherQuery = '';
   stockFilter: 'all' | 'inStock' | 'withClient' = 'all';
@@ -31,12 +32,24 @@ export class AdminLocationDetails implements OnInit, AfterViewInit {
   pageSize = 10;
   totalPages = 1;
 
-  toggleInspections() {
-    this.inspectionsOpen = !this.inspectionsOpen;
-    this.initIcons();
+  get totalCount() {
+    return this.allExtinguishers.length;
+  }
+
+  get inStockCount() {
+    return this.allExtinguishers.filter((e) => !e.client_id).length;
   }
 
   ngOnInit() {
+    this.route.queryParams.subscribe((params) => {
+      const siteId = params['site'];
+      const names: Record<string, string> = {
+        '1': 'Main Hall', '2': 'Warehouse B', '3': 'Central Kitchen',
+        '4': 'Office Block', '5': 'Underground Parking', '6': 'Server Room',
+      };
+      if (siteId && names[siteId]) this.siteName = names[siteId];
+      else if (params['name']) this.siteName = params['name'];
+    });
     this.loadExtinguishers();
   }
 

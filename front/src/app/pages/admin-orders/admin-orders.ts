@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { OrderService } from '../../services/order.service';
 
@@ -9,14 +9,14 @@ declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | 
 @Component({
   selector: 'app-admin-orders',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './admin-orders.html',
   styleUrl: './admin-orders.css',
 })
 export class AdminOrders implements AfterViewInit, OnInit {
   private orderService = inject(OrderService);
+  private route = inject(ActivatedRoute);
 
-  inspectionsOpen = false;
   searchQuery = '';
   filterStatus = 'all';
   isLoading = false;
@@ -48,7 +48,13 @@ export class AdminOrders implements AfterViewInit, OnInit {
   ];
 
   ngOnInit() {
-    this.loadOrders();
+    this.route.queryParams.subscribe((params) => {
+      const status = params['status'];
+      if (status && ['pending', 'granted', 'cancelled', 'all'].includes(status)) {
+        this.filterStatus = status;
+      }
+      this.loadOrders();
+    });
   }
 
   loadOrders() {
@@ -63,11 +69,6 @@ export class AdminOrders implements AfterViewInit, OnInit {
         this.isLoading = false;
       }
     });
-  }
-
-  toggleInspections() {
-    this.inspectionsOpen = !this.inspectionsOpen;
-    this.initIcons();
   }
 
   get filteredOrders() {

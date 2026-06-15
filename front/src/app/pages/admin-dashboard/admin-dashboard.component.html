@@ -1,484 +1,172 @@
-<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
-    <!-- SIDEBAR: Specific for Admin Dashboard -->
-    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0 overflow-x-hidden">
-        <!-- LOGO -->
-        <div class="px-4 py-4 mb-6 flex items-center gap-5">
-            <div
-                class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
-                <i data-lucide="flame" class="icon-xs text-white"></i>
-            </div>
-            <span class="text-xs font-black text-white tracking-[0.2em] leading-none">FEM</span>
+<div class="client-page max-w-6xl pb-8">
+
+  <!-- Hero -->
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
+    <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <div>
+        <p class="client-hero-eyebrow">{{ greeting() }}</p>
+        <h1 class="client-hero-title">{{ userName }}</h1>
+        <p class="client-hero-sub">Operations overview — orders, clients, and warehouse stock at a glance.</p>
+      </div>
+      <a routerLink="/admin-orders" [queryParams]="{ status: 'pending' }" class="client-hero-btn shrink-0">
+        <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+        Review pending
+      </a>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section *ngIf="loading" class="client-stat-grid client-stat-grid--4">
+    <div class="h-28 skeleton" *ngFor="let _ of [1,2,3,4]"></div>
+  </section>
+
+  <section *ngIf="!loading" class="client-stat-grid client-stat-grid--4">
+    <a routerLink="/admin-orders" [queryParams]="{ status: 'pending' }"
+      class="client-stat client-stat--featured client-stat-link">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Pending orders</p>
+          <p class="client-stat-value">{{ stats.pendingOrders }}</p>
+          <p class="client-stat-hint">Needs your review →</p>
         </div>
+        <span class="client-stat-icon"><i data-lucide="clock" class="w-5 h-5"></i></span>
+      </div>
+    </a>
 
-        <!-- NAV -->
-        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
-            <div>
-                <a routerLink="/admin-dashboard" routerLinkActive="bg-white/10 text-white"
-                    [routerLinkActiveOptions]="{exact: true}"
-                    class="flex items-center gap-5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                    <i data-lucide="layout-grid" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                    <span class="text-[15px] tracking-wide font-semibold">Dashboard</span>
-                </a>
-            </div>
-
-            <div class="mt-8 mb-6 pt-2">
-                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">Operations</p>
-                <div class="space-y-3">
-                    <a routerLink="/clients" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center gap-5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                        <i data-lucide="users" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                        <span class="text-[15px] tracking-wide font-semibold">Clients</span>
-                    </a>
-                    <a routerLink="/admin-locations" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center gap-5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                        <i data-lucide="map-pin" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                        <span class="text-[15px] tracking-wide font-semibold">Locations</span>
-                    </a>
-                    <a routerLink="/admin-location-details"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
-                        <div class="flex items-center gap-5.5">
-                            <i data-lucide="flame" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[13px] tracking-wide font-semibold">Fire Extinguishers</span>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
-                    </a>
-                    <div class="space-y-3">
-                        <a (click)="toggleInspections()"
-                            class="flex items-center gap-5 px-4 py-3 rounded-lg text-white hover:bg-white/20 transition-all justify-between group cursor-pointer"
-                            [class.bg-white/15]="inspectionsOpen">
-                            <div class="flex items-center gap-5">
-                                <i data-lucide="clipboard-check"
-                                    class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                                <span class="text-[15px] tracking-wide font-semibold">Inspections</span>
-                            </div>
-                            <i [attr.data-lucide]="inspectionsOpen ? 'chevron-up' : 'chevron-down'"
-                                class="w-3 h-3 opacity-60 group-hover:opacity-100"></i>
-                        </a>
-
-                        <div *ngIf="inspectionsOpen" class="pl-9 space-y-3 mt-1">
-                            <a routerLink="/admin-assigned-inspections" routerLinkActive="text-white !font-black"
-                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
-                                Assigned
-                            </a>
-                            <a routerLink="/admin-inspection-label/LE-2023-894"
-                                routerLinkActive="text-white !font-black"
-                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
-                                Inspection Label
-                            </a>
-                            <a routerLink="/admin-inspectors" routerLinkActive="text-white !font-black"
-                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
-                                Inspectors
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-8 mb-6 pt-2">
-                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">
-                    Management</p>
-                <div class="space-y-3">
-                    <a routerLink="/admin-orders" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center justify-between px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                        <div class="flex items-center gap-5">
-                            <i data-lucide="shopping-bag" class="w-3 h-3 opacity-90 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[15px] tracking-wide font-semibold">Orders</span>
-                        </div>
-                        <span *ngIf="pendingCount > 0"
-                            class="w-5 h-5 bg-orange-500 text-white rounded-full text-[13px] flex items-center justify-center font-black">
-                            {{ pendingCount }}
-                        </span>
-                    </a>
-                    <a routerLink="/admin-compliance"
-                        class="flex items-center gap-5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
-                        <div class="flex items-center gap-5">
-                            <i data-lucide="shield-check"
-                                class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[15px] tracking-wide font-semibold">Compliance</span>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-3 h-3 opacity-60 group-hover:opacity-100"></i>
-                    </a>
-                    <a routerLink="/admin-refills" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center justify-between px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                        <div class="flex items-center gap-5">
-                            <i data-lucide="repeat" class="w-3 h-3 opacity-90 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[15px] tracking-wide font-semibold">Refills</span>
-                        </div>
-                        <span
-                            class="w-5 h-5 bg-amber-500 text-white rounded-full text-[13px] flex items-center justify-center font-black">5</span>
-                    </a>
-                    <a routerLink="/admin-settings" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center justify-between px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group">
-                        <div class="flex items-center gap-5">
-                            <i data-lucide="settings" class="icon-xs opacity-90 group-hover:opacity-100"></i>
-                            <span class="text-[15px] tracking-wide font-semibold">Settings</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </nav>
-
-        <!-- PROFILE BLOCK -->
-        <div class="px-3 pb-6 mt-auto">
-            <div
-                class="bg-white/5 rounded-xl p-3 flex items-center gap-4 border border-white/5 transition-all hover:bg-white/10 cursor-pointer group">
-                <div
-                    class="w-10 h-10 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10 shadow-sm transition-transform group-hover:scale-105">
-                    <img [src]="'https://ui-avatars.com/api/?name=' + userName + '&background=FFC107&color=fff'" alt="Profile"
-                        class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0 flex-1">
-                    <p class="text-[13px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">ADMIN
-                    </p>
-                    <p class="text-[15px] font-black text-white truncate">{{userName}}</p>
-                </div>
-                <button (click)="onLogout()" title="Logout"
-                    class="p-2 rounded-lg hover:bg-white/10 text-slate-400 hover:text-red-400 transition-all ml-auto">
-                    <i data-lucide="log-out" class="w-4 h-4"></i>
-                </button>
-            </div>
+    <a routerLink="/clients" [queryParams]="{ tab: 'pending' }"
+      class="client-stat client-stat--warning client-stat-link">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Pending clients</p>
+          <p class="client-stat-value">{{ stats.pendingClients }}</p>
+          <p class="client-stat-hint">Awaiting approval →</p>
         </div>
-    </aside>
+        <span class="client-stat-icon"><i data-lucide="user-plus" class="w-5 h-5"></i></span>
+      </div>
+    </a>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col bg-white overflow-y-auto">
-        <!-- TOPBAR IN-PAGE -->
-        <header
-            class="h-12 bg-white flex items-center justify-between px-6 sticky top-0 z-10 w-full border-b border-slate-100 shadow-sm shadow-slate-200/50">
-            <div class="relative w-64">
-                <i data-lucide="search"
-                    class="icon-xs absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/50 shrink-0"></i>
-                <input type="text" placeholder="Search for something..."
-                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border-none rounded-xl text-[15px] focus:outline-none focus:ring-1 focus:ring-blue-500/10 transition-all placeholder:text-slate-400">
-            </div>
-            <div class="flex items-center gap-5">
-                <div class="relative">
-                    <button
-                        class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 relative hover:bg-slate-50 hover:text-slate-600 transition-all shadow-sm">
-                        <i data-lucide="shopping-cart" class="icon-xs shrink-0"></i>
-                        <span
-                            class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
-                    </button>
-                </div>
-                <div class="relative">
-                    <button
-                        class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-red-500/80 relative hover:bg-red-50 hover:text-red-600 transition-all shadow-sm">
-                        <i data-lucide="bell" class="icon-xs shrink-0"></i>
-                        <span
-                            class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
-                    </button>
-                </div>
-                <button routerLink="/admin-settings"
-                    class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-blue-500/80 hover:bg-blue-50 hover:text-blue-600 transition-all shadow-sm">
-                    <i data-lucide="settings" class="icon-xs shrink-0"></i>
-                </button>
-            </div>
-        </header>
-
-        <div class="p-7 space-y-5 bg-[#F8FAFC]">
-            <!-- TOP STATS -->
-            <div
-                class="bg-[#0B1437] rounded-xl flex overflow-hidden border border-white/5 shadow-2xl shadow-blue-900/20 dashboard-card stat-card-glow transition-all">
-                <!-- Earnings -->
-                <div
-                    class="flex-1 p-8 border-r border-white/10 relative group cursor-pointer hover:bg-white/[0.02] transition-all">
-                    <div class="flex justify-between items-start mb-6">
-                        <h3
-                            class="text-[14px] font-black text-slate-300 uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
-                            Total Earnings</h3>
-                        <span class="text-[14px] font-black text-blue-400">Detail</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h2 class="text-3xl font-black text-white mb-6.5">5,000,000 <span
-                                    class="text-[14px] text-slate-500 font-bold uppercase ml-1">rwf</span></h2>
-                            <div
-                                class="flex items-center gap-1.5 px-2 py-0.5 bg-white rounded-full text-[13px] font-black text-slate-900 w-max shadow-sm">
-                                <i data-lucide="arrow-up" class="icon-xs text-green-500 shrink-0"></i>
-                                <span>+1.23%</span>
-                            </div>
-                        </div>
-                        <div
-                            class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shadow-inner group">
-                            <i data-lucide="dollar-sign" class="icon-sm text-white shrink-0"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Orders -->
-                <div
-                    class="flex-1 p-8 border-r border-white/10 relative group cursor-pointer hover:bg-white/[0.02] transition-all">
-                    <div class="flex justify-between items-start mb-6">
-                        <h3
-                            class="text-[14px] font-black text-slate-300 uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
-                            Total Orders</h3>
-                        <span class="text-[14px] font-black text-blue-400">Detail</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h2 class="text-3xl font-black text-white mb-6.5">40</h2>
-                            <div
-                                class="flex items-center gap-1.5 px-2 py-0.5 bg-white rounded-full text-[13px] font-black text-slate-900 w-max shadow-sm">
-                                <i data-lucide="arrow-up" class="icon-xs text-green-500 shrink-0"></i>
-                                <span>+1.23%</span>
-                            </div>
-                        </div>
-                        <div
-                            class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shadow-inner group">
-                            <i data-lucide="shopping-cart" class="icon-sm text-white shrink-0"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Customers -->
-                <div
-                    class="flex-1 p-8 border-r border-white/10 relative group cursor-pointer hover:bg-white/[0.02] transition-all">
-                    <div class="flex justify-between items-start mb-6">
-                        <h3
-                            class="text-[14px] font-black text-slate-300 uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
-                            Total Customers</h3>
-                        <span class="text-[14px] font-black text-blue-400">Detail</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h2 class="text-3xl font-black text-white mb-6.5">1,000</h2>
-                            <div
-                                class="flex items-center gap-1.5 px-2 py-0.5 bg-white rounded-full text-[13px] font-black text-slate-900 w-max shadow-sm">
-                                <i data-lucide="arrow-up" class="icon-xs text-green-500 shrink-0"></i>
-                                <span>+1.23%</span>
-                            </div>
-                        </div>
-                        <div
-                            class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shadow-inner group">
-                            <i data-lucide="users" class="icon-sm text-white shrink-0"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Compliance -->
-                <div routerLink="/admin-compliance"
-                    class="flex-1 p-8 relative group cursor-pointer hover:bg-red-500/10 transition-all bg-red-500/5">
-                    <div class="flex justify-between items-start mb-6">
-                        <h3
-                            class="text-[14px] font-black text-red-400 uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
-                            Safety Alerts</h3>
-                        <span class="text-[14px] font-black text-red-500">Action</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h2 class="text-3xl font-black text-white mb-6.5">18</h2>
-                            <div
-                                class="flex items-center gap-1.5 px-2 py-0.5 bg-red-500 rounded-full text-[13px] font-black text-white w-max shadow-sm">
-                                <i data-lucide="alert-octagon" class="icon-xs shrink-0"></i>
-                                <span>Urgent</span>
-                            </div>
-                        </div>
-                        <div
-                            class="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center shadow-lg shadow-red-500/20">
-                            <i data-lucide="shield-alert" class="icon-sm text-white shrink-0"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MIDDLE SECTION (CHART & MAP) -->
-            <div class="grid grid-cols-12 gap-6">
-                <!-- Order Status Graph -->
-                <div
-                    class="col-span-8 bg-white rounded-xl p-8 border border-slate-100 shadow-sm relative overflow-hidden">
-                    <div class="flex justify-between items-center mb-8">
-                        <h3 class="text-3xl font-bold text-slate-800">Order Status</h3>
-                        <div class="flex items-center gap-10">
-                            <div class="flex items-center gap-5">
-                                <div class="w-3.5 h-3.5 rounded-full bg-red-500 shadow-sm shadow-red-500/20"></div>
-                                <span class="text-sm font-bold text-slate-400">Order</span>
-                            </div>
-                            <div class="flex items-center gap-5">
-                                <div class="w-3.5 h-3.5 rounded-full bg-blue-500 shadow-sm shadow-blue-500/20"></div>
-                                <span class="text-sm font-bold text-slate-400">Store</span>
-                            </div>
-                            <div class="flex gap-8 ml-6">
-                                <button class="text-sm font-bold text-blue-600">Daily</button>
-                                <button class="text-sm font-bold text-slate-300">Weekly</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- MOCK CHART -->
-                    <div class="h-48 relative">
-                        <div class="absolute inset-0 flex flex-col justify-between">
-                            <div class="w-full border-t border-slate-50 flex items-center gap-5">
-                                <span class="text-[14px] font-bold text-slate-300 w-8">1000</span>
-                                <div class="flex-1 border-t border-slate-50"></div>
-                            </div>
-                            <div class="w-full border-t border-slate-50 flex items-center gap-5">
-                                <span class="text-[14px] font-bold text-slate-300 w-8">600</span>
-                                <div class="flex-1 border-t border-slate-50"></div>
-                            </div>
-                            <div class="w-full border-t border-slate-50 flex items-center gap-5">
-                                <span class="text-[14px] font-bold text-slate-300 w-8">300</span>
-                                <div class="flex-1 border-t border-slate-50"></div>
-                            </div>
-                            <div class="w-full border-t border-slate-50 flex items-center gap-5">
-                                <span class="text-[14px] font-bold text-slate-300 w-8">100</span>
-                                <div class="flex-1 border-t border-slate-50"></div>
-                            </div>
-                        </div>
-                        <!-- SVG WAVE CHART MOCK -->
-                        <svg class="absolute inset-0 h-full w-full" preserveAspectRatio="none">
-                            <defs>
-                                <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#4F46E5" />
-                                    <stop offset="100%" stop-color="transparent" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M0,150 Q100,50 200,80 T400,120 T600,60 T800,100" fill="none" stroke="#4F46E5"
-                                stroke-width="2" stroke-linecap="round" />
-                            <path d="M0,180 Q150,140 300,160 T600,100 T800,140" fill="none" stroke="#EF4444"
-                                stroke-width="2" stroke-linecap="round" />
-                            <!-- Fill Areas -->
-                            <path d="M0,150 Q100,50 200,80 T400,120 T600,60 T800,100 V256 H0 Z" fill="url(#blueGrad)"
-                                fill-opacity="0.03" />
-                        </svg>
-                    </div>
-                    <div
-                        class="flex justify-between px-12 mt-5 text-[15px] font-bold text-slate-400 uppercase tracking-widest">
-                        <span>Nov 01</span>
-                        <span>Nov 02</span>
-                        <span>Nov 03</span>
-                        <span>Nov 04</span>
-                        <span>Nov 06</span>
-                    </div>
-                </div>
-
-                <!-- Sales by Locations -->
-                <div class="col-span-4 bg-white rounded-xl p-8 border border-slate-100 shadow-sm">
-                    <h3 class="text-3xl font-bold text-slate-800 mb-8">Sales by Locations</h3>
-
-                    <div
-                        class="relative bg-slate-50/50 rounded-2xl h-64 mb-10 flex items-center justify-center border border-slate-50 p-8 overflow-hidden">
-                        <!-- RWANDA MAP SVG -->
-                        <svg viewBox="0 0 500 400" class="h-full w-full opacity-80" stroke="#2563EB" stroke-width="2"
-                            fill="none" stroke-linejoin="round">
-                            <path
-                                d="M150,50 L180,30 L220,40 L260,20 L300,40 L340,20 L380,40 L420,20 L450,50 L480,100 L495,150 L480,200 L495,250 L480,300 L450,350 L420,380 L380,350 L340,380 L280,350 L220,380 L180,350 L120,380 L80,350 L40,300 L10,250 L40,200 L10,150 L40,100 L80,50 Z" />
-                        </svg>
-
-                        <!-- Pin Points -->
-                        <div class="absolute top-[30%] left-[65%] group cursor-pointer">
-                            <i data-lucide="map-pin"
-                                class="map-pin-icon text-red-500 fill-red-500 drop-shadow-md group-hover:scale-110 transition-transform shrink-0"></i>
-                        </div>
-                        <div class="absolute top-[50%] left-[30%] group cursor-pointer">
-                            <i data-lucide="map-pin"
-                                class="map-pin-icon text-blue-600 fill-blue-600 drop-shadow-md group-hover:scale-110 transition-transform shrink-0"></i>
-                        </div>
-                    </div>
-
-                    <div class="space-y-8">
-                        <div>
-                            <div class="flex justify-between items-center mb-6">
-                                <span class="text-sm font-bold text-slate-700">Rubavu</span>
-                            </div>
-                            <div class="w-full h-2 bg-blue-50 rounded-full overflow-hidden">
-                                <div class="h-full bg-blue-600 rounded-full shadow-[0_0_10px_rgba(37,99,235,0.2)]"
-                                    style="width: 85%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-6">
-                                <span class="text-sm font-bold text-slate-700">Gatsata</span>
-                            </div>
-                            <div class="w-full h-2 bg-pink-50 rounded-full overflow-hidden">
-                                <div class="h-full bg-pink-500 rounded-full relative" style="width: 45%;">
-                                    <div class="absolute inset-0 w-full h-full opacity-40"
-                                        style="background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #fff 5px, #fff 10px);">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RECENT ORDERS TABLE -->
-            <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden mb-6">
-                <div class="p-8">
-                    <h3 class="text-xs font-bold text-slate-800">Recent Orders</h3>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="bg-slate-50/30">
-                                <th
-                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                                    Id</th>
-                                <th
-                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                                    Company name</th>
-                                <th
-                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                                    Product</th>
-                                <th
-                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                                    Category</th>
-                                <th
-                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                                    Amount</th>
-                                <th
-                                    class="py-3 px-4 text-[14px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                                    Status</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-50">
-                            <tr *ngFor="let order of orders" class="hover:bg-slate-50/50 transition-colors border-b border-slate-50">
-                                <td class="py-3 px-4 text-[14px] text-slate-400">{{ order.id }}</td>
-                                <td class="py-3 px-4 text-[15px] font-bold text-slate-700">{{ order.companyName }}</td>
-                                <td class="py-3 px-4 text-[14px] text-slate-500">{{ order.productNames }}</td>
-                                <td class="py-3 px-4 text-[14px] text-slate-400">{{ order.category }}</td>
-                                <td class="py-3 px-4 text-[14px] text-slate-600">{{ order.amount }} rwf</td>
-                                <td class="py-3 px-4">
-                                    <span *ngIf="order.status === 'Complete'" class="px-3 py-1 bg-green-100 text-green-600 text-[13px] font-bold rounded-full">Complete</span>
-                                    <span *ngIf="order.status === 'Cancelled'" class="px-3 py-1 bg-red-100 text-red-600 text-[13px] font-bold rounded-full">Cancelled</span>
-                                    <span *ngIf="order.status === 'Pending Approval'" class="px-3 py-1 bg-orange-100 text-orange-600 text-[13px] font-bold rounded-full">Pending</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- PAGINATION -->
-                <div class="px-5 py-3 flex items-center justify-between border-t border-slate-50 bg-white">
-                    <div class="flex items-center gap-5">
-                        <span class="text-[14px] font-bold text-slate-400">Showing</span>
-                        <div class="relative">
-                            <select
-                                class="appearance-none px-3 py-1 bg-slate-50 border border-slate-100 rounded text-[14px] font-black text-[#0B1437] pr-8 focus:outline-none">
-                                <option>10</option>
-                            </select>
-                            <i data-lucide="chevron-down"
-                                class="w-3 h-3 absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
-                        </div>
-                        <span class="text-[14px] font-bold text-slate-400">of 50</span>
-                    </div>
-
-                    <div class="flex items-center gap-1.5">
-                        <button
-                            class="w-6 h-6 flex items-center justify-center rounded border border-slate-50 text-slate-400 hover:bg-slate-50 transition-colors">
-                            <i data-lucide="chevron-left" class="w-3 h-3"></i>
-                        </button>
-                        <button
-                            class="w-6 h-6 flex items-center justify-center rounded bg-[#0B1437] text-white text-[13px] font-black shadow-sm">1</button>
-                        <button
-                            class="w-6 h-6 flex items-center justify-center rounded border border-slate-50 text-slate-600 text-[13px] font-bold hover:bg-slate-50 transition-colors">2</button>
-                        <button
-                            class="w-6 h-6 flex items-center justify-center rounded border border-slate-50 text-slate-400 hover:bg-slate-50 transition-colors">
-                            <i data-lucide="chevron-right" class="w-3 h-3"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <a routerLink="/admin-inventory" class="client-stat client-stat--primary client-stat-link">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">In stock</p>
+          <p class="client-stat-value">{{ stats.inStock }}</p>
+          <p class="client-stat-hint">Warehouse units →</p>
         </div>
-    </main>
+        <span class="client-stat-icon"><i data-lucide="package" class="w-5 h-5"></i></span>
+      </div>
+    </a>
+
+    <a routerLink="/admin-orders" [queryParams]="{ status: 'granted' }"
+      class="client-stat client-stat--success client-stat-link">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Approved</p>
+          <p class="client-stat-value">{{ stats.ordersGranted }}</p>
+          <p class="client-stat-hint">Granted orders →</p>
+        </div>
+        <span class="client-stat-icon"><i data-lucide="check-circle" class="w-5 h-5"></i></span>
+      </div>
+    </a>
+  </section>
+
+  <!-- Stock breakdown (compact) -->
+  <section *ngIf="stockByType.length" class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-lg font-semibold text-[#0B1437]">Stock by type</h2>
+        <p class="text-sm text-slate-500 mt-0.5">Available warehouse inventory</p>
+      </div>
+      <a routerLink="/admin-inventory" class="text-sm font-semibold text-[#0B1437] hover:text-teal-700 inline-flex items-center gap-1">
+        Full inventory <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div *ngFor="let row of stockByType.slice(0, 6)"
+        class="flex items-center justify-between px-4 py-3 bg-slate-50 rounded-xl">
+        <span class="font-medium text-slate-700">{{ row.type }}<span *ngIf="row.capacity"> · {{ row.capacity }}</span></span>
+        <span class="text-lg font-bold text-[#0B1437]">{{ row.count }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick actions -->
+  <section>
+    <h2 class="text-base font-semibold text-slate-500 uppercase tracking-wider mb-4">Quick actions</h2>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <a *ngFor="let action of quickActions" [routerLink]="action.route" [queryParams]="action.queryParams"
+        class="action-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+        <span class="w-11 h-11 rounded-2xl bg-gradient-to-br flex items-center justify-center shrink-0"
+          [ngClass]="action.accent">
+          <i [attr.data-lucide]="action.icon" class="w-5 h-5"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="font-semibold text-[#0B1437]">{{ action.title }}</h3>
+            <i data-lucide="arrow-right" class="action-arrow w-4 h-4 text-slate-300 group-hover:text-[#0B1437] shrink-0"></i>
+          </div>
+          <p class="text-base text-slate-500 mt-0.5">{{ action.description }}</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Recent orders -->
+  <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+      <div>
+        <h2 class="text-lg font-semibold text-[#0B1437]">Recent orders</h2>
+        <p class="text-sm text-slate-500 mt-0.5">Latest client purchase requests</p>
+      </div>
+      <a routerLink="/admin-orders"
+        class="text-sm font-semibold text-[#0B1437] hover:text-teal-700 transition-colors inline-flex items-center gap-1">
+        View all
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+    </div>
+
+    <div *ngIf="orders.length === 0" class="px-6 py-16 text-center">
+      <span class="inline-flex w-14 h-14 rounded-2xl bg-slate-50 items-center justify-center mb-4">
+        <i data-lucide="inbox" class="w-7 h-7 text-slate-300"></i>
+      </span>
+      <p class="font-medium text-[#0B1437]">No orders yet</p>
+      <p class="text-sm text-slate-500 mt-1">Client orders will appear here for review.</p>
+    </div>
+
+    <div *ngIf="orders.length > 0" class="divide-y divide-slate-50">
+      <div *ngFor="let order of orders"
+        class="flex flex-wrap items-center gap-4 px-6 py-4">
+        <div class="flex-1 min-w-[140px]">
+          <p class="text-sm font-medium text-slate-400">Order #{{ order.id }}</p>
+          <p class="font-semibold text-[#0B1437] mt-0.5">{{ order.client_name || 'Client' }}</p>
+        </div>
+        <div class="text-sm text-slate-600">
+          {{ order.type }} · {{ order.capacity }} · Qty {{ order.quantity }}
+        </div>
+        <div class="text-sm font-medium text-[#0B1437]" *ngIf="order.total_price">
+          {{ order.total_price | number }} RWF
+        </div>
+        <span class="client-badge text-sm font-semibold px-3 py-1 rounded-full" [ngClass]="statusClass(order.status)">
+          {{ statusLabel(order.status) }}
+        </span>
+        <div *ngIf="order.status === 'pending'" class="flex items-center gap-2 ml-auto">
+          <button type="button" (click)="approveOrder(order.id)" [disabled]="approvingId === order.id"
+            class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50">
+            {{ approvingId === order.id ? '…' : 'Approve' }}
+          </button>
+          <button type="button" (click)="denyOrder(order.id)"
+            class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-semibold hover:bg-slate-200">
+            Deny
+          </button>
+        </div>
+        <span *ngIf="order.status !== 'pending'" class="text-sm text-slate-400 ml-auto">
+          {{ order.created_at | date:'mediumDate' }}
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="lastPage > 1" class="px-6 py-4 border-t border-slate-50">
+      <app-pagination [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="loadOrders($event)" />
+    </div>
+  </section>
+
 </div>

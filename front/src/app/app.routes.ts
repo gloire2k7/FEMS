@@ -29,6 +29,7 @@ import { AdminCompliance } from './pages/admin-compliance/admin-compliance';
 
 import { AdminRefills } from './pages/admin-refills/admin-refills';
 import { AdminSettings } from './pages/admin-settings/admin-settings';
+import { AdminNotificationsComponent } from './pages/admin-notifications/admin-notifications';
 import { AdminOrders } from './pages/admin-orders/admin-orders';
 import { SuperAdminDashboard } from './pages/super-admin-dashboard/super-admin-dashboard';
 import { SuperAdminAddAdmin } from './pages/super-admin-add-admin/super-admin-add-admin';
@@ -40,12 +41,12 @@ import { SuperAdminReports } from './pages/super-admin-reports/super-admin-repor
 import { SuperAdminLogs } from './pages/super-admin-logs/super-admin-logs';
 import { ClientClientsComponent } from './pages/client-clients/client-clients';
 import { MyOrdersComponent } from './pages/my-orders/my-orders';
+import { AdminShellComponent } from '../layout/admin/admin-shell.component';
 
 export const routes: Routes = [
   { path: '', component: SignupComponent },
   { path: 'signin', component: SigninComponent },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'admin-dashboard', component: AdminDashboardComponent },
   { path: 'super-admin-dashboard', component: SuperAdminDashboard },
   { path: 'super-admin-add-admin', component: SuperAdminAddAdmin },
   { path: 'super-admin-admins', component: SuperAdminAdmins },
@@ -53,22 +54,31 @@ export const routes: Routes = [
   { path: 'super-admin-client-details', component: SuperAdminClientDetails },
   { path: 'super-admin-reports', component: SuperAdminReports },
   { path: 'super-admin-logs', component: SuperAdminLogs },
-
   { path: 'super-admin-admin-details/:id', component: SuperAdminAdminDetails },
-  { path: 'admin-assigned-inspections', component: AdminAssignedInspections },
-  { path: 'admin-inventory', component: AdminInventoryComponent },
-  { path: 'admin-inspectors', component: AdminInspectors },
-  { path: 'admin-compliance', component: AdminCompliance },
-  { path: 'admin-refills', component: AdminRefills },
-  { path: 'admin-settings', component: AdminSettings },
-  { path: 'admin-orders', component: AdminOrders },
-  { path: 'clients', component: ClientsDashboard },
+
+  {
+    path: '',
+    component: AdminShellComponent,
+    children: [
+      { path: 'admin-dashboard', component: AdminDashboardComponent },
+      { path: 'admin-assigned-inspections', component: AdminAssignedInspections },
+      { path: 'admin-inventory', component: AdminInventoryComponent },
+      { path: 'admin-inspectors', component: AdminInspectors },
+      { path: 'admin-compliance', component: AdminCompliance },
+      { path: 'admin-refills', component: AdminRefills },
+      { path: 'admin-settings', component: AdminSettings },
+      { path: 'admin-notifications', component: AdminNotificationsComponent },
+      { path: 'admin-orders', component: AdminOrders },
+      { path: 'clients', component: ClientsDashboard },
+      { path: 'admin-locations', component: AdminLocationsDashboard },
+      { path: 'admin-location-details', component: AdminLocationDetails },
+      { path: 'admin-view-extinguisher/:id', component: AdminViewExtinguisherComponent },
+      { path: 'admin-inspection-label/:id', component: AdminInspectionLabel },
+      { path: 'admin-add-extinguisher', component: AdminAddExtinguisher },
+    ],
+  },
+
   { path: 'client-clients', component: ClientClientsComponent },
-  { path: 'admin-locations', component: AdminLocationsDashboard },
-  { path: 'admin-location-details', component: AdminLocationDetails },
-  { path: 'admin-view-extinguisher/:id', component: AdminViewExtinguisherComponent },
-  { path: 'admin-inspection-label/:id', component: AdminInspectionLabel },
-  { path: 'admin-add-extinguisher', component: AdminAddExtinguisher },
   { path: 'extinguishers', component: ExtinguishersComponent },
   { path: 'service-requests', component: ServiceRequestsComponent },
   { path: 'inspectors', component: InspectorsOverviewComponent },
@@ -80,6 +90,5 @@ export const routes: Routes = [
   { path: 'shop', component: Shop },
   { path: 'cart', component: Cart },
   { path: 'checkout', component: Checkout },
-  { path: 'my-orders', component: MyOrdersComponent }
+  { path: 'my-orders', component: MyOrdersComponent },
 ];
-

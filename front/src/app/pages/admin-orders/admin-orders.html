@@ -1,458 +1,193 @@
-<div class="flex h-screen bg-[#F8FAFC] font-['Poppins'] overflow-hidden">
+<div class="client-page max-w-6xl pb-8">
 
-    <!-- ═══ SIDEBAR ═══ -->
-    <aside class="w-48 bg-[#0B1437] shrink-0 flex flex-col h-screen sticky top-0 overflow-x-hidden">
-        <!-- LOGO -->
-        <div class="px-4 py-4 mb-6 flex items-center gap-5">
-            <div class="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center p-1 shadow-lg shadow-blue-500/20">
-                <i data-lucide="flame" class="icon-xs text-white"></i>
-            </div>
-            <span class="text-xs font-black text-white tracking-[0.2em] leading-none">FEM</span>
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
+    <div class="client-hero-inner">
+      <p class="client-hero-eyebrow">Order management</p>
+      <h1 class="client-hero-title">Client orders</h1>
+      <p class="client-hero-sub">Review, approve, or deny purchase requests from client companies.</p>
+    </div>
+  </section>
+
+  <section class="client-stat-grid client-stat-grid--4" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+    <button type="button" (click)="filterStatus = 'pending'; currentPage=1"
+      class="client-stat client-stat--featured client-stat-link text-left"
+      [class.ring-2]="filterStatus === 'pending'" [class.ring-orange-300]="filterStatus === 'pending'">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Pending</p>
+          <p class="client-stat-value">{{ pendingCount }}</p>
+          <p class="client-stat-hint">Needs review</p>
         </div>
-
-        <!-- NAV -->
-        <nav class="flex-1 px-3 flex flex-col pt-2 pb-8 overflow-y-auto scrollbar-hide">
-            <div>
-                <a routerLink="/admin-dashboard" routerLinkActive="bg-white/10 text-white"
-                    [routerLinkActiveOptions]="{exact: true}"
-                    class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                    <i data-lucide="layout-grid" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                    <span class="text-[13px] tracking-wide font-semibold">Dashboard</span>
-                </a>
-            </div>
-
-            <div class="mt-8 mb-6 pt-2">
-                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">Operations</p>
-                <div class="space-y-3">
-                    <a routerLink="/clients" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                        <i data-lucide="users" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                        <span class="text-[13px] tracking-wide font-semibold">Clients</span>
-                    </a>
-                    <a routerLink="/admin-locations" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white group cursor-pointer">
-                        <i data-lucide="map-pin" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                        <span class="text-[13px] tracking-wide font-semibold">Locations</span>
-                    </a>
-                    <a routerLink="/admin-location-details"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
-                        <div class="flex items-center gap-5.5">
-                            <i data-lucide="flame" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[13px] tracking-wide font-semibold">Fire Extinguishers</span>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
-                    </a>
-                    <div class="space-y-3">
-                        <a (click)="toggleInspections()"
-                            class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-white hover:bg-white/20 transition-all justify-between group cursor-pointer"
-                            [class.bg-white/15]="inspectionsOpen">
-                            <div class="flex items-center gap-5.5">
-                                <i data-lucide="clipboard-check"
-                                    class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                                <span class="text-[13px] tracking-wide font-semibold">Inspections</span>
-                            </div>
-                            <i [attr.data-lucide]="inspectionsOpen ? 'chevron-up' : 'chevron-down'"
-                                class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
-                        </a>
-                        <div *ngIf="inspectionsOpen" class="pl-9 space-y-3 mt-1">
-                            <a routerLink="/admin-assigned-inspections" routerLinkActive="text-white !font-black"
-                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
-                                Assigned
-                            </a>
-                            <a routerLink="/admin-inspection-label/LE-2023-894"
-                                routerLinkActive="text-white !font-black"
-                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
-                                Inspection Label
-                            </a>
-                            <a routerLink="/admin-inspectors" routerLinkActive="text-white !font-black"
-                                class="block py-1.5 text-[12px] font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer">
-                                Inspectors
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-5 mb-6 pt-2">
-                <p class="text-[12px] font-black text-slate-100 uppercase tracking-[0.15em] px-3 mb-6">Management</p>
-                <div class="space-y-3">
-                    <a routerLink="/admin-orders" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-white bg-white/10 hover:bg-white/20 transition-all justify-between group cursor-pointer">
-                        <div class="flex items-center gap-5.5">
-                            <i data-lucide="shopping-bag" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[13px] tracking-wide font-semibold">Orders</span>
-                        </div>
-                        <span *ngIf="pendingCount > 0"
-                            class="w-4 h-4 bg-orange-500 text-white rounded-full text-[12px] flex items-center justify-center font-black">
-                            {{ pendingCount }}
-                        </span>
-                    </a>
-                    <a routerLink="/admin-compliance"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
-                        <div class="flex items-center gap-5.5">
-                            <i data-lucide="shield-check"
-                                class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[13px] tracking-wide font-semibold">Compliance</span>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-60 group-hover:opacity-100"></i>
-                    </a>
-                    <a routerLink="/admin-refills" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-50 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
-                        <div class="flex items-center gap-5.5">
-                            <i data-lucide="repeat" class="icon-xs opacity-90 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[13px] tracking-wide font-semibold">Refills</span>
-                        </div>
-                    </a>
-                    <a routerLink="/admin-settings" routerLinkActive="bg-white/10 text-white"
-                        class="flex items-center gap-5.5 px-4 py-3 rounded-lg text-slate-100 hover:bg-white/10 transition-all hover:text-white justify-between group cursor-pointer">
-                        <div class="flex items-center gap-5.5">
-                            <i data-lucide="settings" class="icon-xs opacity-80 group-hover:opacity-100 shrink-0"></i>
-                            <span class="text-[13px] tracking-wide font-semibold">Settings</span>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-2.5 h-2.5 opacity-50 group-hover:opacity-100"></i>
-                    </a>
-                </div>
-            </div>
-        </nav>
-
-        <!-- PROFILE BLOCK -->
-        <div class="px-3 pb-6 mt-auto">
-            <div class="bg-white/5 rounded-xl p-3 flex items-center gap-5.5 border border-white/5 hover:bg-white/10 cursor-pointer group">
-                <div class="w-8 h-8 rounded-full bg-amber-400 flex-shrink-0 flex items-center justify-center overflow-hidden border-2 border-white/10 group-hover:scale-105 transition-transform">
-                    <img src="https://ui-avatars.com/api/?name=Usanase&background=FFC107&color=fff" alt="Profile"
-                        class="w-full h-full object-cover">
-                </div>
-                <div class="min-w-0">
-                    <p class="text-[11px] font-black text-slate-300 uppercase tracking-widest leading-tight">ADMIN</p>
-                    <p class="text-[13px] font-black text-white truncate">Usanase</p>
-                </div>
-                <i data-lucide="log-out"
-                    class="icon-xs text-slate-400 ml-auto opacity-40 group-hover:opacity-100 group-hover:text-red-400 transition-all"></i>
-            </div>
+        <span class="client-stat-icon"><i data-lucide="clock" class="w-5 h-5"></i></span>
+      </div>
+    </button>
+    <button type="button" (click)="filterStatus = 'granted'; currentPage=1"
+      class="client-stat client-stat--success client-stat-link text-left"
+      [class.ring-2]="filterStatus === 'granted'" [class.ring-emerald-300]="filterStatus === 'granted'">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Approved</p>
+          <p class="client-stat-value">{{ grantedCount }}</p>
+          <p class="client-stat-hint">Granted orders</p>
         </div>
-    </aside>
-
-    <!-- ═══ MAIN CONTENT ═══ -->
-    <main class="flex-1 flex flex-col bg-[#F8FAFC] overflow-y-auto">
-
-        <!-- TOPBAR -->
-        <header class="h-12 bg-white flex items-center justify-between px-6 sticky top-0 z-10 w-full border-b border-slate-100 shadow-sm">
-            <div class="relative w-64">
-                <i data-lucide="search" class="icon-xs absolute left-3 top-1/2 -translate-y-1/2 text-blue-500/50 shrink-0"></i>
-                <input type="text" [(ngModel)]="searchQuery" placeholder="Search orders..."
-                    class="w-full pl-9 pr-4 py-2 bg-slate-50 border-none rounded-xl text-[13px] focus:outline-none focus:ring-1 focus:ring-blue-500/10 transition-all placeholder:text-slate-400 font-medium">
-            </div>
-            <div class="flex items-center gap-5">
-                <button class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-red-500/80 relative hover:bg-red-50 shadow-sm transition-all">
-                    <i data-lucide="bell" class="icon-xs shrink-0"></i>
-                    <span class="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
-                <button routerLink="/admin-settings"
-                    class="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-blue-500/80 hover:bg-blue-50 shadow-sm transition-all">
-                    <i data-lucide="settings" class="icon-xs shrink-0"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- PAGE CONTENT -->
-        <div class="p-8 space-y-6">
-
-            <!-- PAGE HEADER -->
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-[26px] font-black text-[#0B1437] tracking-tight">Client Orders</h1>
-                    <p class="text-[14px] font-medium text-slate-400 mt-0.5">Review, approve or deny purchase orders placed by clients.</p>
-                </div>
-                <div class="flex items-center gap-5">
-                    <span *ngIf="pendingCount > 0"
-                        class="flex items-center gap-5 px-5 py-3 bg-orange-50 border border-orange-200 rounded-xl text-[14px] font-black text-orange-600">
-                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                        {{ pendingCount }} Pending Approval
-                    </span>
-                </div>
-            </div>
-
-            <!-- STAT CARDS -->
-            <div class="grid grid-cols-3 gap-5">
-                <!-- Pending -->
-                <div class="bg-white rounded-2xl p-7 border border-orange-100 shadow-sm flex items-center gap-5">
-                    <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
-                        <i data-lucide="clock" class="w-5 h-5 text-orange-500"></i>
-                    </div>
-                    <div>
-                        <p class="text-[13px] font-black uppercase tracking-widest text-slate-400">Pending Approval</p>
-                        <h2 class="text-[36px] font-black text-[#0B1437] leading-none mt-1">{{ pendingCount }}</h2>
-                    </div>
-                </div>
-
-                <!-- Completed -->
-                <div class="bg-white rounded-2xl p-7 border border-green-100 shadow-sm flex items-center gap-5">
-                    <div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
-                        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
-                    </div>
-                    <div>
-                        <p class="text-[13px] font-black uppercase tracking-widest text-slate-400">Approved</p>
-                        <h2 class="text-[36px] font-black text-[#0B1437] leading-none mt-1">{{ grantedCount }}</h2>
-                    </div>
-                </div>
-
-                <!-- Cancelled -->
-                <div class="bg-white rounded-2xl p-7 border border-red-100 shadow-sm flex items-center gap-5">
-                    <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
-                        <i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i>
-                    </div>
-                    <div>
-                        <p class="text-[13px] font-black uppercase tracking-widest text-slate-400">Denied</p>
-                        <h2 class="text-[36px] font-black text-[#0B1437] leading-none mt-1">{{ cancelledCount }}</h2>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FILTER BAR -->
-            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 flex items-center gap-5">
-                <div class="flex items-center gap-5">
-                    <button (click)="filterStatus = 'all'; currentPage=1"
-                        [class.bg-[#0B1437]]="filterStatus === 'all'" [class.text-white]="filterStatus === 'all'"
-                        [class.bg-slate-100]="filterStatus !== 'all'" [class.text-slate-600]="filterStatus !== 'all'"
-                        class="px-4 py-1.5 rounded-lg text-[13px] font-black transition-all">
-                        All Orders ({{ allOrders.length }})
-                    </button>
-                    <button (click)="filterStatus = 'pending'; currentPage=1"
-                        [class.bg-orange-500]="filterStatus === 'pending'" [class.text-white]="filterStatus === 'pending'"
-                        [class.bg-slate-100]="filterStatus !== 'pending'" [class.text-slate-600]="filterStatus !== 'pending'"
-                        class="px-4 py-1.5 rounded-lg text-[13px] font-black transition-all">
-                        Pending ({{ pendingCount }})
-                    </button>
-                    <button (click)="filterStatus = 'granted'; currentPage=1"
-                        [class.bg-green-600]="filterStatus === 'granted'" [class.text-white]="filterStatus === 'granted'"
-                        [class.bg-slate-100]="filterStatus !== 'granted'" [class.text-slate-600]="filterStatus !== 'granted'"
-                        class="px-4 py-1.5 rounded-lg text-[13px] font-black transition-all">
-                        Approved ({{ grantedCount }})
-                    </button>
-                    <button (click)="filterStatus = 'cancelled'; currentPage=1"
-                        [class.bg-red-600]="filterStatus === 'cancelled'" [class.text-white]="filterStatus === 'cancelled'"
-                        [class.bg-slate-100]="filterStatus !== 'cancelled'" [class.text-slate-600]="filterStatus !== 'cancelled'"
-                        class="px-4 py-1.5 rounded-lg text-[13px] font-black transition-all">
-                        Denied ({{ cancelledCount }})
-                    </button>
-                </div>
-            </div>
-
-            <!-- ORDERS TABLE -->
-            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                <!-- Table Header -->
-                <div class="flex items-center px-6 py-3 border-b border-slate-50 text-[12px] font-black text-slate-400 uppercase tracking-[0.15em]">
-                    <span class="w-[8%]">Order ID</span>
-                    <span class="w-[22%]">Company</span>
-                    <span class="w-[15%]">Type</span>
-                    <span class="w-[10%]">Capacity</span>
-                    <span class="w-[8%]">Qty</span>
-                    <span class="w-[15%]">Total (RWF)</span>
-                    <span class="w-[10%]">Status</span>
-                    <span class="w-[12%] text-right">Actions</span>
-                </div>
-
-                <!-- Loading -->
-                <div *ngIf="isLoading" class="py-16 flex items-center justify-center gap-5">
-                    <div class="w-6 h-6 border-4 border-[#0B1437] border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-sm font-black text-slate-400 uppercase tracking-widest">Loading orders...</p>
-                </div>
-
-                <!-- Empty State -->
-                <div *ngIf="!isLoading && filteredOrders.length === 0" class="py-20 flex flex-col items-center justify-center text-slate-400">
-                    <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-6">
-                        <i data-lucide="inbox" class="w-8 h-8 text-slate-200"></i>
-                    </div>
-                    <p class="text-[16px] font-extrabold text-[#0B1437]">No orders found</p>
-                    <p class="text-[14px] font-medium text-slate-400 mt-1">No orders match your current filter.</p>
-                </div>
-
-                <!-- Orders Rows -->
-                <div class="divide-y divide-slate-50">
-                    <div *ngFor="let order of paginatedOrders"
-                        class="flex items-center px-6 py-4 hover:bg-slate-50/60 transition-colors group"
-                        [class.bg-orange-50/30]="order.status === 'pending'">
-
-                        <div class="w-[8%]">
-                            <p class="text-[13px] font-black text-[#0B1437] font-mono">#{{ order.id }}</p>
-                        </div>
-
-                        <div class="w-[22%] flex items-center gap-5">
-                            <div class="w-7 h-7 rounded-full bg-[#0B1437] flex items-center justify-center shrink-0">
-                                <span class="text-[11px] font-black text-white">{{ (order.client_name || 'C').charAt(0) }}</span>
-                            </div>
-                            <p class="text-[13px] font-bold text-slate-700 truncate">{{ order.client_name || 'Unknown' }}</p>
-                        </div>
-
-                        <div class="w-[15%]">
-                            <span class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded text-[12px] font-black">{{ order.type }}</span>
-                        </div>
-
-                        <div class="w-[10%]">
-                            <p class="text-[13px] font-bold text-slate-600">{{ order.capacity }} kg</p>
-                        </div>
-
-                        <div class="w-[8%]">
-                            <p class="text-[14px] font-black text-[#0B1437]">{{ order.quantity }}</p>
-                        </div>
-
-                        <div class="w-[15%]">
-                            <p class="text-[14px] font-black text-[#0B1437]">{{ order.total_price | number }} <span class="text-[11px] text-slate-400 font-bold">RWF</span></p>
-                        </div>
-
-                        <div class="w-[10%]">
-                            <span [ngClass]="getStatusClass(order.status)"
-                                class="px-2.5 py-1 rounded-full text-[11px] font-black inline-flex items-center gap-1 border">
-                                <span class="w-1.5 h-1.5 rounded-full"
-                                    [class.bg-amber-500]="order.status === 'pending'"
-                                    [class.bg-emerald-500]="order.status === 'granted'"
-                                    [class.bg-red-500]="order.status === 'cancelled'"></span>
-                                {{ order.status | titlecase }}
-                            </span>
-                        </div>
-
-                        <div class="w-[12%] flex justify-end items-center gap-5">
-                            <ng-container *ngIf="order.status === 'pending'">
-                                <button (click)="approveOrder(order)" [disabled]="approvingId === order.id"
-                                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500 text-white text-[12px] font-black hover:bg-green-600 transition-all disabled:opacity-50">
-                                    <span *ngIf="approvingId === order.id">...</span>
-                                    <ng-container *ngIf="approvingId !== order.id">
-                                        <i data-lucide="check" class="w-3 h-3"></i> Approve
-                                    </ng-container>
-                                </button>
-                                <button (click)="openDenyModal(order)"
-                                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white text-[12px] font-black hover:bg-red-600 transition-all">
-                                    <i data-lucide="x" class="w-3 h-3"></i> Deny
-                                </button>
-                            </ng-container>
-                            <ng-container *ngIf="order.status !== 'pending'">
-                                <span class="text-[12px] text-slate-400 font-bold">&mdash;</span>
-                            </ng-container>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pagination Footer -->
-                <div class="px-6 py-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/40">
-                    <p class="text-[12px] font-bold text-slate-400">
-                        Showing {{ (currentPage-1)*pageSize + 1 }} - {{ Math.min(currentPage*pageSize, filteredOrders.length) }} of {{ filteredOrders.length }} orders
-                    </p>
-                    <div class="flex items-center gap-5">
-                        <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
-                            class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center disabled:opacity-40 hover:bg-slate-200 transition-all">
-                            <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
-                        </button>
-                        <span class="text-[13px] font-black text-[#0B1437]">{{ currentPage }} / {{ totalPages }}</span>
-                        <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
-                            class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center disabled:opacity-40 hover:bg-slate-200 transition-all">
-                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
+        <span class="client-stat-icon"><i data-lucide="check-circle" class="w-5 h-5"></i></span>
+      </div>
+    </button>
+    <button type="button" (click)="filterStatus = 'cancelled'; currentPage=1"
+      class="client-stat client-stat--warning client-stat-link text-left"
+      [class.ring-2]="filterStatus === 'cancelled'" [class.ring-red-300]="filterStatus === 'cancelled'">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Denied</p>
+          <p class="client-stat-value">{{ cancelledCount }}</p>
+          <p class="client-stat-hint">Cancelled orders</p>
         </div>
-    </main>
+        <span class="client-stat-icon"><i data-lucide="x-circle" class="w-5 h-5"></i></span>
+      </div>
+    </button>
+  </section>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <button type="button" (click)="filterStatus = 'all'; currentPage=1"
+      [class.bg-[#0B1437]]="filterStatus === 'all'" [class.text-white]="filterStatus === 'all'"
+      class="px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 transition-colors">
+      All ({{ allOrders.length }})
+    </button>
+    <button type="button" (click)="filterStatus = 'pending'; currentPage=1"
+      [class.bg-orange-500]="filterStatus === 'pending'" [class.text-white]="filterStatus === 'pending'"
+      class="px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 transition-colors">
+      Pending
+    </button>
+    <button type="button" (click)="filterStatus = 'granted'; currentPage=1"
+      [class.bg-emerald-600]="filterStatus === 'granted'" [class.text-white]="filterStatus === 'granted'"
+      class="px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 transition-colors">
+      Approved
+    </button>
+    <button type="button" (click)="filterStatus = 'cancelled'; currentPage=1"
+      [class.bg-red-600]="filterStatus === 'cancelled'" [class.text-white]="filterStatus === 'cancelled'"
+      class="px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 transition-colors">
+      Denied
+    </button>
+  </div>
+
+  <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div *ngIf="isLoading" class="py-16 flex items-center justify-center gap-3 text-slate-400">
+      <div class="w-6 h-6 border-4 border-[#0B1437] border-t-transparent rounded-full animate-spin"></div>
+      Loading orders…
+    </div>
+
+    <div *ngIf="!isLoading && filteredOrders.length === 0" class="px-6 py-16 text-center">
+      <span class="inline-flex w-14 h-14 rounded-2xl bg-slate-50 items-center justify-center mb-4">
+        <i data-lucide="inbox" class="w-7 h-7 text-slate-300"></i>
+      </span>
+      <p class="font-medium text-[#0B1437]">No orders found</p>
+      <p class="text-sm text-slate-500 mt-1">Try a different filter.</p>
+    </div>
+
+    <div *ngIf="!isLoading && filteredOrders.length > 0" class="divide-y divide-slate-50">
+      <div *ngFor="let order of paginatedOrders"
+        class="flex flex-wrap items-center gap-4 px-6 py-4 hover:bg-slate-50/50"
+        [class.bg-orange-50/30]="order.status === 'pending'">
+        <div class="w-16">
+          <p class="text-sm font-medium text-slate-400">#{{ order.id }}</p>
+        </div>
+        <div class="flex-1 min-w-[160px]">
+          <p class="font-semibold text-[#0B1437]">{{ order.client_name || 'Unknown' }}</p>
+          <p class="text-sm text-slate-500">{{ order.type }} · {{ order.capacity }} · Qty {{ order.quantity }}</p>
+        </div>
+        <div class="text-sm font-medium text-[#0B1437]" *ngIf="order.total_price">
+          {{ order.total_price | number }} RWF
+        </div>
+        <span class="client-badge text-sm font-semibold px-3 py-1 rounded-full border" [ngClass]="getStatusClass(order.status)">
+          {{ order.status | titlecase }}
+        </span>
+        <div class="flex items-center gap-2 ml-auto" *ngIf="order.status === 'pending'">
+          <button type="button" (click)="approveOrder(order)" [disabled]="approvingId === order.id"
+            class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50">
+            {{ approvingId === order.id ? '…' : 'Approve' }}
+          </button>
+          <button type="button" (click)="openDenyModal(order)"
+            class="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 text-sm font-semibold hover:bg-red-200">
+            Deny
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && filteredOrders.length > 0" class="px-6 py-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/40">
+      <p class="text-sm text-slate-500">
+        {{ (currentPage-1)*pageSize + 1 }}–{{ Math.min(currentPage*pageSize, filteredOrders.length) }} of {{ filteredOrders.length }}
+      </p>
+      <div class="flex items-center gap-2">
+        <button type="button" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
+          class="w-9 h-9 rounded-lg bg-white border border-slate-200 disabled:opacity-40">
+          <i data-lucide="chevron-left" class="w-4 h-4 mx-auto"></i>
+        </button>
+        <span class="text-sm font-semibold text-[#0B1437]">{{ currentPage }} / {{ totalPages }}</span>
+        <button type="button" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
+          class="w-9 h-9 rounded-lg bg-white border border-slate-200 disabled:opacity-40">
+          <i data-lucide="chevron-right" class="w-4 h-4 mx-auto"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
 </div>
 
-<!-- ═══ APPROVAL SUCCESS MODAL ═══ -->
+<!-- Approval modal -->
 <div *ngIf="showApprovalModal"
-    class="fixed inset-0 z-50 flex items-center justify-center p-8"
-    style="background: rgba(11,18,55,0.55); backdrop-filter: blur(4px);">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
-        <div class="bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-5">
-            <div class="flex items-center gap-5">
-                <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                    <i data-lucide="check-circle" class="w-5 h-5 text-white"></i>
-                </div>
-                <div>
-                    <h2 class="text-[19px] font-black text-white">Order Approved!</h2>
-                    <p class="text-[14px] text-green-100 font-medium">{{ approvalResult?.units?.length }} units assigned to client</p>
-                </div>
-            </div>
-        </div>
-        <div class="px-6 py-5 space-y-4">
-            <p class="text-[13px] font-bold text-slate-500">Assigned Serial Numbers:</p>
-            <div class="bg-slate-50 rounded-xl p-4 text-[12px] font-mono text-slate-600 max-h-40 overflow-y-auto space-y-1">
-                <p *ngFor="let sn of approvalResult?.units">{{ sn }}</p>
-            </div>
-            <div *ngIf="approvalResult?.zip_url" class="pt-2">
-                <button (click)="downloadZip()"
-                    class="w-full py-3 bg-[#0B1437] text-white rounded-xl text-[13px] font-black flex items-center justify-center gap-5 hover:bg-blue-900 transition-all">
-                    <i data-lucide="download" class="w-4 h-4"></i>
-                    Download All Inspection Labels (.zip)
-                </button>
-            </div>
-        </div>
-        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
-            <button (click)="closeApprovalModal()"
-                class="px-5 py-2.5 border border-slate-200 rounded-xl text-[13px] font-black text-slate-600 hover:bg-slate-100 transition-all">
-                Close
-            </button>
-        </div>
+  class="fixed inset-0 z-50 flex items-center justify-center p-8"
+  style="background: rgba(11,18,55,0.55); backdrop-filter: blur(4px);">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-5">
+      <h2 class="text-xl font-bold text-white">Order approved</h2>
+      <p class="text-sm text-green-100 mt-1">{{ approvalResult?.units?.length }} units assigned</p>
     </div>
+    <div class="px-6 py-5 space-y-4">
+      <div class="bg-slate-50 rounded-xl p-4 text-sm font-mono text-slate-600 max-h-40 overflow-y-auto space-y-1">
+        <p *ngFor="let sn of approvalResult?.units">{{ sn }}</p>
+      </div>
+      <button *ngIf="approvalResult?.zip_url" type="button" (click)="downloadZip()"
+        class="w-full py-3 bg-[#0B1437] text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        Download inspection labels
+      </button>
+    </div>
+    <div class="px-6 py-4 bg-slate-50 border-t flex justify-end">
+      <button type="button" (click)="closeApprovalModal()"
+        class="px-5 py-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-600">Close</button>
+    </div>
+  </div>
 </div>
 
-<!-- ═══ DENIAL REASON MODAL ═══ -->
+<!-- Deny modal -->
 <div *ngIf="showDenialModal"
-    class="fixed inset-0 z-50 flex items-center justify-center p-8"
-    style="background: rgba(11,18,55,0.55); backdrop-filter: blur(4px);">
-
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
-
-        <!-- Modal Header -->
-        <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-5">
-            <div class="flex items-center gap-5">
-                <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                    <i data-lucide="alert-triangle" class="w-5 h-5 text-white"></i>
-                </div>
-                <div>
-                    <h2 class="text-[19px] font-black text-white">Deny Order</h2>
-                    <p class="text-[14px] text-red-100 font-medium">Order #{{ orderToDeny?.id }} · {{ orderToDeny?.companyName }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal Body -->
-        <div class="px-6 py-5 space-y-4">
-            <p class="text-[14px] font-bold text-slate-500">Select a reason for denying this order:</p>
-
-            <!-- Reason Options -->
-            <div class="grid grid-cols-2 gap-5">
-                <button *ngFor="let reason of denialReasons"
-                    (click)="selectedReason = reason.value"
-                    [class.border-red-500]="selectedReason === reason.value"
-                    [class.bg-red-50]="selectedReason === reason.value"
-                    [class.text-red-700]="selectedReason === reason.value"
-                    [class.border-slate-200]="selectedReason !== reason.value"
-                    [class.text-slate-600]="selectedReason !== reason.value"
-                    class="flex items-center gap-5 px-4 py-3 rounded-xl border-2 text-left transition-all hover:border-red-300 hover:bg-red-50/50">
-                    <span class="text-[13px] font-bold leading-tight">{{ reason.label }}</span>
-                    <div *ngIf="selectedReason === reason.value" class="ml-auto w-3.5 h-3.5 rounded-full bg-red-500 flex items-center justify-center shrink-0">
-                        <i data-lucide="check" class="w-2.5 h-2.5 text-white"></i>
-                    </div>
-                </button>
-            </div>
-
-            <!-- Custom Reason Textarea (shown only when 'other' selected) -->
-            <div *ngIf="selectedReason === 'other'" class="mt-3">
-                <label class="text-[13px] font-black text-slate-400 uppercase tracking-widest block mb-6">Describe your reason</label>
-                <textarea [(ngModel)]="customReason" rows="3" placeholder="Please explain why the order is being denied..."
-                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-[14px] font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-400/30 focus:border-red-400 resize-none transition-all"></textarea>
-            </div>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="px-6 py-4 bg-slate-50/60 border-t border-slate-100 flex items-center gap-5 justify-end">
-            <button (click)="closeDenyModal()"
-                class="px-5 py-2.5 border border-slate-200 rounded-xl text-[14px] font-black text-slate-600 hover:bg-slate-100 transition-all">
-                Cancel
-            </button>
-            <button (click)="confirmDeny()" [disabled]="!canConfirmDeny"
-                class="px-6 py-2.5 bg-red-500 text-white rounded-xl text-[14px] font-black hover:bg-red-600 transition-all shadow-lg shadow-red-500/30 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-5">
-                <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
-                Confirm Denial
-            </button>
-        </div>
+  class="fixed inset-0 z-50 flex items-center justify-center p-8"
+  style="background: rgba(11,18,55,0.55); backdrop-filter: blur(4px);">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-5">
+      <h2 class="text-xl font-bold text-white">Deny order</h2>
+      <p class="text-sm text-red-100 mt-1">Order #{{ orderToDeny?.id }}</p>
     </div>
+    <div class="px-6 py-5 space-y-4">
+      <p class="text-sm text-slate-500">Select a reason:</p>
+      <div class="grid grid-cols-2 gap-2">
+        <button *ngFor="let reason of denialReasons" type="button" (click)="selectedReason = reason.value"
+          [class.border-red-500]="selectedReason === reason.value"
+          [class.bg-red-50]="selectedReason === reason.value"
+          class="px-3 py-2 rounded-xl border border-slate-200 text-sm font-medium text-left">
+          {{ reason.label }}
+        </button>
+      </div>
+      <textarea *ngIf="selectedReason === 'other'" [(ngModel)]="customReason" rows="3"
+        placeholder="Describe the reason…"
+        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm resize-none"></textarea>
+    </div>
+    <div class="px-6 py-4 bg-slate-50 border-t flex justify-end gap-2">
+      <button type="button" (click)="closeDenyModal()"
+        class="px-5 py-2.5 border border-slate-200 rounded-xl text-sm font-semibold">Cancel</button>
+      <button type="button" (click)="confirmDeny()" [disabled]="!canConfirmDeny"
+        class="px-5 py-2.5 bg-red-500 text-white rounded-xl text-sm font-semibold disabled:opacity-40">Confirm</button>
+    </div>
+  </div>
 </div>

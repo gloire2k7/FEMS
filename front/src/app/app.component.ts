@@ -30,9 +30,7 @@ export class AppComponent {
   showLayout(): boolean {
     const path = this.router.url.split('?')[0];
     if (path.startsWith('/admin-') || path.startsWith('/super-admin-') || path === '/clients') return false;
-    const excludedRoutes = ['/', '/signin', '/signup', '/admin-dashboard', '/super-admin-dashboard', '/super-admin-clients', '/super-admin-client-details', '/super-admin-add-admin', '/super-admin-admins', '/super-admin-admin-details', '/super-admin-reports', '/super-admin-logs', '/clients', '/admin-locations', '/admin-location-details', '/admin-view-extinguisher', '/admin-add-extinguisher', '/admin-inspection-label', '/admin-assigned-inspections', '/admin-inventory', '/admin-inspectors', '/admin-compliance', '/admin-refills', '/admin-settings', '/admin-orders'];
-    if (excludedRoutes.includes(path)) return false;
-    if (path.startsWith('/admin-view-extinguisher/') || path.startsWith('/admin-inspection-label/') || path.startsWith('/super-admin-admin-details/')) return false;
+    if (path === '/' || path === '/signin' || path === '/signup') return false;
     return true;
   }
 
