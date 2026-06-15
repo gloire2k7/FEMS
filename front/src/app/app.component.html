@@ -11,6 +11,6 @@
     </div>
   </div>
 } @else {
-  <!-- Sign-in and sign-up: no sidebar or topbar -->
   <router-outlet></router-outlet>
 }
+<app-ai-assistant *ngIf="showAiAssistant()" />

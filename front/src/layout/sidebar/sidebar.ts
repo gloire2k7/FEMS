@@ -22,8 +22,8 @@ export class SidebarComponent implements AfterViewInit, OnDestroy {
 
   constructor(private router: Router, private authService: AuthService) {
     const user = this.authService.getUser();
-    if (user && user.first_name) {
-      this.userName = user.first_name;
+    if (user?.name) {
+      this.userName = user.name;
     }
 
     const sub = this.router.events

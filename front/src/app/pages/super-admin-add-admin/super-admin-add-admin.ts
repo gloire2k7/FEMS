@@ -4,7 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../auth.service';
 
-declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
+declare const lucide: { createIcons: () => void } | undefined;
 
 @Component({
   selector: 'app-super-admin-add-admin',
@@ -20,52 +20,44 @@ export class SuperAdminAddAdmin implements AfterViewInit {
 
   name = '';
   email = '';
-  
+  permissionOptions: any[] = [];
+  selectedPermissions: string[] = ['manage_orders', 'manage_stock', 'approve_clients'];
   isLoading = false;
   error = '';
   successData: any = null;
 
   ngAfterViewInit() {
     this.initIcons();
+    this.authService.getPermissions().subscribe(p => this.permissionOptions = p);
   }
 
+  togglePermission(key: string) {
+    const i = this.selectedPermissions.indexOf(key);
+    if (i >= 0) this.selectedPermissions.splice(i, 1);
+    else this.selectedPermissions.push(key);
+  }
+
+  hasPermission(key: string) { return this.selectedPermissions.includes(key); }
+
   onCreateAdmin() {
-    console.log('DEBUG: onCreateAdmin started', { name: this.name, email: this.email });
     this.isLoading = true;
     this.error = '';
     this.successData = null;
-    this.cdr.detectChanges();
 
-    this.authService.createAdmin({ name: this.name, email: this.email }).subscribe({
+    this.authService.createAdmin({
+      name: this.name,
+      email: this.email,
+      permissions: this.selectedPermissions
+    }).subscribe({
       next: (res) => {
-        console.log('DEBUG: Response received', res);
-        
-        // Capture email before resetting form
-        const createdEmail = this.email;
-        
         this.isLoading = false;
-        this.successData = {
-          email: createdEmail,
-          password: res.generated_password
-        };
-        
-        // Reset form
+        this.successData = { email: this.email, password: res.generated_password, emailed: true };
         this.name = '';
         this.email = '';
-        
-        console.log('DEBUG: successData set', this.successData);
-        
-        // Force UI update
         this.cdr.detectChanges();
-        
-        // Re-init icons for the new success card
-        setTimeout(() => {
-          this.initIcons();
-          this.cdr.detectChanges();
-        }, 100);
+        setTimeout(() => this.initIcons(), 100);
       },
       error: (err) => {
-        console.error('DEBUG: Request failed', err);
         this.isLoading = false;
         this.error = err.error?.message || 'Failed to create admin.';
         this.cdr.detectChanges();
@@ -74,16 +66,8 @@ export class SuperAdminAddAdmin implements AfterViewInit {
   }
 
   copyToClipboard(text: string) {
-    navigator.clipboard.writeText(text).then(() => {
-      alert('Copied to clipboard!');
-    });
+    navigator.clipboard.writeText(text).then(() => alert('Copied!'));
   }
 
-  private initIcons() {
-    if (typeof lucide !== 'undefined' && lucide.createIcons) {
-      lucide.createIcons();
-      setTimeout(() => lucide.createIcons(), 100);
-      setTimeout(() => lucide.createIcons(), 500);
-    }
-  }
+  private initIcons() { lucide?.createIcons?.(); }
 }

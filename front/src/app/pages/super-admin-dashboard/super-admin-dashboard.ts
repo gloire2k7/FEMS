@@ -1,105 +1,61 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../auth.service';
-import { Router } from '@angular/router';
-import { inject } from '@angular/core';
+import { DashboardService } from '../../services/dashboard.service';
 
-declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
+declare const lucide: { createIcons: () => void } | undefined;
 
 @Component({
-    selector: 'app-super-admin-dashboard',
-    standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule],
-    templateUrl: './super-admin-dashboard.html',
-    styleUrls: ['./super-admin-dashboard.css']
+  selector: 'app-super-admin-dashboard',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule],
+  templateUrl: './super-admin-dashboard.html',
+  styleUrls: ['./super-admin-dashboard.css']
 })
 export class SuperAdminDashboard implements AfterViewInit, OnInit {
-    private authService = inject(AuthService);
-    private router = inject(Router);
+  private authService = inject(AuthService);
+  private dashboard = inject(DashboardService);
+  private router = inject(Router);
 
-    userName: string = 'Super Admin';
+  userName = 'Super Admin';
+  stats: any = {};
+  statsCards: any[] = [];
+  criticalIssues: any[] = [];
+  chartData: any[] = [];
+  distribution: any[] = [];
 
-    stats = [
-        { label: 'Total Companies', value: '124', trend: '+12 this month', trendType: 'positive' },
-        { label: 'Total Admins', value: '48', trend: 'Active Personnel', trendType: 'neutral' },
-        { label: 'Total Users', value: '2,850', trend: '+5% growth', trendType: 'positive' },
-        { label: 'Extinguishers', value: '15,420', trend: 'Across all sites', trendType: 'neutral' },
-        { label: 'Inspections', value: '892', trend: 'Completed this month', trendType: 'neutral' },
-        { label: 'Compliance Rate', value: '94.2%', trend: 'System Healthy', trendType: 'healthy' }
-    ];
+  ngOnInit() {
+    const user = this.authService.getUser();
+    if (user?.name) this.userName = user.name;
 
-    criticalIssues = [
-        {
-            title: 'Expired Extinguishers Detected',
-            subtitle: '245 units have passed their expiry date across 12 companies.',
-            type: 'error',
-            icon: 'alert-circle',
-            actionName: 'View List'
-        },
-        {
-            title: 'Low Compliance Companies',
-            subtitle: '3 Companies are below 80% inspection compliance threshold.',
-            type: 'warning',
-            icon: 'trending-down',
-            actionName: 'Review'
-        },
-        {
-            title: 'Overdue Inspections',
-            subtitle: '56 Inspections were scheduled for last week but not logged.',
-            type: 'neutral',
-            icon: 'clock',
-            actionName: 'Notify Admins'
+    this.dashboard.getStats().subscribe({
+      next: (s) => {
+        this.stats = s;
+        this.statsCards = [
+          { label: 'Active Clients', value: s.clients, route: '/super-admin-clients', sub: `${s.pending_clients} pending approval` },
+          { label: 'Admins', value: s.admins, route: '/super-admin-admins', sub: 'Manage personnel' },
+          { label: 'Units In Stock', value: s.extinguishers_in_stock, route: '/admin-inventory', sub: `${s.total_extinguishers} total registered` },
+          { label: 'Pending Orders', value: s.pending_orders, route: '/admin-orders', sub: `${s.orders_this_month} this month` },
+        ];
+        if (s.pending_clients > 0) {
+          this.criticalIssues = [{ title: 'Clients awaiting approval', subtitle: `${s.pending_clients} registrations need review`, type: 'warning', actionName: 'Review', route: '/super-admin-clients' }];
         }
-    ];
+        this.chartData = (s.orders_by_status || []).map((o: any) => ({ month: o.status, value: o.count }));
+        this.distribution = (s.stock_by_type || []).map((t: any) => ({ label: t.type, percentage: t.count, color: 'bg-blue-500' }));
+      }
+    });
+  }
 
-    chartData = [
-        { month: 'Aug', value: 42 },
-        { month: 'Sep', value: 58 },
-        { month: 'Oct', value: 48 },
-        { month: 'Nov', value: 72 },
-        { month: 'Dec', value: 88 },
-        { month: 'Jan', value: 65 }
-    ];
+  goCard(route: string) { this.router.navigate([route]); }
 
-    distribution = [
-        { label: 'Passed (Healthy)', percentage: 65, color: 'bg-emerald-500' },
-        { label: 'Requires Refill', percentage: 20, color: 'bg-[#0B1437]' },
-        { label: 'Condemned', percentage: 10, color: 'bg-amber-400' },
-        { label: 'Failed / Error', percentage: 5, color: 'bg-red-500' }
-    ];
+  onLogout() {
+    this.authService.logout().subscribe({
+      next: () => { this.authService.clearUser(); this.router.navigate(['/signin']); },
+      error: () => { this.authService.clearUser(); this.router.navigate(['/signin']); }
+    });
+  }
 
-    ngOnInit() {
-        const user = this.authService.getUser();
-        if (user && user.first_name) {
-            this.userName = user.first_name;
-        }
-    }
-
-    onLogout() {
-        this.authService.logout().subscribe({
-            next: () => {
-                this.authService.clearUser();
-                this.router.navigate(['/signin']);
-            },
-            error: (err: any) => {
-                console.error('Logout failed', err);
-                this.authService.clearUser();
-                this.router.navigate(['/signin']);
-            }
-        });
-    }
-
-    ngAfterViewInit() {
-        this.initIcons();
-    }
-
-    private initIcons() {
-        if (typeof lucide !== 'undefined' && lucide.createIcons) {
-            lucide.createIcons();
-            setTimeout(() => lucide.createIcons(), 100);
-            setTimeout(() => lucide.createIcons(), 500);
-        }
-    }
+  ngAfterViewInit() { lucide?.createIcons?.(); }
 }

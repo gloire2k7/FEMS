@@ -1,88 +1,77 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { StockService } from '../../services/stock.service';
+import { AuthService } from '../../auth.service';
+import { PaginationComponent } from '../../shared/pagination/pagination.component';
 
-declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
+declare const lucide: { createIcons: () => void } | undefined;
 
 @Component({
-    selector: 'app-admin-inventory',
-    standalone: true,
-    imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive, FormsModule],
-    templateUrl: './admin-inventory.html',
-    styleUrl: './admin-inventory.css',
+  selector: 'app-admin-inventory',
+  standalone: true,
+  imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive, FormsModule, PaginationComponent],
+  templateUrl: './admin-inventory.html',
+  styleUrl: './admin-inventory.css',
 })
 export class AdminInventoryComponent implements AfterViewInit {
+  private stock = inject(StockService);
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
-    inspectionsOpen = true;
+  inspectionsOpen = false;
+  summary: any = null;
+  recent: any[] = [];
+  units: any[] = [];
+  page = 1;
+  lastPage = 1;
+  total = 0;
+  loading = true;
+  canManage = false;
 
-    constructor(private router: Router) { }
+  ngAfterViewInit() {
+    this.canManage = this.auth.isRole('Super Admin') || this.auth.hasPermission('manage_stock');
+    this.load();
+    this.initIcons();
+  }
 
-    generateLabel() {
-        this.router.navigate(['/admin-inspection-label', 'LE-2023-894']);
-    }
+  load(page = 1) {
+    this.page = page;
+    this.loading = true;
+    this.stock.getSummary().subscribe({
+      next: (res) => {
+        this.summary = res.summary;
+        this.recent = res.recent || [];
+      }
+    });
+    this.stock.getUnits(page, true).subscribe({
+      next: (res) => {
+        this.units = res.data || [];
+        this.page = res.page || 1;
+        this.lastPage = res.last_page || 1;
+        this.total = res.total || 0;
+        this.loading = false;
+        setTimeout(() => this.initIcons(), 50);
+      },
+      error: () => { this.loading = false; }
+    });
+  }
 
-    toggleInspections() {
-        this.inspectionsOpen = !this.inspectionsOpen;
-        this.initIcons();
-    }
+  goRegister() {
+    this.router.navigate(['/admin-add-extinguisher']);
+  }
 
-    ngAfterViewInit() {
-        this.initIcons();
-    }
+  toggleInspections() {
+    this.inspectionsOpen = !this.inspectionsOpen;
+    this.initIcons();
+  }
 
-    private initIcons() {
-        const run = () => {
-            if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                lucide.createIcons();
-            }
-        };
-        run();
-        [100, 300, 600, 1000, 2000].forEach((delay) => setTimeout(run, delay));
-    }
+  qrUrl(path: string) {
+    return path ? `http://localhost:8000${path}` : '';
+  }
 
-    extinguishers = [
-        {
-            id: 'EXT-2023-001',
-            location: 'Main Office, Room 4',
-            status: 'Active',
-            lastDate: 'Oct 12, 2023',
-            nextDate: 'Oct 12, 2024',
-            nextDateColor: 'text-orange-500'
-        },
-        {
-            id: 'EXT-2023-045',
-            location: 'Warehouse B, Loading Dock',
-            status: 'Pending Print',
-            lastDate: 'Oct 12, 2023',
-            nextDate: 'Oct 12, 2024',
-            nextDateColor: 'text-orange-500'
-        },
-        {
-            id: 'EXT-2023-099',
-            location: 'Cafeteria, Rear Exit',
-            status: 'No label',
-            lastDate: '–',
-            nextDate: 'Overdue',
-            nextDateColor: 'text-red-500'
-        },
-        {
-            id: 'EXT-2023-112',
-            location: 'Server Room, Main',
-            status: 'Regenerated',
-            lastDate: 'Oct 12, 2023',
-            nextDate: 'Oct 12, 2024',
-            nextDateColor: 'text-orange-500'
-        }
-    ];
-
-    getStatusClass(status: string): string {
-        switch (status) {
-            case 'Active': return 'status-active';
-            case 'Pending Print': return 'status-pending';
-            case 'No label': return 'status-nolabel';
-            case 'Regenerated': return 'status-regen';
-            default: return 'status-active';
-        }
-    }
+  private initIcons() {
+    [0, 100, 300].forEach(d => setTimeout(() => lucide?.createIcons?.(), d));
+  }
 }

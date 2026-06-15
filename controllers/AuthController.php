@@ -16,30 +16,30 @@ class AuthController extends Controller
         $userModel = new User();
         $user = $userModel->findByEmail($data['email']);
 
-        // Verify password hash
         if ($user && password_verify($data['password'], $user['password'])) {
-            if ($user['status'] !== 'active') {
-                $this->jsonResponse(["message" => "Account is inactive"], 403);
+            if ($user['status'] === 'inactive') {
+                $this->jsonResponse(["message" => "Your account has been deactivated. Contact support."], 403);
+            }
+            if ($user['status'] === 'pending') {
+                $this->jsonResponse(["message" => "Your registration is pending approval. You will receive an email once approved."], 403);
             }
 
-            // Regenerate session ID to prevent session fixation attacks
             session_regenerate_id(true);
 
-            // Fetch Role Name for RBAC
-            $db = Database::getConnection();
-            $stmt = $db->prepare("SELECT name FROM roles WHERE id = :role_id");
-            $stmt->bindParam(':role_id', $user['role_id']);
-            $stmt->execute();
-            $role = $stmt->fetch(PDO::FETCH_ASSOC);
+            $permModel = new Permission();
+            $permissions = ($user['role_name'] === 'Super Admin')
+                ? array_column($permModel->findAllKeys(), 'key')
+                : $permModel->getUserPermissions($user['id']);
 
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role_id'] = $user['role_id'];
-            $_SESSION['role_name'] = $role ? $role['name'] : '';
+            $_SESSION['role_name'] = $user['role_name'] ?? '';
             $_SESSION['company_id'] = $user['company_id'];
+            $_SESSION['permissions'] = $permissions;
 
-            // Fetch Client Details if associated
             $clientData = null;
             if (!empty($user['company_id'])) {
+                $db = Database::getConnection();
                 $stmt = $db->prepare("SELECT company_name, contact_person, phone, address FROM clients WHERE id = :id");
                 $stmt->bindParam(':id', $user['company_id']);
                 $stmt->execute();
@@ -47,31 +47,46 @@ class AuthController extends Controller
             }
 
             $_SESSION['user'] = [
-                "id" => $user['id'],
-                "name" => $user['name'],
-                "email" => $user['email'],
-                "role_name" => $_SESSION['role_name'],
-                "company_id" => $user['company_id']
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'role_name' => $_SESSION['role_name'],
+                'company_id' => $user['company_id'],
             ];
 
             $this->jsonResponse([
-                "message" => "Login successful",
-                "user" => [
-                    "id" => $user['id'],
-                    "name" => $user['name'],
-                    "email" => $user['email'],
-                    "role" => $_SESSION['role_name'],
-                    "company_id" => $user['company_id'],
-                    "company_name" => $clientData['company_name'] ?? null,
-                    "contact_person" => $clientData['contact_person'] ?? null,
-                    "phone" => $clientData['phone'] ?? null,
-                    "address" => $clientData['address'] ?? null
-                ]
+                'message' => 'Login successful',
+                'user' => [
+                    'id' => $user['id'],
+                    'name' => $user['name'],
+                    'email' => $user['email'],
+                    'role' => $_SESSION['role_name'],
+                    'company_id' => $user['company_id'],
+                    'permissions' => $permissions,
+                    'company_name' => $clientData['company_name'] ?? null,
+                    'contact_person' => $clientData['contact_person'] ?? null,
+                    'phone' => $clientData['phone'] ?? null,
+                    'address' => $clientData['address'] ?? null,
+                ],
             ]);
         }
-        else {
-            $this->jsonResponse(["message" => "Invalid credentials"], 401);
+
+        $this->jsonResponse(["message" => "Invalid credentials"], 401);
+    }
+
+    public function me()
+    {
+        AuthMiddleware::check();
+        $userModel = new User();
+        $user = $userModel->findById($_SESSION['user_id']);
+        if (!$user) {
+            $this->jsonResponse(["message" => "User not found"], 404);
         }
+        unset($user['password']);
+        AuthMiddleware::refreshPermissions($user['id']);
+        $user['permissions'] = $_SESSION['permissions'];
+        $user['role'] = $user['role_name'];
+        $this->jsonResponse($user);
     }
 
     public function logout()

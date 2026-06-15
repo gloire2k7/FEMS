@@ -198,6 +198,20 @@
                         </div>
                     </div>
 
+                    <!-- PERMISSIONS -->
+                    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
+                        <h3 class="text-xs font-black text-[#0B1437] uppercase tracking-wider mb-4">Permissions</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label *ngFor="let p of permissionOptions" class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl cursor-pointer">
+                                <input type="checkbox" [checked]="hasPermission(p.key)" (change)="togglePermission(p.key)">
+                                <div>
+                                    <span class="text-xs font-bold text-[#0B1437]">{{ p.label }}</span>
+                                    <p class="text-[10px] text-slate-400">{{ p.description }}</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
                     <!-- COMPANY & TERRITORY -->
                     <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm">
                         <div class="flex items-center gap-5 mb-8">

@@ -2,9 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class OrderService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8000/api';
@@ -13,8 +11,12 @@ export class OrderService {
     return this.http.get<any[]>(`${this.apiUrl}/shop/products`, { withCredentials: true });
   }
 
-  getOrders(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/orders`, { withCredentials: true });
+  getOrders(page = 1, limit = 10): Observable<any> {
+    return this.http.get(`${this.apiUrl}/orders?page=${page}&limit=${limit}`, { withCredentials: true });
+  }
+
+  getOrder(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/orders/${id}`, { withCredentials: true });
   }
 
   placeOrder(data: any): Observable<any> {
@@ -25,7 +27,11 @@ export class OrderService {
     return this.http.put(`${this.apiUrl}/orders/${id}/grant`, {}, { withCredentials: true });
   }
 
-  denyOrder(id: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/orders/${id}/confirm`, { action: 'deny' }, { withCredentials: true });
+  denyOrder(id: number, reason = ''): Observable<any> {
+    return this.http.put(`${this.apiUrl}/orders/${id}/confirm`, { action: 'deny', reason }, { withCredentials: true });
+  }
+
+  deliverOrder(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/orders/${id}/deliver`, {}, { withCredentials: true });
   }
 }

@@ -2,52 +2,70 @@
 
 class MailHelper
 {
-    /**
-     * Send email using PHPMailer
-     * 
-     * @param string $to Email address
-     * @param string $subject Email subject
-     * @param string $body Email body (HTML)
-     */
     public static function sendEmail($to, $subject, $body)
     {
-        // ---
-        // INSTRUCTION: After installing PHPMailer manually, uncomment and configure:
-        // require_once 'PHPMailer/src/Exception.php';
-        // require_once 'PHPMailer/src/PHPMailer.php';
-        // require_once 'PHPMailer/src/SMTP.php';
+        $headers = "MIME-Version: 1.0\r\n";
+        $headers .= "Content-type: text/html; charset=UTF-8\r\n";
+        $headers .= "From: FEMS <noreply@fems.local>\r\n";
 
-        // $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-        // try {
-        //     $mail->isSMTP();
-        //     $mail->Host       = 'smtp.example.com'; 
-        //     $mail->SMTPAuth   = true;
-        //     $mail->Username   = 'user@example.com';
-        //     $mail->Password   = 'secret';
-        //     $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-        //     $mail->Port       = 587;
-        //     $mail->setFrom('noreply@yourdomain.com', 'FEMS Admin');
-        //     $mail->addAddress($to);
-        //     $mail->isHTML(true);
-        //     $mail->Subject = $subject;
-        //     $mail->Body    = $body;
-        //     $mail->send();
-        //     return true;
-        // } catch (Exception $e) {
-        //     error_log("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
-        //     return false;
-        // }
-        // ---
+        $sent = @mail($to, $subject, $body, $headers);
 
-        // Stub
-        error_log("Stub email sent to $to with subject: $subject");
+        $logDir = __DIR__ . '/../logs';
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0777, true);
+        }
+        file_put_contents(
+            $logDir . '/mail.log',
+            date('Y-m-d H:i:s') . " | To: $to | Subject: $subject | Sent: " . ($sent ? 'yes' : 'no') . "\n",
+            FILE_APPEND
+        );
+
         return true;
+    }
+
+    public static function sendAdminCredentials($email, $name, $password)
+    {
+        $subject = 'Your FEMS Admin Account';
+        $body = "<h2>Welcome to FEMS, {$name}</h2>
+            <p>Your admin account has been created.</p>
+            <p><strong>Email:</strong> {$email}<br>
+            <strong>Temporary password:</strong> {$password}</p>
+            <p>Please sign in and change your password under Settings.</p>
+            <p><a href='http://localhost:4200/signin'>Sign in to FEMS</a></p>";
+        return self::sendEmail($email, $subject, $body);
+    }
+
+    public static function sendClientApproval($email, $name, $approved)
+    {
+        $subject = $approved ? 'Your FEMS account has been approved' : 'Your FEMS registration was declined';
+        $body = $approved
+            ? "<p>Hello {$name},</p><p>Your client account has been approved. You can now sign in at <a href='http://localhost:4200/signin'>FEMS</a>.</p>"
+            : "<p>Hello {$name},</p><p>Unfortunately your registration could not be approved at this time. Please contact support.</p>";
+        return self::sendEmail($email, $subject, $body);
+    }
+
+    public static function sendOrderStatusUpdate($email, $orderId, $status, $reason = null)
+    {
+        $labels = [
+            'granted' => 'approved',
+            'cancelled' => 'denied',
+            'delivered' => 'marked as delivered',
+            'pending' => 'received and pending review',
+        ];
+        $label = $labels[$status] ?? $status;
+        $subject = "Order #{$orderId} update";
+        $body = "<p>Your order <strong>#{$orderId}</strong> has been {$label}.</p>";
+        if ($reason) {
+            $body .= "<p><strong>Reason:</strong> {$reason}</p>";
+        }
+        $body .= "<p><a href='http://localhost:4200/my-orders'>Track your order</a></p>";
+        return self::sendEmail($email, $subject, $body);
     }
 
     public static function sendExpirationAlert($email, $extinguisher)
     {
-        $subject = "Alert: Extinguisher Expired";
-        $body = "The fire extinguisher with serial " . $extinguisher['serial_number'] . " has expired. Please inspect immediately.";
+        $subject = 'Alert: Extinguisher Expired';
+        $body = 'The fire extinguisher with serial ' . $extinguisher['serial_number'] . ' has expired.';
         return self::sendEmail($email, $subject, $body);
     }
 }

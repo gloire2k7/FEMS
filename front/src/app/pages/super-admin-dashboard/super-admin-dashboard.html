@@ -96,32 +96,13 @@
         <!-- PAGE CONTENT -->
         <div class="p-7 space-y-6 bg-[#F8FAFC] min-h-screen">
 
-            <!-- STATS GRID -->
-            <div class="grid grid-cols-6 gap-5">
-                <div *ngFor="let stat of stats"
-                    class="bg-[#0B1437] rounded-xl p-8 text-white relative overflow-hidden group">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+                <div *ngFor="let stat of statsCards" (click)="goCard(stat.route)"
+                    class="bg-[#0B1437] rounded-xl p-8 text-white relative overflow-hidden group cursor-pointer hover:scale-[1.02] transition-transform">
                     <div class="relative z-10 flex flex-col h-full justify-between">
-                        <span
-                            class="text-[11px] font-black text-slate-400 uppercase tracking-widest opacity-80">{{stat.label}}</span>
+                        <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest opacity-80">{{stat.label}}</span>
                         <h2 class="text-3xl font-black mt-1 mb-1">{{stat.value}}</h2>
-                        <div class="flex items-center gap-1">
-                            <i *ngIf="stat.trendType === 'positive'" data-lucide="trending-up"
-                                class="w-2.5 h-2.5 text-emerald-400"></i>
-                            <i *ngIf="stat.trendType === 'healthy'" data-lucide="check-circle"
-                                class="w-2.5 h-2.5 text-emerald-400"></i>
-                            <span class="text-[11px] font-bold"
-                                [ngClass]="{'text-emerald-400': stat.trendType === 'positive' || stat.trendType === 'healthy', 'text-slate-400': stat.trendType === 'neutral'}">
-                                {{stat.trend}}
-                            </span>
-                        </div>
-                    </div>
-                    <div *ngIf="stat.label === 'Compliance Rate'"
-                        class="absolute left-0 top-0 w-1 h-full bg-emerald-500"></div>
-                    <div class="absolute right-0 top-0 p-2 opacity-5">
-                        <i [attr.data-lucide]="stat.label === 'Total Companies' ? 'briefcase' : 
-                                               stat.label === 'Total Admins' ? 'user-check' : 
-                                               stat.label === 'Inspections' ? 'check-square' : 'layout-grid'"
-                            class="w-8 h-8"></i>
+                        <span class="text-[11px] font-bold text-slate-400">{{stat.sub}}</span>
                     </div>
                 </div>
             </div>

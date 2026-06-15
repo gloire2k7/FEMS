@@ -46,19 +46,11 @@ export class SignupComponent implements AfterViewInit {
     };
 
     this.authService.signup(signupData).subscribe({
-      next: (response) => {
-        // After successful signup, log in automatically
-        this.authService.login({ email: this.email, password: this.password }).subscribe({
-          next: (loginRes) => {
-            this.isLoading = false;
-            this.authService.setUser(loginRes.user);
-            this.router.navigate(['/dashboard']);
-          },
-          error: () => {
-            this.isLoading = false;
-            this.router.navigate(['/signin']);
-          }
-        });
+      next: () => {
+        this.isLoading = false;
+        this.error = '';
+        alert('Registration submitted! An admin will review your account. You will receive an email once approved.');
+        this.router.navigate(['/signin']);
       },
       error: (err) => {
         this.isLoading = false;

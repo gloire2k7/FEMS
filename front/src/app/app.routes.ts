@@ -39,6 +39,7 @@ import { SuperAdminClients } from './pages/super-admin-clients/super-admin-clien
 import { SuperAdminReports } from './pages/super-admin-reports/super-admin-reports';
 import { SuperAdminLogs } from './pages/super-admin-logs/super-admin-logs';
 import { ClientClientsComponent } from './pages/client-clients/client-clients';
+import { MyOrdersComponent } from './pages/my-orders/my-orders';
 
 export const routes: Routes = [
   { path: '', component: SignupComponent },
@@ -78,6 +79,7 @@ export const routes: Routes = [
   { path: 'reports', component: Reports },
   { path: 'shop', component: Shop },
   { path: 'cart', component: Cart },
-  { path: 'checkout', component: Checkout }
+  { path: 'checkout', component: Checkout },
+  { path: 'my-orders', component: MyOrdersComponent }
 ];
 

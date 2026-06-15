@@ -1,38 +1,59 @@
 import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterModule, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { OrderService } from '../../services/order.service';
+import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../auth.service';
-import { Router } from '@angular/router';
+import { PaginationComponent } from '../../shared/pagination/pagination.component';
 
 declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
 
 @Component({
     selector: 'app-admin-dashboard',
     standalone: true,
-    imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive],
+    imports: [CommonModule, RouterModule, RouterLink, RouterLinkActive, PaginationComponent],
     templateUrl: './admin-dashboard.component.html',
     styleUrl: './admin-dashboard.component.css'
 })
 export class AdminDashboardComponent implements AfterViewInit, OnInit {
     private orderService = inject(OrderService);
+    private dashboard = inject(DashboardService);
     private authService = inject(AuthService);
     private router = inject(Router);
 
-    userName: string = 'Admin';
+    userName = 'Admin';
     inspectionsOpen = true;
     orders: any[] = [];
     pendingCount = 0;
+    stats: any = {};
+    page = 1;
+    lastPage = 1;
+    total = 0;
 
     ngOnInit() {
         const user = this.authService.getUser();
-        if (user && user.first_name) {
-            this.userName = user.first_name;
+        if (user?.name) this.userName = user.name;
+
+        if (this.authService.isRole('Super Admin') || this.authService.hasPermission('view_analytics')) {
+            this.dashboard.getStats().subscribe(s => {
+                this.stats = s;
+                this.pendingCount = s.pending_orders || 0;
+            });
         }
 
-        this.orderService.getOrders().subscribe(orders => {
-            this.orders = orders;
-            this.pendingCount = orders.filter((o: any) => o.status === 'pending').length;
+        if (this.authService.isRole('Super Admin') || this.authService.hasPermission('manage_orders')) {
+            this.loadOrders(1);
+        }
+    }
+
+    loadOrders(page: number) {
+        this.page = page;
+        this.orderService.getOrders(page, 8).subscribe(res => {
+            this.orders = res.data || res;
+            this.page = res.page || 1;
+            this.lastPage = res.last_page || 1;
+            this.total = res.total || this.orders.length;
+            this.pendingCount = this.orders.filter((o: any) => o.status === 'pending').length;
         });
     }
 
@@ -51,15 +72,11 @@ export class AdminDashboardComponent implements AfterViewInit, OnInit {
     }
 
     approveOrder(id: number) {
-        this.orderService.approveOrder(id).subscribe(() => {
-            this.ngOnInit(); // refresh
-        });
+        this.orderService.approveOrder(id).subscribe(() => this.loadOrders(this.page));
     }
 
     denyOrder(id: number) {
-        this.orderService.denyOrder(id).subscribe(() => {
-            this.ngOnInit(); // refresh
-        });
+        this.orderService.denyOrder(id, 'Denied by admin').subscribe(() => this.loadOrders(this.page));
     }
 
     toggleInspections() {

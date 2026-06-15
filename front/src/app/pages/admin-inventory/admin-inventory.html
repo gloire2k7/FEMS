@@ -164,181 +164,70 @@
         </header>
 
         <!-- PAGE CONTENT -->
-        <div class="p-8 space-y-5 bg-[#F8FAFC]">
+        <div class="p-8 space-y-6 bg-[#F8FAFC]">
 
-            <!-- ALERTS -->
-            <div class="space-y-3">
-                <!-- Red Alert -->
-                <div
-                    class="bg-white rounded-xl p-8 flex items-center justify-between border-l-4 border-[#814545] shadow-sm">
-                    <div class="flex items-center gap-5">
-                        <div class="w-9 h-9 rounded-full bg-red-50 flex items-center justify-center shrink-0">
-                            <i data-lucide="alert-triangle" class="w-4 h-4 text-[#814545]"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-[15px] font-black text-[#5C2B2B]">Action Required: 3 Extinguishers have no
-                                label</h4>
-                            <p class="text-[13px] font-bold text-[#814545]/70 mt-0.5">Review the inspections submitted
-                                by Inspector J. Doe before end of day.</p>
-                        </div>
-                    </div>
-                    <button
-                        class="ml-4 px-5 py-3 border border-[#814545]/30 rounded-xl text-[13px] font-black text-[#814545] hover:bg-[#814545]/5 transition-all whitespace-nowrap">
-                        View Items
-                    </button>
+            <!-- Stock summary cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" *ngIf="summary">
+                <div class="bg-[#0B1437] rounded-2xl p-6 text-white">
+                    <p class="text-xs font-bold uppercase text-slate-400 mb-1">In Stock</p>
+                    <p class="text-3xl font-black">{{ summary.totals?.in_stock || 0 }}</p>
                 </div>
-
-                <!-- Yellow Alert -->
-                <div
-                    class="bg-[#FFFDF5] rounded-xl p-8 flex items-center justify-between border-l-4 border-[#EB9A2D] shadow-sm">
-                    <div class="flex items-center gap-5">
-                        <div class="w-9 h-9 rounded-full bg-amber-50 flex items-center justify-center shrink-0">
-                            <i data-lucide="alert-triangle" class="w-4 h-4 text-[#EB9A2D]"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-[15px] font-black text-[#A35200]">Action Required: 5 Extinguishers need
-                                regenerenation</h4>
-                            <p class="text-[13px] font-bold text-[#BC7D39] mt-0.5">Review the inspections submitted by
-                                Inspector J. Doe before end of day.</p>
-                        </div>
-                    </div>
-                    <button
-                        class="ml-4 px-5 py-3 border border-[#EB9A2D]/40 rounded-xl text-[13px] font-black text-[#A35200] bg-[#F5EED4] hover:bg-[#EDE3BF] transition-all whitespace-nowrap">
-                        Regenerate
-                    </button>
+                <div class="bg-white rounded-2xl p-6 border border-slate-100">
+                    <p class="text-xs font-bold uppercase text-slate-400 mb-1">Allocated</p>
+                    <p class="text-3xl font-black text-[#0B1437]">{{ summary.totals?.allocated || 0 }}</p>
                 </div>
-            </div>
-
-            <!-- SEARCH / FILTER BAR -->
-            <div class="flex items-center gap-5">
-                <div class="relative w-72">
-                    <i data-lucide="search" class="icon-xs absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" placeholder="Search by extinguisher Id"
-                        class="w-full bg-[#E2E8F0] border-none pl-9 pr-4 py-2 rounded-lg text-[13px] focus:outline-none placeholder:text-slate-500 font-bold text-slate-700">
+                <div class="bg-white rounded-2xl p-6 border border-slate-100">
+                    <p class="text-xs font-bold uppercase text-slate-400 mb-1">Total Units</p>
+                    <p class="text-3xl font-black text-[#0B1437]">{{ summary.totals?.total_units || 0 }}</p>
                 </div>
-                <button
-                    class="px-5 py-3 bg-[#E2E8F0] rounded-lg flex items-center gap-5 text-slate-500 font-bold text-[13px] hover:bg-slate-300 transition-all">
-                    <i data-lucide="filter" class="icon-xs"></i>
-                    Filter
-                </button>
-                <div class="flex-1"></div>
-                <button (click)="generateLabel()"
-                    class="px-6 py-2 bg-[#0B1437] text-white rounded-lg text-[13px] font-black tracking-tight shadow-lg shadow-blue-900/20 hover:bg-blue-900 transition-all">
-                    Generate Label
+                <button *ngIf="canManage" (click)="goRegister()"
+                    class="bg-emerald-600 rounded-2xl p-6 text-white text-left hover:bg-emerald-700 transition-colors">
+                    <p class="text-xs font-bold uppercase opacity-80 mb-1">Quick Action</p>
+                    <p class="text-lg font-black">+ Register Units</p>
                 </button>
             </div>
 
-            <!-- MAIN GRID: Table + Preview -->
-            <div class="flex gap-5 items-start">
-
-                <!-- TABLE CARD -->
-                <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                    <!-- Table Header -->
-                    <div
-                        class="flex items-center px-6 py-3 border-b border-slate-50 text-[12px] font-black text-slate-400 uppercase tracking-[0.15em]">
-                        <span class="w-[35%]">ID / Location</span>
-                        <span class="w-[20%]">Status</span>
-                        <span class="w-[30%]">Dates</span>
-                        <span class="w-[15%] text-right">Actions</span>
-                    </div>
-
-                    <!-- Table Rows -->
-                    <div class="divide-y divide-slate-50">
-                        <div *ngFor="let item of extinguishers"
-                            class="flex items-center px-6 py-4 hover:bg-slate-50/60 transition-colors group">
-
-                            <!-- ID / Location -->
-                            <div class="w-[35%]">
-                                <h4 class="text-[15px] font-black text-[#0B1437]">{{item.id}}</h4>
-                                <p class="text-[12px] font-bold text-slate-400 mt-0.5 truncate">{{item.location}}</p>
-                            </div>
-
-                            <!-- Status -->
-                            <div class="w-[20%]">
-                                <span [class]="getStatusClass(item.status)"
-                                    class="px-3 py-1 rounded-full text-[12px] font-black whitespace-nowrap inline-block">
-                                    {{item.status}}
-                                </span>
-                            </div>
-
-                            <!-- Dates -->
-                            <div class="w-[30%]">
-                                <div class="space-y-0.5">
-                                    <p class="text-[12px] text-slate-500 font-bold">
-                                        <span class="text-slate-400 font-black">Last:</span>
-                                        &nbsp;{{item.lastDate}}
-                                    </p>
-                                    <p class="text-[12px] font-black" [class]="item.nextDateColor">
-                                        <span class="text-slate-400 font-black">Next:</span>
-                                        &nbsp;{{item.nextDate}}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="w-[15%] flex justify-end items-center gap-5">
-                                <ng-container *ngIf="item.status !== 'No label'">
-                                    <button
-                                        class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:bg-slate-100 hover:text-slate-600 transition-all">
-                                        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                    </button>
-                                    <button
-                                        class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:bg-slate-100 hover:text-slate-600 transition-all">
-                                        <i data-lucide="cloud-download" class="w-3.5 h-3.5"></i>
-                                    </button>
-                                    <button
-                                        class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:bg-slate-100 hover:text-slate-600 transition-all">
-                                        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                                    </button>
-                                </ng-container>
-                                <ng-container *ngIf="item.status === 'No label'">
-                                    <button (click)="generateLabel()"
-                                        class="px-4 py-1.5 bg-[#0B1437] text-white rounded-lg text-[12px] font-black hover:bg-blue-900 transition-all shadow-sm">
-                                        Generate
-                                    </button>
-                                </ng-container>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div class="px-6 py-4 border-t border-slate-50 flex items-center justify-between">
-                        <p class="text-[12px] font-bold text-slate-400">Showing 1 to 4 of 455 entries</p>
-                        <div class="flex items-center gap-5">
-                            <button
-                                class="px-4 py-1.5 rounded-lg bg-slate-100 text-slate-500 text-[12px] font-black hover:bg-slate-200 transition-colors">Previous</button>
-                            <button
-                                class="px-4 py-1.5 rounded-lg bg-slate-200 text-slate-500 text-[12px] font-black hover:bg-slate-300 transition-colors">Next</button>
-                        </div>
+            <!-- By type breakdown -->
+            <div class="bg-white rounded-2xl border border-slate-100 p-6" *ngIf="summary?.by_type?.length">
+                <h3 class="text-sm font-black text-[#0B1437] mb-4">Stock by Type</h3>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div *ngFor="let row of summary.by_type"
+                        class="p-4 bg-slate-50 rounded-xl flex justify-between items-center">
+                        <span class="font-bold text-sm">{{ row.type }} · {{ row.capacity }}</span>
+                        <span class="text-lg font-black text-[#0B1437]">{{ row.count }}</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- LABEL PREVIEW CARD -->
-                <div class="w-52 shrink-0 sticky top-20">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <!-- Card inner: grey background -->
-                        <div class="bg-[#F0F2F7] m-2 rounded-xl p-7 relative overflow-hidden">
-                            <!-- Decorative elements -->
-                            <div class="absolute -right-6 -top-6 w-20 h-20 rounded-full bg-slate-200/60"></div>
-                            <div class="absolute -left-4 -bottom-4 w-14 h-14 rounded-full bg-slate-200/40"></div>
-
-                            <!-- Header row -->
-                            <div class="flex items-start justify-between relative z-10 mb-6">
-                                <span
-                                    class="text-[7px] font-black text-slate-400 tracking-[0.15em] uppercase leading-tight">FIRE<br>EXTINGUISHER</span>
-                                <span
-                                    class="bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-wide">ACTIVE</span>
-                            </div>
-
-                            <!-- ID -->
-                            <div class="relative z-10 text-center py-2">
-                                <h3 class="text-[16px] font-black text-[#0B1437] tracking-tight leading-none">
-                                    EXT-2023-001</h3>
-                            </div>
-                        </div>
+            <!-- Recent stock actions -->
+            <div class="bg-white rounded-2xl border border-slate-100 p-6" *ngIf="recent.length">
+                <h3 class="text-sm font-black text-[#0B1437] mb-4">Recent Stock Actions</h3>
+                <div class="space-y-2">
+                    <div *ngFor="let m of recent" class="flex justify-between text-sm py-2 border-b border-slate-50">
+                        <span><strong>{{ m.action }}</strong> · {{ m.serial_number || '—' }} by {{ m.performer_name }}</span>
+                        <span class="text-slate-400 text-xs">{{ m.created_at }}</span>
                     </div>
                 </div>
+            </div>
 
+            <!-- Units table -->
+            <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-50 flex justify-between items-center">
+                    <h3 class="text-sm font-black text-[#0B1437]">Units in Stock</h3>
+                    <span class="text-xs text-slate-400">{{ total }} units</span>
+                </div>
+                <div *ngIf="loading" class="p-8 text-center text-slate-400">Loading…</div>
+                <div class="divide-y divide-slate-50" *ngIf="!loading">
+                    <div *ngFor="let u of units" class="flex items-center px-6 py-4 gap-4 hover:bg-slate-50/50">
+                        <img *ngIf="u.qr_code_path" [src]="qrUrl(u.qr_code_path)" alt="QR" class="w-10 h-10 rounded border" />
+                        <div class="flex-1 min-w-0">
+                            <p class="font-black text-sm text-[#0B1437]">{{ u.serial_number }}</p>
+                            <p class="text-xs text-slate-500">{{ u.type }} · {{ u.capacity }} · {{ u.price | currency }}</p>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-1 rounded-full bg-emerald-50 text-emerald-700">{{ u.status }}</span>
+                    </div>
+                </div>
+                <app-pagination [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="load($event)" />
             </div>
         </div>
     </main>

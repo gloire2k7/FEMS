@@ -2,9 +2,6 @@
 
 class AuthMiddleware
 {
-    /**
-     * Check if user is logged in
-     */
     public static function check()
     {
         if (!isset($_SESSION['user_id'])) {
@@ -14,14 +11,10 @@ class AuthMiddleware
         }
     }
 
-    /**
-     * Check if user has specific role
-     * @param string|array $roleNames
-     */
     public static function hasRole($roleNames)
     {
         self::check();
-        $userRole = isset($_SESSION['role_name']) ? $_SESSION['role_name'] : '';
+        $userRole = $_SESSION['role_name'] ?? '';
 
         if (!is_array($roleNames)) {
             $roleNames = [$roleNames];
@@ -29,8 +22,38 @@ class AuthMiddleware
 
         if (!in_array($userRole, $roleNames)) {
             http_response_code(403);
-            echo json_encode(["message" => "Forbidden. You do not have the required permissions.", "role" => $userRole]);
+            echo json_encode(["message" => "Forbidden. You do not have the required role.", "role" => $userRole]);
             exit;
         }
+    }
+
+    /** Super Admin bypasses all permission checks. */
+    public static function hasPermission($permissionKey)
+    {
+        self::check();
+        if (($_SESSION['role_name'] ?? '') === 'Super Admin') {
+            return;
+        }
+        $perms = $_SESSION['permissions'] ?? [];
+        if (!in_array($permissionKey, $perms, true)) {
+            http_response_code(403);
+            echo json_encode(["message" => "Forbidden. Missing permission: $permissionKey"]);
+            exit;
+        }
+    }
+
+    public static function hasRoleOrPermission(array $roles, $permissionKey)
+    {
+        self::check();
+        if (in_array($_SESSION['role_name'] ?? '', $roles, true)) {
+            return;
+        }
+        self::hasPermission($permissionKey);
+    }
+
+    public static function refreshPermissions($userId)
+    {
+        $permModel = new Permission();
+        $_SESSION['permissions'] = $permModel->getUserPermissions($userId);
     }
 }
