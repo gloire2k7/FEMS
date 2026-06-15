@@ -45,6 +45,14 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
     setTimeout(() => lucide?.createIcons?.(), 50);
   }
 
+  hasPermission(key: string): boolean {
+    return this.auth.hasPermission(key);
+  }
+
+  hasAnyPermission(keys: string[]): boolean {
+    return keys.some(k => this.auth.hasPermission(k));
+  }
+
   toggleInspections() {
     this.inspectionsOpen = !this.inspectionsOpen;
     setTimeout(() => lucide?.createIcons?.(), 50);

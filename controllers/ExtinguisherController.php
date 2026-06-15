@@ -20,7 +20,7 @@ class ExtinguisherController extends Controller
 
     public function stockSummary()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_stock');
+        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
         $this->jsonResponse([
             'summary' => $this->extModel->getStockSummary(),
             'recent' => $this->extModel->getRecentMovements(15),
@@ -29,13 +29,13 @@ class ExtinguisherController extends Controller
 
     public function store()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_stock');
+        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
         return $this->createSingle($this->getJsonInput());
     }
 
     public function bulkStore()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_stock');
+        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
         $data = $this->getJsonInput();
 
         if (!isset($data['count']) || !is_numeric($data['count'])) {
@@ -86,7 +86,7 @@ class ExtinguisherController extends Controller
 
     public function update($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_stock');
+        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
         $data = $this->getJsonInput();
         $ext = $this->extModel->findById($id);
         if (!$ext) {

@@ -117,13 +117,14 @@ class User extends Model
 
     public function create($data)
     {
-        $query = "INSERT INTO {$this->table} (name, email, password, role_id, company_id, status)
-                  VALUES (:name, :email, :password, :role_id, :company_id, :status)";
+        $query = "INSERT INTO {$this->table} (name, email, password, role_id, company_id, status, must_change_password)
+                  VALUES (:name, :email, :password, :role_id, :company_id, :status, :must_change_password)";
         $stmt = $this->db->prepare($query);
 
         $hashed = password_hash($data['password'], PASSWORD_DEFAULT);
         $status = $data['status'] ?? 'active';
         $company_id = $data['company_id'] ?? null;
+        $mustChange = isset($data['must_change_password']) ? (int) $data['must_change_password'] : 0;
 
         $stmt->bindParam(':name', $data['name']);
         $stmt->bindParam(':email', $data['email']);
@@ -131,6 +132,7 @@ class User extends Model
         $stmt->bindParam(':role_id', $data['role_id']);
         $stmt->bindParam(':company_id', $company_id);
         $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':must_change_password', $mustChange, PDO::PARAM_INT);
 
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }

@@ -1,7 +1,8 @@
-import { AfterViewInit, Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { AfterViewInit, Component, OnInit, inject } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { AdminSidebarComponent } from './admin-sidebar.component';
 import { AdminTopbarComponent } from './admin-topbar.component';
+import { AuthService } from '../../app/auth.service';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
@@ -21,7 +22,17 @@ declare const lucide: { createIcons: () => void } | undefined;
     </div>
   `,
 })
-export class AdminShellComponent implements AfterViewInit {
+export class AdminShellComponent implements OnInit, AfterViewInit {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+
+  ngOnInit() {
+    const user = this.auth.getUser();
+    if (user?.must_change_password) {
+      this.router.navigate(['/admin-settings']);
+    }
+  }
+
   ngAfterViewInit() {
     setTimeout(() => lucide?.createIcons?.(), 50);
   }

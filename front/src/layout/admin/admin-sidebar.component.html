@@ -16,85 +16,111 @@
       <span class="font-medium">Dashboard</span>
     </a>
 
-    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">Operations</p>
+    <!-- ── OPERATIONS ────────────────────────────────────── -->
+    <ng-container *ngIf="hasAnyPermission(['manage_clients','manage_locations','manage_inventory','manage_orders'])">
+      <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">Operations</p>
 
-    <a routerLink="/clients" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
-      <span class="flex items-center gap-3">
-        <i data-lucide="users" class="w-5 h-5 shrink-0"></i>
-        <span class="font-medium">Clients</span>
-      </span>
-      <span *ngIf="pendingClients > 0" class="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center">
-        {{ pendingClients }}
-      </span>
-    </a>
-    <a routerLink="/admin-locations" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
-      <i data-lucide="map-pin" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">Locations</span>
-    </a>
-    <a routerLink="/admin-inventory" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
-      <i data-lucide="package" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">Inventory</span>
-    </a>
-    <a routerLink="/admin-orders" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
-      <span class="flex items-center gap-3">
-        <i data-lucide="shopping-bag" class="w-5 h-5 shrink-0"></i>
-        <span class="font-medium">Orders</span>
-      </span>
-      <span *ngIf="pendingOrders > 0" class="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center">
-        {{ pendingOrders }}
-      </span>
-    </a>
+      <a *ngIf="hasPermission('manage_clients')"
+        routerLink="/clients" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <span class="flex items-center gap-3">
+          <i data-lucide="users" class="w-5 h-5 shrink-0"></i>
+          <span class="font-medium">Clients</span>
+        </span>
+        <span *ngIf="pendingClients > 0" class="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center">
+          {{ pendingClients }}
+        </span>
+      </a>
 
-    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">Compliance</p>
+      <a *ngIf="hasPermission('manage_locations')"
+        routerLink="/admin-locations" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="map-pin" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">Locations</span>
+      </a>
 
-    <button type="button" (click)="toggleInspections()"
-      class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors text-left"
-      [class.bg-white/10]="inspectionsOpen" [class.text-white]="inspectionsOpen">
-      <span class="flex items-center gap-3">
-        <i data-lucide="clipboard-check" class="w-5 h-5 shrink-0"></i>
-        <span class="font-medium">Inspections</span>
-      </span>
-      <i [attr.data-lucide]="inspectionsOpen ? 'chevron-up' : 'chevron-down'" class="w-4 h-4 opacity-70"></i>
-    </button>
-    <div *ngIf="inspectionsOpen" class="ml-4 pl-4 border-l border-white/10 space-y-1 mb-2">
-      <a routerLink="/admin-assigned-inspections" routerLinkActive="text-white bg-white/5"
-        class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white">Assigned</a>
-      <a routerLink="/admin-inspectors" routerLinkActive="text-white bg-white/5"
-        class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white">Inspectors</a>
-      <a routerLink="/admin-compliance" routerLinkActive="text-white bg-white/5"
-        class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white">Compliance</a>
-    </div>
-    <a routerLink="/admin-refills" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
-      <i data-lucide="repeat" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">Refills</span>
-    </a>
+      <a *ngIf="hasPermission('manage_inventory')"
+        routerLink="/admin-inventory" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="package" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">Inventory</span>
+      </a>
 
-    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">System</p>
-    <a routerLink="/admin-notifications" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
-      <span class="flex items-center gap-3">
-        <i data-lucide="bell" class="w-5 h-5 shrink-0"></i>
-        <span class="font-medium">Notifications</span>
-      </span>
-      <span *ngIf="unreadNotifications > 0" class="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
-        {{ unreadNotifications > 9 ? '9+' : unreadNotifications }}
-      </span>
-    </a>
-    <a routerLink="/admin-settings" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
-      <i data-lucide="settings" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">Settings</span>
-    </a>
-    <a routerLink="/assistant" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
-      <i data-lucide="sparkles" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">AI Assistant</span>
-    </a>
+      <a *ngIf="hasPermission('manage_orders')"
+        routerLink="/admin-orders" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <span class="flex items-center gap-3">
+          <i data-lucide="shopping-bag" class="w-5 h-5 shrink-0"></i>
+          <span class="font-medium">Orders</span>
+        </span>
+        <span *ngIf="pendingOrders > 0" class="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center">
+          {{ pendingOrders }}
+        </span>
+      </a>
+    </ng-container>
+
+    <!-- ── COMPLIANCE ─────────────────────────────────────── -->
+    <ng-container *ngIf="hasAnyPermission(['manage_inspections','manage_refills'])">
+      <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">Compliance</p>
+
+      <ng-container *ngIf="hasPermission('manage_inspections')">
+        <button type="button" (click)="toggleInspections()"
+          class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors text-left"
+          [class.bg-white/10]="inspectionsOpen" [class.text-white]="inspectionsOpen">
+          <span class="flex items-center gap-3">
+            <i data-lucide="clipboard-check" class="w-5 h-5 shrink-0"></i>
+            <span class="font-medium">Inspections</span>
+          </span>
+          <i [attr.data-lucide]="inspectionsOpen ? 'chevron-up' : 'chevron-down'" class="w-4 h-4 opacity-70"></i>
+        </button>
+        <div *ngIf="inspectionsOpen" class="ml-4 pl-4 border-l border-white/10 space-y-1 mb-2">
+          <a routerLink="/admin-assigned-inspections" routerLinkActive="text-white bg-white/5"
+            class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white">Assigned</a>
+          <a routerLink="/admin-inspectors" routerLinkActive="text-white bg-white/5"
+            class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white">Inspectors</a>
+          <a routerLink="/admin-compliance" routerLinkActive="text-white bg-white/5"
+            class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white">Compliance</a>
+        </div>
+      </ng-container>
+
+      <a *ngIf="hasPermission('manage_refills')"
+        routerLink="/admin-refills" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="repeat" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">Refills</span>
+      </a>
+    </ng-container>
+
+    <!-- ── SYSTEM ──────────────────────────────────────────── -->
+    <ng-container *ngIf="hasAnyPermission(['manage_notifications','manage_settings','manage_ai_assistant'])">
+      <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">System</p>
+
+      <a *ngIf="hasPermission('manage_notifications')"
+        routerLink="/admin-notifications" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <span class="flex items-center gap-3">
+          <i data-lucide="bell" class="w-5 h-5 shrink-0"></i>
+          <span class="font-medium">Notifications</span>
+        </span>
+        <span *ngIf="unreadNotifications > 0" class="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
+          {{ unreadNotifications > 9 ? '9+' : unreadNotifications }}
+        </span>
+      </a>
+
+      <a *ngIf="hasPermission('manage_settings')"
+        routerLink="/admin-settings" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="settings" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">Settings</span>
+      </a>
+
+      <a *ngIf="hasPermission('manage_ai_assistant')"
+        routerLink="/assistant" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="sparkles" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">AI Assistant</span>
+      </a>
+    </ng-container>
   </nav>
 
   <div class="mt-auto pt-6">

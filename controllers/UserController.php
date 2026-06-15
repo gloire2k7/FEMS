@@ -37,14 +37,14 @@ class UserController extends Controller
 
     public function pendingClients()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'approve_clients');
+        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_clients');
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $this->jsonResponse($this->userModel->findPendingClients($page, 10));
     }
 
     public function clients()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'approve_clients');
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'manage_clients');
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $status = $_GET['status'] ?? null;
         $this->jsonResponse($this->userModel->findClientsPaginated($page, 10, $status));
@@ -107,6 +107,7 @@ class UserController extends Controller
             $plainPassword = bin2hex(random_bytes(6));
             $data['password'] = $plainPassword;
             $data['status'] = 'active';
+            $data['must_change_password'] = 1;
         } elseif ($role['name'] === 'Super Admin') {
             $this->jsonResponse(["message" => "Cannot create Super Admin via this endpoint."], 403);
         }
@@ -119,7 +120,7 @@ class UserController extends Controller
         if ($role['name'] === 'Admin') {
             $permKeys = $data['permissions'] ?? [];
             (new Permission())->setUserPermissions($id, $permKeys);
-            MailHelper::sendAdminCredentials($data['email'], $data['name'], $plainPassword);
+            MailHelper::sendAdminCredentials($data['email'], $data['name'], $plainPassword, $permKeys);
             $this->jsonResponse([
                 'message' => 'Admin created. Credentials sent by email.',
                 'id' => $id,
@@ -182,7 +183,7 @@ class UserController extends Controller
 
     public function approveClient($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'approve_clients');
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'manage_clients');
         $user = $this->userModel->findById($id);
         if (!$user || $user['role_name'] !== 'Company User') {
             $this->jsonResponse(["message" => "Client not found"], 404);
@@ -194,7 +195,7 @@ class UserController extends Controller
 
     public function rejectClient($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'approve_clients');
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'manage_clients');
         $user = $this->userModel->findById($id);
         if (!$user || $user['role_name'] !== 'Company User') {
             $this->jsonResponse(["message" => "Client not found"], 404);
@@ -220,7 +221,7 @@ class UserController extends Controller
 
         $db = Database::getConnection();
         $hash = password_hash($data['new_password'], PASSWORD_DEFAULT);
-        $db->prepare("UPDATE users SET password = ? WHERE id = ?")->execute([$hash, $userId]);
+        $db->prepare("UPDATE users SET password = ?, must_change_password = 0 WHERE id = ?")->execute([$hash, $userId]);
         $this->jsonResponse(['message' => 'Password updated successfully']);
     }
 

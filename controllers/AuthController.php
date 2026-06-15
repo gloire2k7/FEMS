@@ -63,6 +63,7 @@ class AuthController extends Controller
                     'role' => $_SESSION['role_name'],
                     'company_id' => $user['company_id'],
                     'permissions' => $permissions,
+                    'must_change_password' => (bool) ($user['must_change_password'] ?? false),
                     'company_name' => $clientData['company_name'] ?? null,
                     'contact_person' => $clientData['contact_person'] ?? null,
                     'phone' => $clientData['phone'] ?? null,
