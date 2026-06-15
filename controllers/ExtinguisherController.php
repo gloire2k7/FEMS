@@ -12,18 +12,21 @@ class ExtinguisherController extends Controller
     public function index()
     {
         AuthMiddleware::check();
-        $page = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(5, (int) ($_GET['limit'] ?? 15)));
-        $inStock = isset($_GET['in_stock']) && $_GET['in_stock'] === '1';
-        $this->jsonResponse($this->extModel->findPaginated($page, $limit, $inStock));
+        $page  = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = min(50, max(1, (int) ($_GET['limit'] ?? 5)));
+        $statusMap = ['in_stock' => true, 'allocated' => true, 'all' => true];
+        $status = isset($statusMap[$_GET['status'] ?? '']) ? $_GET['status'] : 'in_stock';
+        $sort   = ($_GET['sort'] ?? 'newest') === 'oldest' ? 'oldest' : 'newest';
+        $this->jsonResponse($this->extModel->findPaginated($page, $limit, $status, $sort));
     }
 
     public function stockSummary()
     {
         AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
+        $recentPage = max(1, (int) ($_GET['recent_page'] ?? 1));
         $this->jsonResponse([
             'summary' => $this->extModel->getStockSummary(),
-            'recent' => $this->extModel->getRecentMovements(15),
+            'recent'  => $this->extModel->getRecentMovementsPaginated($recentPage, 3),
         ]);
     }
 

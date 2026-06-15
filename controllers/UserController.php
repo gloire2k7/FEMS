@@ -167,7 +167,7 @@ class UserController extends Controller
 
     public function setStatus($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_admins');
+        AuthMiddleware::hasRole(['Super Admin']);
         $data = $this->getJsonInput();
         $status = $data['status'] ?? '';
         if (!in_array($status, ['active', 'inactive'], true)) {

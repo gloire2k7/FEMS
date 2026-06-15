@@ -34,16 +34,25 @@ class Extinguisher extends Model
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
-    public function findPaginated($page = 1, $limit = 15, $inStockOnly = false)
+    public function findPaginated($page = 1, $limit = 5, $status = 'in_stock', $sort = 'newest')
     {
         $offset = ($page - 1) * $limit;
-        $where = $inStockOnly ? 'fe.client_id IS NULL' : '1=1';
+
+        if ($status === 'in_stock') {
+            $where = 'fe.client_id IS NULL';
+        } elseif ($status === 'allocated') {
+            $where = 'fe.client_id IS NOT NULL';
+        } else {
+            $where = '1=1';
+        }
+
+        $order = $sort === 'oldest' ? 'ASC' : 'DESC';
 
         $total = (int) $this->db->query("SELECT COUNT(*) FROM {$this->table} fe WHERE $where")->fetchColumn();
 
         $query = "SELECT fe.*, c.company_name as client_name FROM {$this->table} fe
                   LEFT JOIN clients c ON fe.client_id = c.id
-                  WHERE $where ORDER BY fe.created_at DESC LIMIT :limit OFFSET :offset";
+                  WHERE $where ORDER BY fe.created_at $order LIMIT :limit OFFSET :offset";
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
@@ -53,6 +62,30 @@ class Extinguisher extends Model
             'data' => $stmt->fetchAll(PDO::FETCH_ASSOC),
             'total' => $total,
             'page' => (int) $page,
+            'last_page' => max(1, (int) ceil($total / $limit)),
+        ];
+    }
+
+    public function getRecentMovementsPaginated($page = 1, $limit = 3)
+    {
+        $offset = ($page - 1) * $limit;
+        $total = (int) $this->db->query("SELECT COUNT(*) FROM stock_movements")->fetchColumn();
+
+        $stmt = $this->db->prepare(
+            "SELECT sm.*, u.name as performer_name, fe.serial_number
+             FROM stock_movements sm
+             LEFT JOIN users u ON u.id = sm.performed_by
+             LEFT JOIN fire_extinguishers fe ON fe.id = sm.extinguisher_id
+             ORDER BY sm.created_at DESC LIMIT ? OFFSET ?"
+        );
+        $stmt->bindValue(1, (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(2, (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'data'      => $stmt->fetchAll(PDO::FETCH_ASSOC),
+            'total'     => $total,
+            'page'      => (int) $page,
             'last_page' => max(1, (int) ceil($total / $limit)),
         ];
     }

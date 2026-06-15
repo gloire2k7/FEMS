@@ -14,6 +14,8 @@
   </div>
 
   <ng-container *ngIf="admin && !loading">
+
+    <!-- Hero -->
     <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-violet-900/20"
       style="background: linear-gradient(135deg, #1a0f2e 0%, #0B1437 100%);">
       <div class="client-hero-inner flex flex-col sm:flex-row sm:items-center gap-6">
@@ -33,6 +35,7 @@
       </div>
     </section>
 
+    <!-- Account details -->
     <section class="client-card p-6">
       <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Account details</h2>
       <div class="grid sm:grid-cols-2 gap-4 text-sm">
@@ -50,25 +53,100 @@
         </div>
         <div>
           <p class="text-slate-400 mb-1">Status</p>
-          <p class="font-medium capitalize" [class.text-emerald-600]="admin.status === 'active'" [class.text-red-600]="admin.status !== 'active'">{{ admin.status }}</p>
+          <p class="font-medium capitalize"
+            [class.text-emerald-600]="admin.status === 'active'"
+            [class.text-red-600]="admin.status !== 'active'">{{ admin.status }}</p>
         </div>
       </div>
     </section>
 
-    <section class="client-card p-6" *ngIf="admin.permissions?.length">
-      <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Permissions</h2>
-      <div class="flex flex-wrap gap-2">
+    <!-- Permissions — view mode -->
+    <section class="client-card p-6" *ngIf="!editingPermissions">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-[#0B1437]">Permissions</h2>
+        <button type="button" (click)="startEditPermissions()"
+          class="client-btn-secondary px-4 py-2 text-sm flex items-center gap-2">
+          <i data-lucide="pencil" class="w-4 h-4"></i> Edit
+        </button>
+      </div>
+      <div *ngIf="admin.permissions?.length; else noPerms" class="flex flex-wrap gap-2">
         <span *ngFor="let p of admin.permissions"
           class="text-sm font-medium px-3 py-1.5 bg-violet-50 text-violet-700 rounded-lg">{{ p }}</span>
       </div>
+      <ng-template #noPerms>
+        <p class="text-sm text-slate-400">No permissions assigned.</p>
+      </ng-template>
     </section>
 
+    <!-- Permissions — edit mode -->
+    <section class="client-card p-6" *ngIf="editingPermissions">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-[#0B1437]">Edit permissions</h2>
+        <button type="button" (click)="cancelEditPermissions()" class="client-btn-secondary px-4 py-2 text-sm">Cancel</button>
+      </div>
+
+      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Operations</p>
+      <div class="grid sm:grid-cols-2 gap-3 mb-4">
+        <label *ngFor="let p of editablePermissions | slice:0:4"
+          class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+          <input type="checkbox" [checked]="hasPermissionSelected(p.key)" (change)="togglePermission(p.key)">
+          <span class="text-sm font-semibold text-[#0B1437]">{{ p.label }}</span>
+        </label>
+      </div>
+
+      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Compliance</p>
+      <div class="grid sm:grid-cols-2 gap-3 mb-4">
+        <label *ngFor="let p of editablePermissions | slice:4:6"
+          class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+          <input type="checkbox" [checked]="hasPermissionSelected(p.key)" (change)="togglePermission(p.key)">
+          <span class="text-sm font-semibold text-[#0B1437]">{{ p.label }}</span>
+        </label>
+      </div>
+
+      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">System</p>
+      <div class="grid sm:grid-cols-3 gap-3 mb-6">
+        <div *ngFor="let s of ['Notifications','Settings','AI Assistant']"
+          class="flex items-center gap-3 p-4 bg-emerald-50 rounded-xl">
+          <input type="checkbox" checked disabled>
+          <span class="text-sm font-semibold text-emerald-700">{{ s }}</span>
+        </div>
+      </div>
+
+      <button type="button" (click)="savePermissions()" [disabled]="savingPermissions"
+        class="client-btn-primary px-6 py-3">
+        {{ savingPermissions ? 'Saving…' : 'Save permissions' }}
+      </button>
+    </section>
+
+    <!-- Action buttons -->
     <div class="flex flex-wrap gap-3">
       <button type="button" (click)="toggleStatus()" class="client-btn-primary px-6 py-3">
         {{ admin.status === 'active' ? 'Deactivate account' : 'Activate account' }}
       </button>
-      <a routerLink="/super-admin-admins" class="client-btn-secondary px-6 py-3 no-underline inline-flex items-center">Done</a>
+
+      <!-- Delete — default state -->
+      <button *ngIf="!confirmDelete" type="button" (click)="requestDelete()"
+        class="client-btn-secondary px-6 py-3 text-red-600 border-red-100 hover:bg-red-50">
+        <i data-lucide="trash-2" class="w-4 h-4 inline-block mr-1"></i> Delete admin
+      </button>
+
+      <!-- Delete — confirmation state -->
+      <ng-container *ngIf="confirmDelete">
+        <span class="self-center text-sm text-red-600 font-medium">Are you sure? This cannot be undone.</span>
+        <button type="button" (click)="confirmDeleteAdmin()" [disabled]="deleting"
+          class="client-btn-secondary px-5 py-3 text-red-700 border-red-200 hover:bg-red-50">
+          {{ deleting ? 'Deleting…' : 'Yes, delete' }}
+        </button>
+        <button type="button" (click)="cancelDelete()"
+          class="client-btn-secondary px-5 py-3">
+          Cancel
+        </button>
+      </ng-container>
+
+      <a *ngIf="!confirmDelete" routerLink="/super-admin-admins"
+        class="client-btn-secondary px-6 py-3 no-underline inline-flex items-center">Done</a>
     </div>
+
   </ng-container>
 
 </div>

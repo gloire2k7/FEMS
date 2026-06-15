@@ -37,11 +37,18 @@ export class SuperAdminClients implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    const snap = this.route.snapshot.queryParams;
+    if (snap['tab'] === 'active' || snap['tab'] === 'pending') {
+      this.tab = snap['tab'];
+    }
+    this.load(1);
+
     this.route.queryParams.subscribe((params) => {
-      if (params['tab'] === 'active' || params['tab'] === 'pending') {
-        this.tab = params['tab'];
+      const t = params['tab'];
+      if ((t === 'active' || t === 'pending') && t !== this.tab) {
+        this.tab = t;
+        this.load(1);
       }
-      this.load(1);
     });
   }
 

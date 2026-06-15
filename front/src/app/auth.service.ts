@@ -93,7 +93,13 @@ export class AuthService {
     const user = this.getUser();
     if (!user) return false;
     if (user.role === 'Super Admin') return true;
+    const alwaysGranted = ['manage_notifications', 'manage_settings', 'manage_ai_assistant'];
+    if (alwaysGranted.includes(key)) return true;
     return (user.permissions || []).includes(key);
+  }
+
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/users/${id}`, { withCredentials: true });
   }
 
   isRole(...roles: string[]): boolean {

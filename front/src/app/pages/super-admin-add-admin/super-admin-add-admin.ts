@@ -21,14 +21,17 @@ export class SuperAdminAddAdmin implements AfterViewInit {
   name = '';
   email = '';
   permissionOptions: any[] = [];
-  selectedPermissions: string[] = ['manage_orders', 'manage_stock', 'approve_clients'];
+  selectedPermissions: string[] = ['manage_orders', 'manage_inventory', 'manage_clients'];
+  private readonly systemPermissions = ['manage_notifications', 'manage_settings', 'manage_ai_assistant'];
   isLoading = false;
   error = '';
   successData: any = null;
 
   ngAfterViewInit() {
     this.initIcons();
-    this.authService.getPermissions().subscribe(p => this.permissionOptions = p);
+    this.authService.getPermissions().subscribe(p => {
+      this.permissionOptions = p.filter((x: any) => !this.systemPermissions.includes(x.key));
+    });
   }
 
   togglePermission(key: string) {

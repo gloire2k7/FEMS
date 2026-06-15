@@ -14,36 +14,85 @@
     </div>
   </section>
 
-  <section *ngIf="summary" class="client-stat-grid client-stat-grid--4">
-    <div class="client-stat client-stat--primary">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <p class="client-stat-label">In stock</p>
-          <p class="client-stat-value">{{ summary.totals?.in_stock || 0 }}</p>
+  <!-- Units in stock -->
+  <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap justify-between items-center gap-3">
+      <div>
+        <h2 class="text-lg font-semibold text-[#0B1437]">Units in stock</h2>
+        <p class="text-sm text-slate-500">{{ total }} units found</p>
+      </div>
+      <!-- Sort -->
+      <select (change)="setSort($any($event.target).value)" class="client-input text-sm py-2 px-3">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+      </select>
+    </div>
+
+    <!-- Status filters (pill tabs) -->
+    <div class="px-6 pt-4 pb-2 flex flex-wrap gap-2">
+      <button type="button" (click)="setFilter('in_stock')"
+        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors"
+        [class.bg-emerald-600]="statusFilter === 'in_stock'" [class.text-white]="statusFilter === 'in_stock'"
+        [class.bg-slate-100]="statusFilter !== 'in_stock'" [class.text-slate-600]="statusFilter !== 'in_stock'">
+        <i data-lucide="package" class="w-3.5 h-3.5"></i>
+        In stock
+        <span *ngIf="summary" class="ml-1 text-xs font-bold opacity-80">({{ summary.totals?.in_stock || 0 }})</span>
+      </button>
+      <button type="button" (click)="setFilter('allocated')"
+        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors"
+        [class.bg-blue-600]="statusFilter === 'allocated'" [class.text-white]="statusFilter === 'allocated'"
+        [class.bg-slate-100]="statusFilter !== 'allocated'" [class.text-slate-600]="statusFilter !== 'allocated'">
+        <i data-lucide="truck" class="w-3.5 h-3.5"></i>
+        Allocated
+        <span *ngIf="summary" class="ml-1 text-xs font-bold opacity-80">({{ summary.totals?.allocated || 0 }})</span>
+      </button>
+      <button type="button" (click)="setFilter('all')"
+        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors"
+        [class.bg-violet-600]="statusFilter === 'all'" [class.text-white]="statusFilter === 'all'"
+        [class.bg-slate-100]="statusFilter !== 'all'" [class.text-slate-600]="statusFilter !== 'all'">
+        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+        Total
+        <span *ngIf="summary" class="ml-1 text-xs font-bold opacity-80">({{ summary.totals?.total_units || 0 }})</span>
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="p-12 text-center text-slate-400">Loading…</div>
+    <div *ngIf="!loading && units.length === 0" class="p-12 text-center text-slate-400">No units found.</div>
+    <div *ngIf="!loading && units.length > 0" class="divide-y divide-slate-50">
+      <div *ngFor="let u of units" class="flex items-center px-6 py-4 gap-4 hover:bg-slate-50/50">
+        <img *ngIf="u.qr_code_path" [src]="qrUrl(u.qr_code_path)" alt="QR" class="w-10 h-10 rounded border" />
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-[#0B1437]">{{ u.serial_number }}</p>
+          <p class="text-sm text-slate-500">{{ u.type }} · {{ u.capacity }} · {{ u.price | currency }}</p>
+          <p *ngIf="u.client_name" class="text-xs text-blue-600 mt-0.5">{{ u.client_name }}</p>
         </div>
-        <span class="client-stat-icon"><i data-lucide="package" class="w-5 h-5"></i></span>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full"
+          [class.bg-emerald-50]="u.client_id === null" [class.text-emerald-700]="u.client_id === null"
+          [class.bg-blue-50]="u.client_id !== null" [class.text-blue-700]="u.client_id !== null">
+          {{ u.client_id ? 'Allocated' : u.status }}
+        </span>
+        <a [routerLink]="['/admin-view-extinguisher', u.id]"
+          class="client-btn-secondary px-4 py-2 text-sm no-underline inline-flex items-center gap-2 shrink-0">
+          <i data-lucide="eye" class="w-4 h-4"></i> See details
+        </a>
       </div>
     </div>
-    <div class="client-stat client-stat--info">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <p class="client-stat-label">Allocated</p>
-          <p class="client-stat-value">{{ summary.totals?.allocated || 0 }}</p>
-        </div>
-        <span class="client-stat-icon"><i data-lucide="truck" class="w-5 h-5"></i></span>
-      </div>
-    </div>
-    <div class="client-stat client-stat--success">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <p class="client-stat-label">Total units</p>
-          <p class="client-stat-value">{{ summary.totals?.total_units || 0 }}</p>
-        </div>
-        <span class="client-stat-icon"><i data-lucide="layers" class="w-5 h-5"></i></span>
-      </div>
-    </div>
+    <app-pagination [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="loadUnits($event)" />
   </section>
 
+  <!-- Recent stock actions -->
+  <section *ngIf="recentTotal > 0 || recent.length > 0" class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+    <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Recent stock actions</h2>
+    <div class="space-y-2 divide-y divide-slate-50">
+      <div *ngFor="let m of recent" class="flex flex-wrap justify-between gap-2 py-3 text-sm">
+        <span><strong>{{ m.action }}</strong> · {{ m.serial_number || '—' }} by {{ m.performer_name }}</span>
+        <span class="text-slate-400">{{ m.created_at }}</span>
+      </div>
+    </div>
+    <app-pagination [page]="recentPage" [lastPage]="recentLastPage" [total]="recentTotal" (pageChange)="loadRecent($event)" />
+  </section>
+
+  <!-- Stock by type -->
   <section *ngIf="summary?.by_type?.length" class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
     <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Stock by type</h2>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -53,37 +102,6 @@
         <span class="text-lg font-bold text-[#0B1437]">{{ row.count }}</span>
       </div>
     </div>
-  </section>
-
-  <section *ngIf="recent.length" class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
-    <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Recent stock actions</h2>
-    <div class="space-y-2 divide-y divide-slate-50">
-      <div *ngFor="let m of recent" class="flex flex-wrap justify-between gap-2 py-3 text-sm">
-        <span><strong>{{ m.action }}</strong> · {{ m.serial_number || '—' }} by {{ m.performer_name }}</span>
-        <span class="text-slate-400">{{ m.created_at }}</span>
-      </div>
-    </div>
-  </section>
-
-  <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-    <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
-      <div>
-        <h2 class="text-lg font-semibold text-[#0B1437]">Units in stock</h2>
-        <p class="text-sm text-slate-500">{{ total }} units available</p>
-      </div>
-    </div>
-    <div *ngIf="loading" class="p-12 text-center text-slate-400">Loading…</div>
-    <div *ngIf="!loading" class="divide-y divide-slate-50">
-      <div *ngFor="let u of units" class="flex items-center px-6 py-4 gap-4 hover:bg-slate-50/50">
-        <img *ngIf="u.qr_code_path" [src]="qrUrl(u.qr_code_path)" alt="QR" class="w-10 h-10 rounded border" />
-        <div class="flex-1 min-w-0">
-          <p class="font-semibold text-[#0B1437]">{{ u.serial_number }}</p>
-          <p class="text-sm text-slate-500">{{ u.type }} · {{ u.capacity }} · {{ u.price | currency }}</p>
-        </div>
-        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700">{{ u.status }}</span>
-      </div>
-    </div>
-    <app-pagination [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="load($event)" />
   </section>
 
 </div>

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, inject } from '@angular/core';
+import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../auth.service';
@@ -13,7 +13,7 @@ declare const lucide: { createIcons: () => void } | undefined;
   templateUrl: './super-admin-admins.html',
   styleUrl: './super-admin-admins.css',
 })
-export class SuperAdminAdmins implements AfterViewInit {
+export class SuperAdminAdmins implements OnInit, AfterViewInit {
   private auth = inject(AuthService);
   admins: any[] = [];
   page = 1;
@@ -30,8 +30,12 @@ export class SuperAdminAdmins implements AfterViewInit {
     return this.admins;
   }
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.load(1);
+  }
+
+  ngAfterViewInit() {
+    this.refreshIcons();
   }
 
   setFilter(f: 'all' | 'active' | 'inactive') {

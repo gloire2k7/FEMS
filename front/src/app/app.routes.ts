@@ -63,6 +63,7 @@ export const routes: Routes = [
       { path: 'super-admin-reports', component: SuperAdminReports },
       { path: 'super-admin-logs', component: SuperAdminLogs },
       { path: 'super-admin-admin-details/:id', component: SuperAdminAdminDetails },
+      { path: 'super-admin-inventory', component: AdminInventoryComponent },
     ],
   },
 

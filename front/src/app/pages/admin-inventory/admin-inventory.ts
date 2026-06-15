@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, inject } from '@angular/core';
+import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ declare const lucide: { createIcons: () => void } | undefined;
   templateUrl: './admin-inventory.html',
   styleUrl: './admin-inventory.css',
 })
-export class AdminInventoryComponent implements AfterViewInit {
+export class AdminInventoryComponent implements OnInit, AfterViewInit {
   private stock = inject(StockService);
   private auth = inject(AuthService);
   private router = inject(Router);
@@ -23,29 +23,50 @@ export class AdminInventoryComponent implements AfterViewInit {
   inspectionsOpen = false;
   summary: any = null;
   recent: any[] = [];
+  recentPage = 1;
+  recentLastPage = 1;
+  recentTotal = 0;
+
   units: any[] = [];
   page = 1;
   lastPage = 1;
   total = 0;
+
+  statusFilter: 'in_stock' | 'allocated' | 'all' = 'in_stock';
+  sortOrder: 'newest' | 'oldest' = 'newest';
+
   loading = true;
   canManage = false;
 
+  ngOnInit() {
+    this.canManage = this.auth.isRole('Super Admin') || this.auth.hasPermission('manage_inventory');
+    this.loadRecent(1);
+    this.loadUnits(1);
+  }
+
   ngAfterViewInit() {
-    this.canManage = this.auth.isRole('Super Admin') || this.auth.hasPermission('manage_stock');
-    this.load();
     this.initIcons();
   }
 
-  load(page = 1) {
-    this.page = page;
-    this.loading = true;
-    this.stock.getSummary().subscribe({
+  loadRecent(page: number) {
+    this.recentPage = page;
+    this.stock.getSummary(page).subscribe({
       next: (res) => {
         this.summary = res.summary;
-        this.recent = res.recent || [];
+        const r = res.recent;
+        this.recent = r.data || [];
+        this.recentPage = r.page || 1;
+        this.recentLastPage = r.last_page || 1;
+        this.recentTotal = r.total || 0;
+        setTimeout(() => this.initIcons(), 50);
       }
     });
-    this.stock.getUnits(page, true).subscribe({
+  }
+
+  loadUnits(page: number) {
+    this.page = page;
+    this.loading = true;
+    this.stock.getUnits(page, this.statusFilter, this.sortOrder).subscribe({
       next: (res) => {
         this.units = res.data || [];
         this.page = res.page || 1;
@@ -58,13 +79,20 @@ export class AdminInventoryComponent implements AfterViewInit {
     });
   }
 
-  goRegister() {
-    this.router.navigate(['/admin-add-extinguisher']);
+  setFilter(filter: 'in_stock' | 'allocated' | 'all') {
+    if (this.statusFilter === filter) return;
+    this.statusFilter = filter;
+    this.loadUnits(1);
   }
 
-  toggleInspections() {
-    this.inspectionsOpen = !this.inspectionsOpen;
-    this.initIcons();
+  setSort(sort: 'newest' | 'oldest') {
+    if (this.sortOrder === sort) return;
+    this.sortOrder = sort;
+    this.loadUnits(1);
+  }
+
+  goRegister() {
+    this.router.navigate(['/admin-add-extinguisher']);
   }
 
   qrUrl(path: string) {
