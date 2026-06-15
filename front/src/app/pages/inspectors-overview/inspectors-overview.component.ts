@@ -36,7 +36,9 @@ interface Inspector {
       </section>
 
       <section class="client-stat-grid">
-        <div class="client-stat client-stat--primary">
+        <button type="button" (click)="setStatusFilter('all')"
+          class="client-stat client-stat--primary client-stat-link"
+          [class.client-stat-link--active]="statusFilter === 'all'">
           <div class="relative z-10 flex items-start justify-between gap-3">
             <div>
               <p class="client-stat-label">Total inspectors</p>
@@ -45,8 +47,10 @@ interface Inspector {
             </div>
             <span class="client-stat-icon"><i data-lucide="users" class="w-5 h-5"></i></span>
           </div>
-        </div>
-        <div class="client-stat client-stat--featured">
+        </button>
+        <button type="button" (click)="setStatusFilter('available')"
+          class="client-stat client-stat--featured client-stat-link"
+          [class.client-stat-link--active]="statusFilter === 'available'">
           <div class="relative z-10 flex items-start justify-between gap-3">
             <div>
               <p class="client-stat-label">Available</p>
@@ -55,8 +59,10 @@ interface Inspector {
             </div>
             <span class="client-stat-icon"><i data-lucide="user-check" class="w-5 h-5"></i></span>
           </div>
-        </div>
-        <div class="client-stat client-stat--warning">
+        </button>
+        <button type="button" (click)="setStatusFilter('busy')"
+          class="client-stat client-stat--warning client-stat-link"
+          [class.client-stat-link--active]="statusFilter === 'busy'">
           <div class="relative z-10 flex items-start justify-between gap-3">
             <div>
               <p class="client-stat-label">On assignment</p>
@@ -65,18 +71,18 @@ interface Inspector {
             </div>
             <span class="client-stat-icon"><i data-lucide="briefcase" class="w-5 h-5"></i></span>
           </div>
-        </div>
+        </button>
       </section>
 
       <section class="client-card client-card--lift p-5">
-        <div class="relative max-w-md">
-          <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        <div class="client-search max-w-md">
+          <i data-lucide="search" class="client-search-icon"></i>
           <input type="text" [(ngModel)]="searchTerm" placeholder="Search by name or location…"
-            class="client-input pl-10" />
+            class="client-input" />
         </div>
       </section>
 
-      <section class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <section id="inspector-list" class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <article *ngFor="let i of filteredInspectors" class="client-card client-card--lift p-6">
           <div class="flex items-start gap-4">
             <img [src]="'https://ui-avatars.com/api/?name=' + i.name + '&background=0B1437&color=fff&size=96'"
@@ -110,27 +116,20 @@ interface Inspector {
       </section>
 
       <section *ngIf="filteredInspectors.length === 0" class="client-card client-empty">
-        <p class="text-lg font-semibold text-[#0B1437]">No inspectors match your search</p>
-        <p class="text-base text-slate-500 mt-2">Try a different name or location.</p>
-      </section>
-
-      <section class="client-card p-6 bg-slate-50/50">
-        <div class="flex items-start gap-4">
-          <span class="w-12 h-12 rounded-xl bg-[#0B1437] flex items-center justify-center shrink-0">
-            <i data-lucide="calendar" class="w-6 h-6 text-white"></i>
-          </span>
-          <div>
-            <h2 class="text-lg font-semibold text-[#0B1437]">Need to schedule an inspection?</h2>
-            <p class="text-base text-slate-600 mt-1">Contact our team or submit a service request and we'll assign the right inspector.</p>
-            <a routerLink="/service-requests" class="client-btn-primary mt-4 inline-flex">Request service</a>
-          </div>
-        </div>
+        <p class="text-lg font-semibold text-[#0B1437]">No inspectors match{{ statusFilter !== 'all' ? ' this filter' : ' your search' }}</p>
+        <p class="text-base text-slate-500 mt-2">
+          {{ statusFilter !== 'all' ? 'Try another category above.' : 'Try a different name or location.' }}
+        </p>
+        <button *ngIf="statusFilter !== 'all'" type="button" (click)="setStatusFilter('all')" class="client-btn-secondary mt-4 inline-flex">
+          Show all inspectors
+        </button>
       </section>
     </div>
   `
 })
 export class InspectorsOverviewComponent implements AfterViewInit {
   searchTerm = '';
+  statusFilter: 'all' | 'available' | 'busy' = 'all';
 
   inspectors: Inspector[] = [
     { id: '1', name: 'Sarah Johnson', title: 'Senior Fire Safety Inspector', location: 'Kigali', status: 'available', phone: '+250 788 000 001', email: 'sarah.j@fems.com' },
@@ -139,9 +138,15 @@ export class InspectorsOverviewComponent implements AfterViewInit {
   ];
 
   get filteredInspectors() {
+    let list = this.inspectors;
+    if (this.statusFilter === 'available') {
+      list = list.filter(i => i.status === 'available');
+    } else if (this.statusFilter === 'busy') {
+      list = list.filter(i => i.status === 'busy');
+    }
     const q = this.searchTerm.trim().toLowerCase();
-    if (!q) return this.inspectors;
-    return this.inspectors.filter(i =>
+    if (!q) return list;
+    return list.filter(i =>
       i.name.toLowerCase().includes(q) ||
       i.location.toLowerCase().includes(q) ||
       i.title.toLowerCase().includes(q)
@@ -154,6 +159,12 @@ export class InspectorsOverviewComponent implements AfterViewInit {
 
   get busyCount() {
     return this.inspectors.filter(i => i.status === 'busy').length;
+  }
+
+  setStatusFilter(filter: 'all' | 'available' | 'busy') {
+    this.statusFilter = filter;
+    document.getElementById('inspector-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 50);
   }
 
   ngAfterViewInit() {

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { PaginationComponent } from '../../shared/pagination/pagination.component';
 
@@ -24,19 +24,70 @@ import { PaginationComponent } from '../../shared/pagination/pagination.componen
         </div>
       </section>
 
+      <section class="client-stat-grid client-stat-grid--4">
+        <a routerLink="/my-orders" [queryParams]="{}" class="client-stat client-stat--primary client-stat-link"
+          [class.client-stat-link--active]="!statusFilter">
+          <div class="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p class="client-stat-label">All orders</p>
+              <p class="client-stat-value">{{ allOrdersCount }}</p>
+              <p class="client-stat-hint">Full history</p>
+            </div>
+            <span class="client-stat-icon"><i data-lucide="package" class="w-5 h-5"></i></span>
+          </div>
+        </a>
+        <a routerLink="/my-orders" [queryParams]="{ status: 'pending' }" class="client-stat client-stat--featured client-stat-link"
+          [class.client-stat-link--active]="statusFilter === 'pending'">
+          <div class="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p class="client-stat-label">Pending</p>
+              <p class="client-stat-value">{{ countByStatus('pending') }}</p>
+              <p class="client-stat-hint">Awaiting review</p>
+            </div>
+            <span class="client-stat-icon"><i data-lucide="clock" class="w-5 h-5"></i></span>
+          </div>
+        </a>
+        <a routerLink="/my-orders" [queryParams]="{ status: 'granted' }" class="client-stat client-stat--success client-stat-link"
+          [class.client-stat-link--active]="statusFilter === 'granted'">
+          <div class="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p class="client-stat-label">Approved</p>
+              <p class="client-stat-value">{{ countByStatus('granted') }}</p>
+              <p class="client-stat-hint">Ready for delivery</p>
+            </div>
+            <span class="client-stat-icon"><i data-lucide="check-circle" class="w-5 h-5"></i></span>
+          </div>
+        </a>
+        <a routerLink="/my-orders" [queryParams]="{ status: 'delivered' }" class="client-stat client-stat--info client-stat-link"
+          [class.client-stat-link--active]="statusFilter === 'delivered'">
+          <div class="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p class="client-stat-label">Delivered</p>
+              <p class="client-stat-value">{{ countByStatus('delivered') }}</p>
+              <p class="client-stat-hint">Completed</p>
+            </div>
+            <span class="client-stat-icon"><i data-lucide="truck" class="w-5 h-5"></i></span>
+          </div>
+        </a>
+      </section>
+
       <div *ngIf="loading" class="text-center py-16 text-base text-slate-400">Loading orders…</div>
 
-      <section *ngIf="!loading && orders.length === 0" class="client-card client-empty">
+      <section *ngIf="!loading && displayOrders.length === 0" class="client-card client-empty">
         <div class="client-empty-icon">
           <i data-lucide="package" class="w-8 h-8"></i>
         </div>
-        <p class="text-lg font-semibold text-[#0B1437]">No orders yet</p>
-        <p class="text-base text-slate-500 mt-2">Browse the shop to place your first order.</p>
+        <p class="text-lg font-semibold text-[#0B1437]">
+          {{ statusFilter ? 'No ' + statusLabel(statusFilter).toLowerCase() + ' orders' : 'No orders yet' }}
+        </p>
+        <p class="text-base text-slate-500 mt-2">
+          {{ statusFilter ? 'Try another filter above.' : 'Browse the shop to place your first order.' }}
+        </p>
         <a routerLink="/shop" class="client-btn-primary mt-6 inline-flex">Browse shop</a>
       </section>
 
-      <section *ngIf="!loading && orders.length > 0" class="space-y-5">
-        <article *ngFor="let o of orders" class="client-card client-card--lift p-6">
+      <section id="order-list" *ngIf="!loading && displayOrders.length > 0" class="space-y-5">
+        <article *ngFor="let o of displayOrders" class="client-card client-card--lift p-6">
           <div class="flex flex-wrap justify-between gap-4 mb-5">
             <div>
               <p class="text-sm font-semibold text-slate-400 uppercase tracking-wide">Order #{{ o.id }}</p>
@@ -67,16 +118,17 @@ import { PaginationComponent } from '../../shared/pagination/pagination.componen
           </div>
         </article>
 
-        <app-pagination [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="load($event)" />
+        <app-pagination *ngIf="!statusFilter" [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="load($event)" />
       </section>
     </div>
   `
 })
 export class MyOrdersComponent implements OnInit {
   private orderService = inject(OrderService);
+  private route = inject(ActivatedRoute);
   loading = true;
   ordersList: any[] = [];
-  get orders() { return this.ordersList; }
+  statusFilter = '';
   page = 1;
   lastPage = 1;
   total = 0;
@@ -86,21 +138,45 @@ export class MyOrdersComponent implements OnInit {
     { key: 'delivered', label: 'Delivered' }
   ];
 
-  ngOnInit() { this.load(1); }
+  get displayOrders() {
+    if (!this.statusFilter) return this.ordersList;
+    return this.ordersList.filter(o => o.status === this.statusFilter);
+  }
+
+  get allOrdersCount() {
+    return this.total || this.ordersList.length;
+  }
+
+  ngOnInit() {
+    this.statusFilter = this.route.snapshot.queryParamMap.get('status') || '';
+    this.route.queryParamMap.subscribe(params => {
+      this.statusFilter = params.get('status') || '';
+    });
+    this.load(1);
+  }
 
   load(page: number) {
     this.loading = true;
     this.page = page;
-    this.orderService.getOrders(page, 10).subscribe({
+    this.orderService.getOrders(page, 50).subscribe({
       next: (res) => {
         this.ordersList = res.data || res;
         this.page = res.page || 1;
         this.lastPage = res.last_page || 1;
         this.total = res.total || this.ordersList.length;
         this.loading = false;
+        if (this.statusFilter) {
+          setTimeout(() => {
+            document.getElementById('order-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
       },
       error: () => { this.loading = false; }
     });
+  }
+
+  countByStatus(status: string) {
+    return this.ordersList.filter(o => o.status === status).length;
   }
 
   statusLabel(s: string) {

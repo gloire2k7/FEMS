@@ -36,7 +36,9 @@ interface Location {
       </section>
 
       <section class="client-stat-grid">
-        <div class="client-stat client-stat--primary">
+        <button type="button" (click)="setLocationFilter('all')"
+          class="client-stat client-stat--primary client-stat-link"
+          [class.client-stat-link--active]="locationFilter === 'all'">
           <div class="relative z-10 flex items-start justify-between gap-3">
             <div>
               <p class="client-stat-label">Locations</p>
@@ -45,18 +47,20 @@ interface Location {
             </div>
             <span class="client-stat-icon"><i data-lucide="map-pin" class="w-5 h-5"></i></span>
           </div>
-        </div>
-        <div class="client-stat client-stat--featured">
+        </button>
+        <a routerLink="/extinguishers" class="client-stat client-stat--featured client-stat-link">
           <div class="relative z-10 flex items-start justify-between gap-3">
             <div>
               <p class="client-stat-label">Total units</p>
               <p class="client-stat-value">{{ totalUnits }}</p>
-              <p class="client-stat-hint">Across all sites</p>
+              <p class="client-stat-hint">View all units →</p>
             </div>
             <span class="client-stat-icon"><i data-lucide="flame" class="w-5 h-5"></i></span>
           </div>
-        </div>
-        <div class="client-stat client-stat--warning">
+        </a>
+        <button type="button" (click)="setLocationFilter('attention')"
+          class="client-stat client-stat--warning client-stat-link"
+          [class.client-stat-link--active]="locationFilter === 'attention'">
           <div class="relative z-10 flex items-start justify-between gap-3">
             <div>
               <p class="client-stat-label">Needs attention</p>
@@ -65,17 +69,17 @@ interface Location {
             </div>
             <span class="client-stat-icon"><i data-lucide="alert-triangle" class="w-5 h-5"></i></span>
           </div>
-        </div>
+        </button>
       </section>
 
       <section class="client-card client-card--lift p-5">
-        <div class="relative max-w-md">
-          <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-          <input type="text" [(ngModel)]="searchTerm" placeholder="Search locations…" class="client-input pl-10" />
+        <div class="client-search max-w-md">
+          <i data-lucide="search" class="client-search-icon"></i>
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Search locations…" class="client-input" />
         </div>
       </section>
 
-      <section class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <section id="location-list" class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <article *ngFor="let loc of filteredLocations" class="client-card client-card--lift p-6">
           <div class="flex items-start justify-between gap-3 mb-4">
             <div>
@@ -109,15 +113,22 @@ interface Location {
         <div class="client-empty-icon">
           <i data-lucide="map-pin" class="w-8 h-8"></i>
         </div>
-        <p class="text-lg font-semibold text-[#0B1437]">No locations found</p>
-        <p class="text-base text-slate-500 mt-2">Locations are added when extinguishers are assigned to your sites.</p>
-        <a routerLink="/extinguishers" class="client-btn-secondary mt-6 inline-flex">View extinguishers</a>
+        <p class="text-lg font-semibold text-[#0B1437]">
+          {{ locationFilter === 'attention' ? 'No locations need attention' : 'No locations found' }}
+        </p>
+        <p class="text-base text-slate-500 mt-2">
+          {{ locationFilter === 'attention' ? 'All your sites are compliant.' : 'Locations are added when extinguishers are assigned to your sites.' }}
+        </p>
+        <button *ngIf="locationFilter === 'attention'" type="button" (click)="setLocationFilter('all')"
+          class="client-btn-secondary mt-6 inline-flex">Show all locations</button>
+        <a *ngIf="locationFilter === 'all'" routerLink="/extinguishers" class="client-btn-secondary mt-6 inline-flex">View extinguishers</a>
       </section>
     </div>
   `
 })
 export class LocationsDashboardComponent implements AfterViewInit {
   searchTerm = '';
+  locationFilter: 'all' | 'attention' = 'all';
 
   locations: Location[] = [
     { id: '1', name: 'Head Office', address: 'KN 4 Ave', city: 'Kigali', totalExtinguishers: 12, status: 'compliant', lastInspection: '2024-11-15' },
@@ -126,9 +137,13 @@ export class LocationsDashboardComponent implements AfterViewInit {
   ];
 
   get filteredLocations() {
+    let list = this.locations;
+    if (this.locationFilter === 'attention') {
+      list = list.filter(l => l.status !== 'compliant');
+    }
     const q = this.searchTerm.trim().toLowerCase();
-    if (!q) return this.locations;
-    return this.locations.filter(l =>
+    if (!q) return list;
+    return list.filter(l =>
       l.name.toLowerCase().includes(q) ||
       l.address.toLowerCase().includes(q) ||
       l.city.toLowerCase().includes(q)
@@ -141,6 +156,12 @@ export class LocationsDashboardComponent implements AfterViewInit {
 
   get attentionCount() {
     return this.locations.filter(l => l.status !== 'compliant').length;
+  }
+
+  setLocationFilter(filter: 'all' | 'attention') {
+    this.locationFilter = filter;
+    document.getElementById('location-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 50);
   }
 
   statusLabel(s: string) {

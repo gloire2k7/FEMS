@@ -119,6 +119,18 @@ svg.lucide.w-6 {
   margin-left: auto;
   margin-right: auto;
   padding-bottom: 2.5rem;
+  animation: client-page-in 0.4s ease-out;
+}
+
+@keyframes client-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .client-page > * + * {
@@ -272,6 +284,11 @@ svg.lucide.w-6 {
   box-shadow: 0 14px 28px -10px rgba(11, 20, 55, 0.14);
 }
 
+button.client-stat-link:hover,
+a.client-stat-link:hover {
+  transform: translateY(-3px);
+}
+
 .client-stat-label {
   font-size: 0.875rem;
   font-weight: 600;
@@ -395,6 +412,51 @@ svg.lucide.w-6 {
 .client-stat--info .client-stat-icon {
   background: #e0f2fe;
   color: #0284c7;
+}
+
+/* Clickable stat quick links */
+button.client-stat-link {
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+button.client-stat-link:focus-visible {
+  outline: 2px solid #0b1437;
+  outline-offset: 3px;
+}
+
+button.client-stat-link--active.client-stat--primary {
+  border-color: #0b1437;
+  box-shadow: 0 0 0 3px rgba(11, 20, 55, 0.12);
+}
+
+button.client-stat-link--active.client-stat--featured {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35), 0 18px 36px -10px rgba(11, 20, 55, 0.5);
+}
+
+button.client-stat-link--active.client-stat--success {
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+}
+
+button.client-stat-link--active.client-stat--warning {
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+}
+
+button.client-stat-link--active.client-stat--info {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+a.client-stat-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 
 .client-input {
@@ -522,4 +584,31 @@ svg.lucide.w-6 {
   font-weight: 600;
   color: #475569;
   margin-bottom: 0.5rem;
+}
+
+/* Search field — icon + input without overlap */
+.client-search {
+  position: relative;
+  width: 100%;
+}
+
+.client-search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #94a3b8;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.client-search .client-input {
+  padding-left: 2.875rem;
+  width: 100%;
+}
+
+.client-search:focus-within .client-search-icon {
+  color: #64748b;
 }

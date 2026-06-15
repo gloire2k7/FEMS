@@ -1,4 +1,4 @@
-<div class="client-page max-w-6xl mx-auto space-y-8 pb-8">
+<div class="client-page max-w-6xl pb-8">
 
   <!-- Hero -->
   <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
@@ -26,49 +26,49 @@
   </section>
 
   <section *ngIf="!loading" class="client-stat-grid client-stat-grid--4">
-      <div class="client-stat client-stat--primary">
+      <a routerLink="/extinguishers" class="client-stat client-stat--primary client-stat-link">
         <div class="relative z-10 flex items-start justify-between gap-3">
           <div>
             <p class="client-stat-label">My units</p>
             <p class="client-stat-value">{{ stats.myUnits }}</p>
-            <p class="client-stat-hint">Assigned to you</p>
+            <p class="client-stat-hint">View extinguishers →</p>
           </div>
           <span class="client-stat-icon"><i data-lucide="flame" class="w-5 h-5"></i></span>
         </div>
-      </div>
+      </a>
 
-      <div class="client-stat client-stat--featured">
+      <a routerLink="/my-orders" [queryParams]="{ status: 'pending' }" class="client-stat client-stat--featured client-stat-link">
         <div class="relative z-10 flex items-start justify-between gap-3">
           <div>
             <p class="client-stat-label">Pending</p>
             <p class="client-stat-value">{{ stats.pendingOrders }}</p>
-            <p class="client-stat-hint">Awaiting review</p>
+            <p class="client-stat-hint">Awaiting review →</p>
           </div>
           <span class="client-stat-icon"><i data-lucide="clock" class="w-5 h-5"></i></span>
         </div>
-      </div>
+      </a>
 
-      <div class="client-stat client-stat--success">
+      <a routerLink="/my-orders" [queryParams]="{ status: 'granted' }" class="client-stat client-stat--success client-stat-link">
         <div class="relative z-10 flex items-start justify-between gap-3">
           <div>
             <p class="client-stat-label">Approved</p>
             <p class="client-stat-value">{{ stats.approvedOrders }}</p>
-            <p class="client-stat-hint">Ready for delivery</p>
+            <p class="client-stat-hint">Ready for delivery →</p>
           </div>
           <span class="client-stat-icon"><i data-lucide="check-circle" class="w-5 h-5"></i></span>
         </div>
-      </div>
+      </a>
 
-      <div class="client-stat client-stat--info">
+      <a routerLink="/my-orders" [queryParams]="{ status: 'delivered' }" class="client-stat client-stat--info client-stat-link">
         <div class="relative z-10 flex items-start justify-between gap-3">
           <div>
             <p class="client-stat-label">Delivered</p>
             <p class="client-stat-value">{{ stats.deliveredOrders }}</p>
-            <p class="client-stat-hint">Completed orders</p>
+            <p class="client-stat-hint">Completed orders →</p>
           </div>
           <span class="client-stat-icon"><i data-lucide="truck" class="w-5 h-5"></i></span>
         </div>
-      </div>
+      </a>
   </section>
 
   <!-- Quick actions -->
@@ -124,7 +124,7 @@
       <div *ngFor="let order of recentOrders"
         class="order-row flex flex-wrap items-center gap-4 px-6 py-4">
         <div class="flex-1 min-w-[140px]">
-          <p class="text-xs font-medium text-slate-400">Order #{{ order.id }}</p>
+          <p class="text-sm font-medium text-slate-400">Order #{{ order.id }}</p>
           <p class="font-semibold text-[#0B1437] mt-0.5">
             {{ order.type }} · {{ order.capacity }}
           </p>
@@ -135,11 +135,10 @@
         <div class="text-sm font-medium text-[#0B1437]" *ngIf="order.total_price">
           {{ order.total_price | currency }}
         </div>
-        <span class="status-pill text-[11px] font-bold uppercase px-3 py-1 rounded-full ring-1 ring-inset"
-          [ngClass]="statusClass(order.status)">
+        <span class="client-badge text-sm font-semibold px-3 py-1 rounded-full" [ngClass]="statusClass(order.status)">
           {{ statusLabel(order.status) }}
         </span>
-        <span class="text-xs text-slate-400 w-full sm:w-auto sm:ml-auto">
+        <span class="text-sm text-slate-400 w-full sm:w-auto sm:ml-auto">
           {{ order.created_at | date:'mediumDate' }}
         </span>
       </div>

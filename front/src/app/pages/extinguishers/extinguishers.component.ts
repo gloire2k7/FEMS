@@ -1,11 +1,13 @@
 import { AfterViewInit, Component, NgZone, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ExtinguisherService } from '../../services/extinguisher.service';
 import { PaginationComponent } from '../../shared/pagination/pagination.component';
 
 declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
+
+type StatusFilter = 'all' | 'valid' | 'attention';
 
 @Component({
   selector: 'app-extinguishers',
@@ -15,40 +17,66 @@ declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | 
 })
 export class ExtinguishersComponent implements OnInit, AfterViewInit {
   private extService = inject(ExtinguisherService);
+  private route = inject(ActivatedRoute);
   private ngZone = inject(NgZone);
 
   loading = true;
   search = '';
+  statusFilter: StatusFilter = 'all';
   page = 1;
   lastPage = 1;
   total = 0;
   units: any[] = [];
 
   get filteredUnits() {
+    let list = this.units;
+
+    if (this.statusFilter === 'valid') {
+      list = list.filter(u => !this.needsAttention(u));
+    } else if (this.statusFilter === 'attention') {
+      list = list.filter(u => this.needsAttention(u));
+    }
+
     const q = this.search.trim().toLowerCase();
-    if (!q) return this.units;
-    return this.units.filter(u =>
-      (u.serial_number || '').toLowerCase().includes(q) ||
-      (u.type || '').toLowerCase().includes(q) ||
-      (u.capacity || '').toLowerCase().includes(q)
-    );
+    if (q) {
+      list = list.filter(u =>
+        (u.serial_number || '').toLowerCase().includes(q) ||
+        (u.type || '').toLowerCase().includes(q) ||
+        (u.capacity || '').toLowerCase().includes(q)
+      );
+    }
+    return list;
   }
 
   get stats() {
     const list = this.units;
-    const now = Date.now();
     let valid = 0;
     let attention = 0;
     for (const u of list) {
-      const exp = u.expiry_date ? new Date(u.expiry_date).getTime() : null;
-      if (exp && exp < now) attention++;
+      if (this.needsAttention(u)) attention++;
       else valid++;
     }
     return { total: this.total || list.length, valid, attention };
   }
 
   ngOnInit() {
+    const filter = this.route.snapshot.queryParamMap.get('filter');
+    if (filter === 'valid' || filter === 'attention') {
+      this.statusFilter = filter;
+    }
     this.load(1);
+  }
+
+  setStatusFilter(filter: StatusFilter) {
+    this.statusFilter = filter;
+    this.scrollToList();
+    this.refreshIcons();
+  }
+
+  needsAttention(u: any): boolean {
+    if (u.expiry_date && new Date(u.expiry_date) < new Date()) return true;
+    const s = (u.status || '').toLowerCase();
+    return s === 'maintenance' || s === 'under_maintenance';
   }
 
   load(page: number) {
@@ -62,6 +90,9 @@ export class ExtinguishersComponent implements OnInit, AfterViewInit {
         this.total = res.total ?? this.units.length;
         this.loading = false;
         this.refreshIcons();
+        if (this.statusFilter !== 'all') {
+          setTimeout(() => this.scrollToList(), 100);
+        }
       },
       error: () => {
         this.units = [];
@@ -73,6 +104,9 @@ export class ExtinguishersComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.refreshIcons();
+    if (this.statusFilter !== 'all') {
+      setTimeout(() => this.scrollToList(), 200);
+    }
   }
 
   statusLabel(u: any): string {
@@ -88,6 +122,10 @@ export class ExtinguishersComponent implements OnInit, AfterViewInit {
     if (label === 'Expired') return 'bg-red-50 text-red-700';
     if (label === 'In service') return 'bg-blue-50 text-blue-700';
     return 'bg-emerald-50 text-emerald-700';
+  }
+
+  private scrollToList() {
+    document.getElementById('extinguisher-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   private refreshIcons() {

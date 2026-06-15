@@ -18,9 +18,11 @@
   <section class="client-card client-card--lift p-5">
     <div class="flex flex-col sm:flex-row gap-4">
       <div class="relative flex-1">
-        <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-        <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applyFilter()"
-          placeholder="Search by type or capacity…" class="client-input pl-10" />
+        <div class="client-search">
+          <i data-lucide="search" class="client-search-icon"></i>
+          <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applyFilter()"
+            placeholder="Search by type or capacity…" class="client-input" />
+        </div>
       </div>
       <select [(ngModel)]="filterType" (ngModelChange)="applyFilter()" class="client-input sm:w-44">
         <option value="">All types</option>

@@ -25,24 +25,6 @@ declare const lucide: { createIcons: () => void } | undefined;
         </div>
       </section>
 
-      <section class="client-card client-card--lift p-6">
-        <div class="flex items-start gap-4">
-          <span class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-            <i data-lucide="info" class="w-6 h-6 text-blue-600"></i>
-          </span>
-          <div>
-            <h2 class="text-lg font-semibold text-[#0B1437]">How it works</h2>
-            <p class="text-base text-slate-600 mt-1 leading-relaxed">
-              Submit a request with your extinguisher serial number. Our team will review it and schedule service at your location.
-            </p>
-            <a routerLink="/extinguishers" class="inline-flex items-center gap-2 mt-3 text-base font-semibold text-[#0B1437] hover:underline">
-              View my extinguishers
-              <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </a>
-          </div>
-        </div>
-      </section>
-
       <section class="client-card">
         <div class="client-empty">
           <div class="client-empty-icon">
