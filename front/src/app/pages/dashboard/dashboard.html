@@ -71,6 +71,18 @@
       </a>
   </section>
 
+  <!-- Charts -->
+  <section *ngIf="!loading && (orderChart.length || unitsChart.length)" class="grid lg:grid-cols-2 gap-6">
+    <app-chart-card *ngIf="orderChart.length" title="Order status" subtitle="Your requests breakdown"
+      link="/my-orders" linkLabel="All orders">
+      <app-donut-chart [segments]="orderChart" centerLabel="Orders" />
+    </app-chart-card>
+    <app-chart-card *ngIf="unitsChart.length" title="Fleet by type" subtitle="Extinguishers at your sites"
+      link="/extinguishers" linkLabel="View fleet">
+      <app-h-bar-chart [segments]="unitsChart" />
+    </app-chart-card>
+  </section>
+
   <!-- Quick actions -->
   <section>
     <h2 class="text-base font-semibold text-slate-500 uppercase tracking-wider mb-4">Quick actions</h2>

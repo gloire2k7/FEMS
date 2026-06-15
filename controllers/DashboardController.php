@@ -37,6 +37,9 @@ class DashboardController extends Controller
             $stats['stock_by_type'] = $db->query(
                 "SELECT type, capacity, COUNT(*) as count FROM fire_extinguishers WHERE client_id IS NULL AND status='filled' GROUP BY type, capacity"
             )->fetchAll(PDO::FETCH_ASSOC);
+            $stats['orders_by_status'] = $db->query(
+                "SELECT status, COUNT(*) as count FROM orders GROUP BY status"
+            )->fetchAll(PDO::FETCH_ASSOC);
             $this->jsonResponse($stats);
         }
 
@@ -53,9 +56,14 @@ class DashboardController extends Controller
         $stmt->execute([$companyId]);
         $ordersByStatus = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        $stmt = $db->prepare("SELECT type, COUNT(*) as count FROM fire_extinguishers WHERE client_id = ? GROUP BY type");
+        $stmt->execute([$companyId]);
+        $unitsByType = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         $this->jsonResponse([
             'my_units' => $units,
             'orders_by_status' => $ordersByStatus,
+            'units_by_type' => $unitsByType,
             'pending_orders' => array_sum(array_column(
                 array_filter($ordersByStatus, fn($o) => $o['status'] === 'pending'),
                 'count'

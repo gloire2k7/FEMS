@@ -1,8 +1,13 @@
 import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { DashboardService } from '../../services/dashboard.service';
+import { BarChartComponent } from '../../shared/charts/bar-chart.component';
+import { DonutChartComponent } from '../../shared/charts/donut-chart.component';
+import { HorizontalBarChartComponent } from '../../shared/charts/h-bar-chart.component';
+import { ChartCardComponent } from '../../shared/charts/chart-card.component';
+import { ChartSegment, toChartSegments } from '../../shared/charts/chart.models';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
@@ -18,20 +23,19 @@ interface QuickAction {
 @Component({
   selector: 'app-super-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, BarChartComponent, DonutChartComponent, ChartCardComponent],
   templateUrl: './super-admin-dashboard.html',
   styleUrls: ['./super-admin-dashboard.css'],
 })
 export class SuperAdminDashboard implements AfterViewInit, OnInit {
   private authService = inject(AuthService);
   private dashboard = inject(DashboardService);
-  private router = inject(Router);
 
   userName = 'Super Admin';
   loading = true;
   stats: any = {};
-  stockByType: { type: string; capacity?: string; count: number }[] = [];
-  ordersByStatus: { status: string; count: number }[] = [];
+  orderChart: ChartSegment[] = [];
+  platformChart: ChartSegment[] = [];
   alerts: { title: string; subtitle: string; type: string; icon: string; route: string; queryParams?: Record<string, string> }[] = [];
 
   quickActions: QuickAction[] = [
@@ -73,8 +77,13 @@ export class SuperAdminDashboard implements AfterViewInit, OnInit {
     this.dashboard.getStats().subscribe({
       next: (s) => {
         this.stats = s;
-        this.stockByType = (s.stock_by_type || []).slice(0, 6);
-        this.ordersByStatus = s.orders_by_status || [];
+        this.orderChart = toChartSegments(s.orders_by_status);
+        this.platformChart = [
+          { label: 'Active clients', value: s.clients ?? 0, color: '#8b5cf6' },
+          { label: 'Administrators', value: s.admins ?? 0, color: '#3b82f6' },
+          { label: 'Pending clients', value: s.pending_clients ?? 0, color: '#f59e0b' },
+        ].filter(x => x.value > 0);
+
         this.alerts = [];
         if (s.pending_clients > 0) {
           this.alerts.push({
@@ -110,15 +119,6 @@ export class SuperAdminDashboard implements AfterViewInit, OnInit {
     if (h < 12) return 'Good morning';
     if (h < 17) return 'Good afternoon';
     return 'Good evening';
-  }
-
-  maxOrderCount(): number {
-    const max = Math.max(...this.ordersByStatus.map(o => o.count), 1);
-    return max;
-  }
-
-  barHeight(count: number): number {
-    return Math.max(8, (count / this.maxOrderCount()) * 100);
   }
 
   ngAfterViewInit() {

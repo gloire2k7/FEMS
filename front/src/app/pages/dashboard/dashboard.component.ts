@@ -4,6 +4,10 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { OrderService } from '../../services/order.service';
+import { DonutChartComponent } from '../../shared/charts/donut-chart.component';
+import { HorizontalBarChartComponent } from '../../shared/charts/h-bar-chart.component';
+import { ChartCardComponent } from '../../shared/charts/chart-card.component';
+import { ChartSegment, toChartSegments } from '../../shared/charts/chart.models';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
@@ -18,7 +22,7 @@ interface QuickAction {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, DonutChartComponent, HorizontalBarChartComponent, ChartCardComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -37,6 +41,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     deliveredOrders: 0,
   };
   recentOrders: any[] = [];
+  orderChart: ChartSegment[] = [];
+  unitsChart: ChartSegment[] = [];
 
   quickActions: QuickAction[] = [
     {
@@ -84,6 +90,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.stats.pendingOrders = this.countByStatus(s.orders_by_status, 'pending') || s.pending_orders || 0;
         this.stats.approvedOrders = this.countByStatus(s.orders_by_status, 'granted');
         this.stats.deliveredOrders = this.countByStatus(s.orders_by_status, 'delivered');
+        this.orderChart = toChartSegments(s.orders_by_status);
+        this.unitsChart = toChartSegments(s.units_by_type);
         this.loading = false;
         this.refreshIcons();
       },

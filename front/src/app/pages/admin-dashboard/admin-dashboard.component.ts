@@ -4,6 +4,11 @@ import { RouterModule } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../auth.service';
+import { BarChartComponent } from '../../shared/charts/bar-chart.component';
+import { DonutChartComponent } from '../../shared/charts/donut-chart.component';
+import { HorizontalBarChartComponent } from '../../shared/charts/h-bar-chart.component';
+import { ChartCardComponent } from '../../shared/charts/chart-card.component';
+import { ChartSegment, toChartSegments, stockLabel } from '../../shared/charts/chart.models';
 import { PaginationComponent } from '../../shared/pagination/pagination.component';
 
 declare const lucide: { createIcons: () => void } | undefined;
@@ -20,7 +25,7 @@ interface QuickAction {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, PaginationComponent],
+  imports: [CommonModule, RouterModule, PaginationComponent, BarChartComponent, DonutChartComponent, ChartCardComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css',
 })
@@ -38,6 +43,8 @@ export class AdminDashboardComponent implements AfterViewInit, OnInit {
     ordersGranted: 0,
   };
   stockByType: { type: string; capacity?: string; count: number }[] = [];
+  orderChart: ChartSegment[] = [];
+  stockChart: ChartSegment[] = [];
   orders: any[] = [];
   page = 1;
   lastPage = 1;
@@ -88,6 +95,8 @@ export class AdminDashboardComponent implements AfterViewInit, OnInit {
         this.stats.inStock = s.extinguishers_in_stock ?? 0;
         this.stats.ordersGranted = s.orders_granted ?? 0;
         this.stockByType = s.stock_by_type ?? [];
+        this.orderChart = toChartSegments(s.orders_by_status);
+        this.stockChart = toChartSegments(s.stock_by_type, stockLabel);
         this.loading = false;
         this.refreshIcons();
       },

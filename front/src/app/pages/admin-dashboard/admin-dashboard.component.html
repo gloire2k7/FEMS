@@ -69,24 +69,16 @@
     </a>
   </section>
 
-  <!-- Stock breakdown (compact) -->
-  <section *ngIf="stockByType.length" class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h2 class="text-lg font-semibold text-[#0B1437]">Stock by type</h2>
-        <p class="text-sm text-slate-500 mt-0.5">Available warehouse inventory</p>
-      </div>
-      <a routerLink="/admin-inventory" class="text-sm font-semibold text-[#0B1437] hover:text-teal-700 inline-flex items-center gap-1">
-        Full inventory <i data-lucide="arrow-right" class="w-4 h-4"></i>
-      </a>
-    </div>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      <div *ngFor="let row of stockByType.slice(0, 6)"
-        class="flex items-center justify-between px-4 py-3 bg-slate-50 rounded-xl">
-        <span class="font-medium text-slate-700">{{ row.type }}<span *ngIf="row.capacity"> · {{ row.capacity }}</span></span>
-        <span class="text-lg font-bold text-[#0B1437]">{{ row.count }}</span>
-      </div>
-    </div>
+  <!-- Charts -->
+  <section *ngIf="!loading && (orderChart.length || stockChart.length)" class="grid lg:grid-cols-2 gap-6">
+    <app-chart-card *ngIf="orderChart.length" title="Order pipeline" subtitle="Requests by status"
+      link="/admin-orders" linkLabel="Manage orders">
+      <app-bar-chart [segments]="orderChart" />
+    </app-chart-card>
+    <app-chart-card *ngIf="stockChart.length" title="Stock mix" subtitle="Warehouse inventory by type"
+      link="/admin-inventory" linkLabel="Full inventory">
+      <app-donut-chart [segments]="stockChart" centerLabel="Units" />
+    </app-chart-card>
   </section>
 
   <!-- Quick actions -->
