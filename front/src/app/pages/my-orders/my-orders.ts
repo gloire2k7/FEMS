@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { OrderService } from '../../services/order.service';
@@ -139,6 +139,7 @@ import { PaginationComponent } from '../../shared/pagination/pagination.componen
 export class MyOrdersComponent implements OnInit {
   private orderService = inject(OrderService);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
   loading = true;
   ordersList: any[] = [];
   statusFilter = '';
@@ -162,9 +163,9 @@ export class MyOrdersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.statusFilter = this.route.snapshot.queryParamMap.get('status') || '';
-    this.route.queryParamMap.subscribe(params => {
+    this.route.queryParamMap.subscribe((params) => {
       this.statusFilter = params.get('status') || '';
+      this.cdr.detectChanges();
     });
     this.load(1);
   }
@@ -179,13 +180,17 @@ export class MyOrdersComponent implements OnInit {
         this.lastPage = res.last_page || 1;
         this.total = res.total || this.ordersList.length;
         this.loading = false;
+        this.cdr.detectChanges();
         if (this.statusFilter) {
           setTimeout(() => {
             document.getElementById('order-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }, 100);
         }
       },
-      error: () => { this.loading = false; }
+      error: () => {
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
     });
   }
 

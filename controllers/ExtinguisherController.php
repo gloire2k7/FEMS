@@ -14,10 +14,21 @@ class ExtinguisherController extends Controller
         AuthMiddleware::check();
         $page  = max(1, (int) ($_GET['page'] ?? 1));
         $limit = min(50, max(1, (int) ($_GET['limit'] ?? 5)));
+        $sort  = ($_GET['sort'] ?? 'newest') === 'oldest' ? 'oldest' : 'newest';
+        $type  = !empty($_GET['type']) ? trim($_GET['type']) : null;
+        $role  = $_SESSION['role_name'] ?? '';
+
+        if ($role === 'Company User') {
+            $companyId = $_SESSION['company_id'] ?? null;
+            if (!$companyId) {
+                $this->jsonResponse(['message' => 'No client linked to this account.'], 400);
+            }
+            $this->jsonResponse($this->extModel->findPaginated($page, $limit, 'all', $sort, $type, (int) $companyId));
+        }
+
+        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
         $statusMap = ['in_stock' => true, 'allocated' => true, 'all' => true];
         $status = isset($statusMap[$_GET['status'] ?? '']) ? $_GET['status'] : 'in_stock';
-        $sort   = ($_GET['sort'] ?? 'newest') === 'oldest' ? 'oldest' : 'newest';
-        $type   = !empty($_GET['type']) ? trim($_GET['type']) : null;
         $this->jsonResponse($this->extModel->findPaginated($page, $limit, $status, $sort, $type));
     }
 
@@ -140,9 +151,51 @@ class ExtinguisherController extends Controller
         $ext = is_numeric($id)
             ? $this->extModel->findById($id)
             : $this->extModel->findBySerialNumber($id);
-        if ($ext) {
-            $this->jsonResponse($ext);
+        if (!$ext) {
+            $this->jsonResponse(["message" => "Not found"], 404);
         }
-        $this->jsonResponse(["message" => "Not found"], 404);
+
+        $role = $_SESSION['role_name'] ?? '';
+        if ($role === 'Company User') {
+            $companyId = (int) ($_SESSION['company_id'] ?? 0);
+            if (!$companyId || (int) $ext['client_id'] !== $companyId) {
+                $this->jsonResponse(["message" => "Forbidden"], 403);
+            }
+        }
+
+        $this->jsonResponse($ext);
+    }
+
+    public function assignLocation($id)
+    {
+        AuthMiddleware::check();
+        if (($_SESSION['role_name'] ?? '') !== 'Company User') {
+            $this->jsonResponse(['message' => 'Forbidden. Client access only.'], 403);
+        }
+
+        $companyId = (int) ($_SESSION['company_id'] ?? 0);
+        if (!$companyId) {
+            $this->jsonResponse(['message' => 'No client linked to this account.'], 400);
+        }
+
+        $ext = is_numeric($id)
+            ? $this->extModel->findById($id)
+            : $this->extModel->findBySerialNumber($id);
+        if (!$ext) {
+            $this->jsonResponse(['message' => 'Unit not found.'], 404);
+        }
+
+        $data = $this->getJsonInput();
+        $locationId = array_key_exists('location_id', $data) && $data['location_id'] !== null
+            ? (int) $data['location_id']
+            : null;
+
+        $result = $this->extModel->assignLocation((int) $ext['id'], $locationId, $companyId);
+        if (!$result['ok']) {
+            $this->jsonResponse(['message' => $result['message']], 400);
+        }
+
+        $updated = $this->extModel->findById($ext['id']);
+        $this->jsonResponse(['message' => 'Location updated.', 'extinguisher' => $updated]);
     }
 }

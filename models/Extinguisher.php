@@ -34,19 +34,24 @@ class Extinguisher extends Model
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
-    public function findPaginated($page = 1, $limit = 5, $status = 'in_stock', $sort = 'newest', $type = null)
+    public function findPaginated($page = 1, $limit = 5, $status = 'in_stock', $sort = 'newest', $type = null, $clientId = null)
     {
         $offset = ($page - 1) * $limit;
 
-        if ($status === 'in_stock') {
+        if ($clientId !== null) {
+            $where = 'fe.client_id = :client_id';
+            $params = [':client_id' => (int) $clientId];
+        } elseif ($status === 'in_stock') {
             $where = 'fe.client_id IS NULL';
+            $params = [];
         } elseif ($status === 'allocated') {
             $where = 'fe.client_id IS NOT NULL';
+            $params = [];
         } else {
             $where = '1=1';
+            $params = [];
         }
 
-        $params = [];
         if ($type) {
             $where .= ' AND fe.type = :type';
             $params[':type'] = $type;
@@ -181,8 +186,12 @@ class Extinguisher extends Model
 
     public function findById($id)
     {
-        $query = "SELECT fe.*, c.company_name as client_name FROM {$this->table} fe
-                  LEFT JOIN clients c ON fe.client_id = c.id WHERE fe.id = :id LIMIT 1";
+        $query = "SELECT fe.*, c.company_name as client_name,
+                         l.location_name, l.address as location_address
+                  FROM {$this->table} fe
+                  LEFT JOIN clients c ON fe.client_id = c.id
+                  LEFT JOIN locations l ON fe.location_id = l.id
+                  WHERE fe.id = :id LIMIT 1";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
@@ -216,11 +225,63 @@ class Extinguisher extends Model
 
     public function findBySerialNumber($serial)
     {
-        $query = "SELECT fe.*, c.company_name as client_name FROM {$this->table} fe
-                  LEFT JOIN clients c ON fe.client_id = c.id WHERE fe.serial_number = :serial LIMIT 1";
+        $query = "SELECT fe.*, c.company_name as client_name,
+                         l.location_name, l.address as location_address
+                  FROM {$this->table} fe
+                  LEFT JOIN clients c ON fe.client_id = c.id
+                  LEFT JOIN locations l ON fe.location_id = l.id
+                  WHERE fe.serial_number = :serial LIMIT 1";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':serial', $serial);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function assignLocation($extId, $locationId, $clientId)
+    {
+        $extId = (int) $extId;
+        $clientId = (int) $clientId;
+
+        $stmt = $this->db->prepare(
+            "SELECT id, client_id, location_id FROM {$this->table} WHERE id = :id LIMIT 1"
+        );
+        $stmt->bindValue(':id', $extId, PDO::PARAM_INT);
+        $stmt->execute();
+        $ext = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$ext || (int) $ext['client_id'] !== $clientId) {
+            return ['ok' => false, 'message' => 'Unit not found or does not belong to your account.'];
+        }
+
+        if ($locationId === null) {
+            $upd = $this->db->prepare("UPDATE {$this->table} SET location_id = NULL WHERE id = :id");
+            $upd->bindValue(':id', $extId, PDO::PARAM_INT);
+            $upd->execute();
+            return ['ok' => true];
+        }
+
+        $locationId = (int) $locationId;
+        if ($ext['location_id'] !== null && (int) $ext['location_id'] !== $locationId) {
+            return [
+                'ok'      => false,
+                'message' => 'This unit is already assigned to another location.',
+            ];
+        }
+
+        $locStmt = $this->db->prepare(
+            "SELECT id FROM locations WHERE id = :id AND client_id = :client_id LIMIT 1"
+        );
+        $locStmt->bindValue(':id', $locationId, PDO::PARAM_INT);
+        $locStmt->bindValue(':client_id', $clientId, PDO::PARAM_INT);
+        $locStmt->execute();
+        if (!$locStmt->fetch()) {
+            return ['ok' => false, 'message' => 'Location not found.'];
+        }
+
+        $upd = $this->db->prepare("UPDATE {$this->table} SET location_id = :location_id WHERE id = :id");
+        $upd->bindValue(':location_id', $locationId, PDO::PARAM_INT);
+        $upd->bindValue(':id', $extId, PDO::PARAM_INT);
+        $upd->execute();
+        return ['ok' => true];
     }
 }

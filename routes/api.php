@@ -36,11 +36,21 @@ $router->get('/api/clients/{id}', ['ClientController', 'show']);
 $router->put('/api/clients/{id}', ['ClientController', 'update']);
 $router->delete('/api/clients/{id}', ['ClientController', 'destroy']);
 
+// Locations (client portal only)
+$router->get('/api/locations', ['LocationController', 'index']);
+$router->post('/api/locations', ['LocationController', 'store']);
+$router->get('/api/locations/{id}/available-units', ['LocationController', 'availableUnits']);
+$router->get('/api/locations/{id}', ['LocationController', 'show']);
+$router->delete('/api/locations/{id}', ['LocationController', 'destroy']);
+$router->post('/api/locations/{id}/units', ['LocationController', 'addUnits']);
+$router->delete('/api/locations/{id}/units', ['LocationController', 'removeUnits']);
+
 // Extinguishers / stock
 $router->get('/api/extinguishers/stock', ['ExtinguisherController', 'stockSummary']);
 $router->get('/api/extinguishers', ['ExtinguisherController', 'index']);
 $router->post('/api/extinguishers', ['ExtinguisherController', 'store']);
 $router->post('/api/extinguishers/bulk', ['ExtinguisherController', 'bulkStore']);
+$router->put('/api/extinguishers/{id}/location', ['ExtinguisherController', 'assignLocation']);
 $router->get('/api/extinguishers/{id}', ['ExtinguisherController', 'show']);
 $router->put('/api/extinguishers/{id}', ['ExtinguisherController', 'update']);
 $router->delete('/api/extinguishers/{id}', ['ExtinguisherController', 'destroy']);

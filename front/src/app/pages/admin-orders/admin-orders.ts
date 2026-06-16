@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
+import { Component, AfterViewInit, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -16,6 +16,7 @@ declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | 
 export class AdminOrders implements AfterViewInit, OnInit {
   private orderService = inject(OrderService);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
 
   searchQuery = '';
   filterStatus = 'all';
@@ -28,13 +29,21 @@ export class AdminOrders implements AfterViewInit, OnInit {
   pageSize = 10;
 
   ngOnInit() {
+    this.loadOrders();
     this.route.queryParams.subscribe((params) => {
       const status = params['status'];
-      if (status && ['pending', 'granted', 'cancelled', 'all'].includes(status)) {
-        this.filterStatus = status;
-      }
-      this.loadOrders();
+      this.filterStatus =
+        status && ['pending', 'granted', 'cancelled', 'delivered', 'all'].includes(status) ? status : 'all';
+      this.currentPage = 1;
+      this.cdr.detectChanges();
     });
+  }
+
+  setStatusFilter(status: string) {
+    this.filterStatus = status;
+    this.currentPage = 1;
+    this.cdr.detectChanges();
+    this.initIcons();
   }
 
   loadOrders() {
@@ -43,10 +52,12 @@ export class AdminOrders implements AfterViewInit, OnInit {
       next: (res) => {
         this.allOrders = res.data || res || [];
         this.isLoading = false;
+        this.cdr.detectChanges();
         this.initIcons();
       },
       error: () => {
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -74,7 +85,10 @@ export class AdminOrders implements AfterViewInit, OnInit {
   }
 
   changePage(page: number) {
-    if (page >= 1 && page <= this.totalPages) this.currentPage = page;
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.cdr.detectChanges();
+    }
   }
 
   get pendingCount() {

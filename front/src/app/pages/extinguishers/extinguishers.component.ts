@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, NgZone, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, NgZone, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -19,6 +19,7 @@ export class ExtinguishersComponent implements OnInit, AfterViewInit {
   private extService = inject(ExtinguisherService);
   private route = inject(ActivatedRoute);
   private ngZone = inject(NgZone);
+  private cdr = inject(ChangeDetectorRef);
 
   loading = true;
   search = '';
@@ -71,6 +72,7 @@ export class ExtinguishersComponent implements OnInit, AfterViewInit {
     this.statusFilter = filter;
     this.scrollToList();
     this.refreshIcons();
+    this.cdr.detectChanges();
   }
 
   needsAttention(u: any): boolean {
@@ -89,6 +91,7 @@ export class ExtinguishersComponent implements OnInit, AfterViewInit {
         this.lastPage = res.last_page ?? 1;
         this.total = res.total ?? this.units.length;
         this.loading = false;
+        this.cdr.detectChanges();
         this.refreshIcons();
         if (this.statusFilter !== 'all') {
           setTimeout(() => this.scrollToList(), 100);

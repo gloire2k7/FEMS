@@ -1,17 +1,17 @@
-<div class="client-page max-w-6xl pb-8">
+<div class="client-page pb-6">
 
-  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
+  <section class="client-hero">
     <div class="client-hero-inner">
       <p class="client-hero-eyebrow">Order management</p>
       <h1 class="client-hero-title">Client orders</h1>
-      <p class="client-hero-sub">Review, approve, or deny purchase requests from client companies.</p>
+      <p class="client-hero-sub">Review, grant, or deny purchase requests from client companies.</p>
     </div>
   </section>
 
   <section class="client-stat-grid client-stat-grid--4" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
-    <button type="button" (click)="filterStatus = 'pending'; currentPage=1"
+    <button type="button" (click)="setStatusFilter('pending')"
       class="client-stat client-stat--featured client-stat-link text-left"
-      [class.ring-2]="filterStatus === 'pending'" [class.ring-orange-300]="filterStatus === 'pending'">
+      [class.client-stat-link--active]="filterStatus === 'pending'">
       <div class="relative z-10 flex items-start justify-between gap-3">
         <div>
           <p class="client-stat-label">Pending</p>
@@ -21,9 +21,9 @@
         <span class="client-stat-icon"><i data-lucide="clock" class="w-5 h-5"></i></span>
       </div>
     </button>
-    <button type="button" (click)="filterStatus = 'granted'; currentPage=1"
+    <button type="button" (click)="setStatusFilter('granted')"
       class="client-stat client-stat--success client-stat-link text-left"
-      [class.ring-2]="filterStatus === 'granted'" [class.ring-emerald-300]="filterStatus === 'granted'">
+      [class.client-stat-link--active]="filterStatus === 'granted'">
       <div class="relative z-10 flex items-start justify-between gap-3">
         <div>
           <p class="client-stat-label">Approved</p>
@@ -33,9 +33,9 @@
         <span class="client-stat-icon"><i data-lucide="check-circle" class="w-5 h-5"></i></span>
       </div>
     </button>
-    <button type="button" (click)="filterStatus = 'cancelled'; currentPage=1"
+    <button type="button" (click)="setStatusFilter('cancelled')"
       class="client-stat client-stat--warning client-stat-link text-left"
-      [class.ring-2]="filterStatus === 'cancelled'" [class.ring-red-300]="filterStatus === 'cancelled'">
+      [class.client-stat-link--active]="filterStatus === 'cancelled'">
       <div class="relative z-10 flex items-start justify-between gap-3">
         <div>
           <p class="client-stat-label">Denied</p>
@@ -48,24 +48,24 @@
   </section>
 
   <div class="flex flex-wrap items-center gap-2">
-    <button type="button" (click)="filterStatus = 'all'; currentPage=1"
+    <button type="button" (click)="setStatusFilter('all')"
       [class.bg-[#0B1437]]="filterStatus === 'all'" [class.text-white]="filterStatus === 'all'"
-      class="px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 transition-colors">
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 transition-colors">
       All ({{ allOrders.length }})
     </button>
-    <button type="button" (click)="filterStatus = 'pending'; currentPage=1"
+    <button type="button" (click)="setStatusFilter('pending')"
       [class.bg-orange-500]="filterStatus === 'pending'" [class.text-white]="filterStatus === 'pending'"
-      class="px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 transition-colors">
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 transition-colors">
       Pending
     </button>
-    <button type="button" (click)="filterStatus = 'granted'; currentPage=1"
+    <button type="button" (click)="setStatusFilter('granted')"
       [class.bg-emerald-600]="filterStatus === 'granted'" [class.text-white]="filterStatus === 'granted'"
-      class="px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 transition-colors">
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 transition-colors">
       Approved
     </button>
-    <button type="button" (click)="filterStatus = 'cancelled'; currentPage=1"
+    <button type="button" (click)="setStatusFilter('cancelled')"
       [class.bg-red-600]="filterStatus === 'cancelled'" [class.text-white]="filterStatus === 'cancelled'"
-      class="px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 transition-colors">
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 transition-colors">
       Denied
     </button>
   </div>

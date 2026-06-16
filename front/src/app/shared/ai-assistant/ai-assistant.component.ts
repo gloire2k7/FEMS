@@ -113,6 +113,10 @@ export class AiAssistantComponent implements AfterViewInit {
   }
 
   runAction(action: { route: string; label: string; query?: Record<string, string> }) {
+    if (action.route === '__download__') {
+      window.open(action.query?.['url'], '_blank');
+      return;
+    }
     this.router.navigate([action.route], { queryParams: action.query ?? {} });
     if (!this.fullPage) this.open = false;
   }

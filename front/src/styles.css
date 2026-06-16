@@ -4,6 +4,8 @@
 
 body {
   font-family: 'Poppins', sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }
 
 /* Lucide: ensure icon elements and replaced SVGs have size so they stay visible */
@@ -115,11 +117,15 @@ svg.lucide.w-6 {
 
 /* ── Client portal (Company User pages) ── */
 .client-page {
-  max-width: 72rem;
+  max-width: 56rem;
   margin-left: auto;
   margin-right: auto;
-  padding-bottom: 2.5rem;
+  padding-bottom: 1.75rem;
   animation: client-page-in 0.4s ease-out;
+}
+
+.client-page--compact {
+  max-width: 28rem;
 }
 
 @keyframes client-page-in {
@@ -134,7 +140,7 @@ svg.lucide.w-6 {
 }
 
 .client-page > * + * {
-  margin-top: 2rem;
+  margin-top: 1.25rem;
 }
 
 .client-page-header {
@@ -142,25 +148,25 @@ svg.lucide.w-6 {
 }
 
 .client-title {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
+  font-size: 1.5rem;
+  line-height: 1.875rem;
   font-weight: 700;
   color: #0b1437;
   letter-spacing: -0.025em;
 }
 
 .client-subtitle {
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.375rem;
   color: #64748b;
-  margin-top: 0.5rem;
+  margin-top: 0.375rem;
 }
 
 .client-card {
   background: #fff;
-  border-radius: 1rem;
+  border-radius: 0.875rem;
   border: 1px solid #f1f5f9;
-  box-shadow: 0 1px 3px rgba(11, 20, 55, 0.04);
+  box-shadow: 0 1px 2px rgba(11, 20, 55, 0.04);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
@@ -172,12 +178,12 @@ svg.lucide.w-6 {
 /* Page hero — matches dashboard gradient */
 .client-hero {
   background: linear-gradient(135deg, #0b1437 0%, #1e3a5f 55%, #0f766e 100%);
-  border-radius: 1.5rem;
-  padding: 2rem 2rem;
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
   color: #fff;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 16px 40px -12px rgba(11, 20, 55, 0.35);
+  box-shadow: 0 10px 28px -10px rgba(11, 20, 55, 0.3);
 }
 
 .client-hero::before {
@@ -196,48 +202,48 @@ svg.lucide.w-6 {
 }
 
 .client-hero-eyebrow {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.72);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.125rem;
 }
 
 .client-hero-title {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
+  font-size: 1.375rem;
+  line-height: 1.625rem;
   font-weight: 700;
   letter-spacing: -0.025em;
 }
 
 @media (min-width: 768px) {
   .client-hero-title {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
+    font-size: 1.625rem;
+    line-height: 2rem;
   }
 }
 
 .client-hero-sub {
-  font-size: 1rem;
-  line-height: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.375rem;
   color: rgba(255, 255, 255, 0.78);
-  margin-top: 0.5rem;
-  max-width: 32rem;
+  margin-top: 0.375rem;
+  max-width: 28rem;
 }
 
 .client-hero-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  font-size: 1rem;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: #0b1437;
   background: #fff;
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   border: none;
   cursor: pointer;
   text-decoration: none;
-  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.2);
   transition: transform 0.15s ease, background 0.15s ease;
 }
 
@@ -250,7 +256,7 @@ svg.lucide.w-6 {
 .client-stat-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 @media (min-width: 640px) {
@@ -271,8 +277,8 @@ svg.lucide.w-6 {
 
 .client-stat {
   background: #fff;
-  border-radius: 1rem;
-  padding: 1.25rem 1.5rem;
+  border-radius: 0.875rem;
+  padding: 0.875rem 1rem;
   border: 1px solid #f1f5f9;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
@@ -290,7 +296,7 @@ a.client-stat-link:hover {
 }
 
 .client-stat-label {
-  font-size: 0.875rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -298,23 +304,23 @@ a.client-stat-link:hover {
 }
 
 .client-stat-value {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
+  font-size: 1.375rem;
+  line-height: 1.625rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  margin-top: 0.25rem;
+  margin-top: 0.125rem;
 }
 
 .client-stat-hint {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: #64748b;
-  margin-top: 0.25rem;
+  margin-top: 0.125rem;
 }
 
 .client-stat-icon {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 0.875rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.625rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -429,42 +435,47 @@ button.client-stat-link:focus-visible {
   outline-offset: 3px;
 }
 
-button.client-stat-link--active.client-stat--primary {
-  border-color: #0b1437;
-  box-shadow: 0 0 0 3px rgba(11, 20, 55, 0.12);
-}
-
-button.client-stat-link--active.client-stat--featured {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35), 0 18px 36px -10px rgba(11, 20, 55, 0.5);
-}
-
-button.client-stat-link--active.client-stat--success {
-  border-color: #059669;
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
-}
-
-button.client-stat-link--active.client-stat--warning {
-  border-color: #d97706;
-  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
-}
-
-button.client-stat-link--active.client-stat--info {
-  border-color: #0284c7;
-  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
-}
-
 a.client-stat-link {
   display: block;
   text-decoration: none;
   color: inherit;
 }
 
+a.client-stat-link--active.client-stat--primary,
+button.client-stat-link--active.client-stat--primary {
+  border-color: #0b1437;
+  box-shadow: 0 0 0 3px rgba(11, 20, 55, 0.12);
+}
+
+a.client-stat-link--active.client-stat--featured,
+button.client-stat-link--active.client-stat--featured {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35), 0 18px 36px -10px rgba(11, 20, 55, 0.5);
+}
+
+a.client-stat-link--active.client-stat--success,
+button.client-stat-link--active.client-stat--success {
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+}
+
+a.client-stat-link--active.client-stat--warning,
+button.client-stat-link--active.client-stat--warning {
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+}
+
+a.client-stat-link--active.client-stat--info,
+button.client-stat-link--active.client-stat--info {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
 .client-input {
   width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+  border-radius: 0.625rem;
   border: 1px solid #e2e8f0;
   background: #fff;
   color: #0b1437;
@@ -485,13 +496,13 @@ a.client-stat-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  font-size: 1rem;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: #fff;
   background: #0b1437;
-  border-radius: 0.75rem;
+  border-radius: 0.625rem;
   border: none;
   cursor: pointer;
   transition: background 0.15s ease, transform 0.15s ease;
@@ -505,13 +516,13 @@ a.client-stat-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  font-size: 1rem;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: #0b1437;
   background: #fff;
-  border-radius: 0.75rem;
+  border-radius: 0.625rem;
   border: 1px solid #e2e8f0;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -524,22 +535,22 @@ a.client-stat-link {
 .client-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.875rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
   font-weight: 600;
   border-radius: 9999px;
 }
 
 .client-empty {
   text-align: center;
-  padding: 3rem 1.5rem;
+  padding: 2rem 1.25rem;
 }
 
 .client-empty-icon {
-  width: 3.5rem;
-  height: 3.5rem;
-  margin: 0 auto 1rem;
-  border-radius: 1rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: 0 auto 0.75rem;
+  border-radius: 0.75rem;
   background: #f8fafc;
   display: flex;
   align-items: center;
@@ -553,13 +564,13 @@ a.client-stat-link {
 
 .client-table {
   width: 100%;
-  font-size: 1rem;
+  font-size: 0.875rem;
   text-align: left;
 }
 
 .client-table th {
-  padding: 1rem 1.25rem;
-  font-size: 0.875rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -569,7 +580,7 @@ a.client-stat-link {
 }
 
 .client-table td {
-  padding: 1rem 1.25rem;
+  padding: 0.625rem 1rem;
   color: #0b1437;
   border-bottom: 1px solid #f8fafc;
 }

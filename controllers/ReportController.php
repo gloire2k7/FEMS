@@ -50,9 +50,26 @@ class ReportController extends Controller
             case 'inventory':
                 $title = "Inventory Report";
                 $headers = ['ID', 'Serial', 'Type', 'Capacity', 'Status', 'Client'];
-                $query = "SELECT f.id, f.serial_number, f.type, f.capacity, f.status, c.company_name 
-                          FROM fire_extinguishers f 
-                          LEFT JOIN clients c ON f.client_id = c.id";
+                $where = ($startDate && $endDate)
+                    ? "WHERE f.created_at BETWEEN '{$startDate} 00:00:00' AND '{$endDate} 23:59:59'"
+                    : '';
+                $query = "SELECT f.id, f.serial_number, f.type, f.capacity, f.status, c.company_name
+                          FROM fire_extinguishers f
+                          LEFT JOIN clients c ON f.client_id = c.id $where ORDER BY f.created_at DESC";
+                $stmt = $db->prepare($query);
+                $stmt->execute();
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+
+            case 'orders':
+                $title = "Orders Report";
+                $headers = ['ID', 'Client', 'Status', 'Total (RWF)', 'Date'];
+                $where = ($startDate && $endDate)
+                    ? "WHERE o.created_at BETWEEN '{$startDate} 00:00:00' AND '{$endDate} 23:59:59'"
+                    : '';
+                $query = "SELECT o.id, c.company_name, o.status, o.total_price, DATE(o.created_at) as order_date
+                          FROM orders o LEFT JOIN clients c ON o.client_id = c.id
+                          $where ORDER BY o.created_at DESC";
                 $stmt = $db->prepare($query);
                 $stmt->execute();
                 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);

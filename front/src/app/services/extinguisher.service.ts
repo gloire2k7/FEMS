@@ -20,4 +20,12 @@ export class ExtinguisherService {
   getExtinguisher(idOrSerial: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/extinguishers/${idOrSerial}`, { withCredentials: true });
   }
+
+  assignLocation(idOrSerial: string, locationId: number | null): Observable<any> {
+    return this.http.put(
+      `${this.apiUrl}/extinguishers/${idOrSerial}/location`,
+      { location_id: locationId },
+      { withCredentials: true }
+    );
+  }
 }

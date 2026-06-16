@@ -6,6 +6,7 @@ import { ExtinguishersComponent } from './pages/extinguishers/extinguishers.comp
 import { ServiceRequestsComponent } from './pages/service-requests/service-requests.component';
 import { InspectorsOverviewComponent } from './pages/inspectors-overview/inspectors-overview.component';
 import { LocationsDashboardComponent } from './pages/locations-dashboard/locations-dashboard.component';
+import { LocationDetailsComponent } from './pages/location-details/location-details.component';
 import { Reports } from './pages/reports/reports';
 import { PlaceOrderComponent } from './pages/place-order/place-order';
 import { AdminOrderReview } from './pages/admin-order-review/admin-order-review';
@@ -15,8 +16,6 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { ClientsDashboard } from './pages/clients-dashboard/clients-dashboard';
-import { AdminLocationsDashboard } from './pages/admin-locations-dashboard/admin-locations-dashboard';
-import { AdminLocationDetails } from './pages/admin-location-details/admin-location-details';
 import { AdminAddExtinguisher } from './pages/admin-add-extinguisher/admin-add-extinguisher';
 
 import { AdminViewExtinguisherComponent } from './pages/admin-view-extinguisher/admin-view-extinguisher.component';
@@ -81,8 +80,6 @@ export const routes: Routes = [
       { path: 'admin-orders', component: AdminOrders },
       { path: 'admin-orders/:id/review', component: AdminOrderReview },
       { path: 'clients', component: ClientsDashboard },
-      { path: 'admin-locations', component: AdminLocationsDashboard },
-      { path: 'admin-location-details', component: AdminLocationDetails },
       { path: 'admin-view-extinguisher/:id', component: AdminViewExtinguisherComponent },
       { path: 'admin-inspection-label/:id', component: AdminInspectionLabel },
       { path: 'admin-add-extinguisher', component: AdminAddExtinguisher },
@@ -94,6 +91,7 @@ export const routes: Routes = [
   { path: 'service-requests', component: ServiceRequestsComponent },
   { path: 'inspectors', component: InspectorsOverviewComponent },
   { path: 'locations', component: LocationsDashboardComponent },
+  { path: 'locations/:id', component: LocationDetailsComponent },
   { path: 'view-extinguisher/:id', component: ViewExtinguisherComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'notifications', component: NotificationsComponent },
