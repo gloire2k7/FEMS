@@ -21,6 +21,8 @@ export class SuperAdminAdminDetails implements OnInit, AfterViewInit {
   admin: any = null;
   loading = true;
   error = '';
+  saveMessage = '';
+  saveError = '';
 
   editingPermissions = false;
   selectedPermissions: string[] = [];
@@ -28,6 +30,18 @@ export class SuperAdminAdminDetails implements OnInit, AfterViewInit {
 
   confirmDelete = false;
   deleting = false;
+
+  readonly permissionLabels: Record<string, string> = {
+    manage_clients: 'Clients Management',
+    manage_locations: 'Location Management',
+    manage_inventory: 'Inventory Management',
+    manage_orders: 'Orders Management',
+    manage_inspections: 'Inspections Management',
+    manage_refills: 'Refills Management',
+    manage_notifications: 'Notifications',
+    manage_settings: 'Settings',
+    manage_ai_assistant: 'AI Assistant',
+  };
 
   readonly editablePermissions = [
     { key: 'manage_clients',    label: 'Clients Management',    group: 'Operations' },
@@ -38,14 +52,28 @@ export class SuperAdminAdminDetails implements OnInit, AfterViewInit {
     { key: 'manage_refills',    label: 'Refills Management',    group: 'Compliance' },
   ];
 
+  readonly systemPermissions = [
+    { key: 'manage_notifications', label: 'Notifications' },
+    { key: 'manage_settings',      label: 'Settings' },
+    { key: 'manage_ai_assistant',  label: 'AI Assistant' },
+  ];
+
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.adminId = id ? +id : null;
-    if (!this.adminId) { this.loading = false; return; }
-    this.loadAdmin();
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      this.adminId = id ? +id : null;
+      if (!this.adminId) {
+        this.loading = false;
+        this.error = 'Invalid administrator ID.';
+        return;
+      }
+      this.loadAdmin();
+    });
   }
 
   loadAdmin() {
+    this.loading = true;
+    this.error = '';
     this.auth.getUserById(this.adminId!).subscribe({
       next: (user) => {
         this.admin = user;
@@ -60,6 +88,14 @@ export class SuperAdminAdminDetails implements OnInit, AfterViewInit {
     });
   }
 
+  permissionLabel(key: string): string {
+    return this.permissionLabels[key] || key;
+  }
+
+  permissionsByGroup(group: string) {
+    return this.editablePermissions.filter(p => p.group === group);
+  }
+
   toggleStatus() {
     if (!this.admin) return;
     const next = this.admin.status === 'active' ? 'inactive' : 'active';
@@ -71,10 +107,13 @@ export class SuperAdminAdminDetails implements OnInit, AfterViewInit {
   startEditPermissions() {
     this.selectedPermissions = [...(this.admin.permissions || [])];
     this.editingPermissions = true;
+    this.saveMessage = '';
+    this.saveError = '';
   }
 
   cancelEditPermissions() {
     this.editingPermissions = false;
+    this.selectedPermissions = [...(this.admin.permissions || [])];
   }
 
   togglePermission(key: string) {
@@ -89,14 +128,31 @@ export class SuperAdminAdminDetails implements OnInit, AfterViewInit {
 
   savePermissions() {
     this.savingPermissions = true;
+    this.saveMessage = '';
+    this.saveError = '';
     this.auth.updateUser(this.adminId!, { permissions: this.selectedPermissions }).subscribe({
-      next: () => {
-        this.admin.permissions = [...this.selectedPermissions];
+      next: (res) => {
+        this.admin.permissions = res.permissions || [...this.selectedPermissions];
+        this.selectedPermissions = [...this.admin.permissions];
         this.editingPermissions = false;
         this.savingPermissions = false;
+
+        const added = (res.added || []).map((k: string) => this.permissionLabel(k));
+        const removed = (res.removed || []).map((k: string) => this.permissionLabel(k));
+        if (added.length || removed.length) {
+          const parts: string[] = [];
+          if (added.length) parts.push(`Granted: ${added.join(', ')}`);
+          if (removed.length) parts.push(`Revoked: ${removed.join(', ')}`);
+          this.saveMessage = `${parts.join('. ')}. An email was sent to ${this.admin.email}.`;
+        } else {
+          this.saveMessage = 'Permissions saved. No changes were detected.';
+        }
         this.refreshIcons();
       },
-      error: () => { this.savingPermissions = false; },
+      error: (err) => {
+        this.savingPermissions = false;
+        this.saveError = err.error?.message || 'Failed to save permissions.';
+      },
     });
   }
 

@@ -15,11 +15,11 @@ import { PaginationComponent } from '../../shared/pagination/pagination.componen
           <div>
             <p class="client-hero-eyebrow">Order history</p>
             <h1 class="client-hero-title">My Orders</h1>
-            <p class="client-hero-sub">Track approval, delivery, and status of your orders.</p>
+            <p class="client-hero-sub">Track review, delivery dates, and confirm when your order arrives.</p>
           </div>
-          <a routerLink="/shop" class="client-hero-btn shrink-0">
-            <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-            New order
+          <a routerLink="/place-order" class="client-hero-btn shrink-0">
+            <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+            Place order
           </a>
         </div>
       </section>
@@ -53,7 +53,7 @@ import { PaginationComponent } from '../../shared/pagination/pagination.componen
             <div>
               <p class="client-stat-label">Approved</p>
               <p class="client-stat-value">{{ countByStatus('granted') }}</p>
-              <p class="client-stat-hint">Ready for delivery</p>
+              <p class="client-stat-hint">Scheduled for delivery</p>
             </div>
             <span class="client-stat-icon"><i data-lucide="check-circle" class="w-5 h-5"></i></span>
           </div>
@@ -81,17 +81,20 @@ import { PaginationComponent } from '../../shared/pagination/pagination.componen
           {{ statusFilter ? 'No ' + statusLabel(statusFilter).toLowerCase() + ' orders' : 'No orders yet' }}
         </p>
         <p class="text-base text-slate-500 mt-2">
-          {{ statusFilter ? 'Try another filter above.' : 'Browse the shop to place your first order.' }}
+          {{ statusFilter ? 'Try another filter above.' : 'Place an order for the extinguishers you need.' }}
         </p>
-        <a routerLink="/shop" class="client-btn-primary mt-6 inline-flex">Browse shop</a>
+        <a routerLink="/place-order" class="client-btn-primary mt-6 inline-flex">Place order</a>
       </section>
 
       <section id="order-list" *ngIf="!loading && displayOrders.length > 0" class="space-y-5">
         <article *ngFor="let o of displayOrders" class="client-card client-card--lift p-6">
           <div class="flex flex-wrap justify-between gap-4 mb-5">
             <div>
-              <p class="text-sm font-semibold text-slate-400 uppercase tracking-wide">Order #{{ o.id }}</p>
-              <h3 class="text-xl font-bold text-[#0B1437] mt-1">{{ o.type }} · {{ o.capacity }} × {{ o.quantity }}</h3>
+              <p class="text-sm font-semibold text-slate-400 uppercase tracking-wide">
+                Order #{{ o.id }}
+                <span *ngIf="o.parent_order_id" class="normal-case text-slate-400"> · from #{{ o.parent_order_id }}</span>
+              </p>
+              <h3 class="text-xl font-bold text-[#0B1437] mt-1">{{ o.type }} · {{ o.capacity }} kg × {{ o.quantity }}</h3>
               <p class="text-base text-slate-500 mt-1">{{ o.created_at | date:'medium' }}</p>
             </div>
             <span class="client-badge h-fit" [ngClass]="statusClass(o.status)">
@@ -100,7 +103,9 @@ import { PaginationComponent } from '../../shared/pagination/pagination.componen
           </div>
 
           <div class="grid sm:grid-cols-2 gap-3 text-base">
-            <div><span class="text-slate-500">Total:</span> <span class="font-semibold">{{ o.total_price | currency }}</span></div>
+            <div><span class="text-slate-500">Total:</span> <span class="font-semibold">{{ o.total_price | number:'1.0-0' }} RWF</span></div>
+            <div *ngIf="o.granted_quantity"><span class="text-slate-500">Granted:</span> {{ o.granted_quantity }} unit(s)</div>
+            <div *ngIf="o.expected_delivery_date"><span class="text-slate-500">Expected delivery:</span> {{ o.expected_delivery_date | date:'mediumDate' }}</div>
             <div *ngIf="o.delivery_address"><span class="text-slate-500">Delivery:</span> {{ o.delivery_address }}</div>
             <div *ngIf="o.payment_method"><span class="text-slate-500">Payment:</span> {{ o.payment_method }}</div>
             <div *ngIf="o.denial_reason" class="sm:col-span-2 text-red-600 text-base">
@@ -115,6 +120,14 @@ import { PaginationComponent } from '../../shared/pagination/pagination.componen
                 [class.bg-slate-200]="!stepDone(o.status, step.key)"></div>
               <span class="text-sm font-medium text-slate-500">{{ step.label }}</span>
             </div>
+          </div>
+
+          <div *ngIf="o.status === 'granted'" class="mt-6 pt-5 border-t border-slate-100">
+            <p class="text-sm text-slate-600 mb-3">Your order has been approved. Confirm delivery once you receive the units.</p>
+            <button type="button" (click)="confirmDelivery(o)" [disabled]="confirmingId === o.id"
+              class="client-btn-primary px-5 py-2.5 text-sm disabled:opacity-50">
+              {{ confirmingId === o.id ? 'Confirming…' : 'Confirm delivery received' }}
+            </button>
           </div>
         </article>
 
@@ -132,6 +145,7 @@ export class MyOrdersComponent implements OnInit {
   page = 1;
   lastPage = 1;
   total = 0;
+  confirmingId: number | null = null;
   steps = [
     { key: 'pending', label: 'Submitted' },
     { key: 'granted', label: 'Approved' },
@@ -172,6 +186,19 @@ export class MyOrdersComponent implements OnInit {
         }
       },
       error: () => { this.loading = false; }
+    });
+  }
+
+  confirmDelivery(order: any) {
+    this.confirmingId = order.id;
+    this.orderService.confirmDelivery(order.id).subscribe({
+      next: () => {
+        this.confirmingId = null;
+        this.load(this.page);
+      },
+      error: () => {
+        this.confirmingId = null;
+      },
     });
   }
 

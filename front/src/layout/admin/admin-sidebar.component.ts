@@ -32,6 +32,11 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
     const user = this.auth.getUser();
     if (user?.name) this.userName = user.name;
 
+    this.auth.user$.subscribe((u) => {
+      if (u?.name) this.userName = u.name;
+      setTimeout(() => lucide?.createIcons?.(), 50);
+    });
+
     this.dashboard.getStats().subscribe({
       next: (s) => {
         this.pendingOrders = s.pending_orders ?? 0;

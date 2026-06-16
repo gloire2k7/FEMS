@@ -101,15 +101,15 @@
         <span class="client-badge text-sm font-semibold px-3 py-1 rounded-full border" [ngClass]="getStatusClass(order.status)">
           {{ order.status | titlecase }}
         </span>
-        <div class="flex items-center gap-2 ml-auto" *ngIf="order.status === 'pending'">
-          <button type="button" (click)="approveOrder(order)" [disabled]="approvingId === order.id"
-            class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50">
-            {{ approvingId === order.id ? '…' : 'Approve' }}
-          </button>
-          <button type="button" (click)="openDenyModal(order)"
-            class="px-3 py-1.5 rounded-lg bg-red-100 text-red-700 text-sm font-semibold hover:bg-red-200">
-            Deny
-          </button>
+        <div class="flex items-center gap-2 ml-auto">
+          <a *ngIf="order.status === 'pending'" [routerLink]="['/admin-orders', order.id, 'review']"
+            class="px-3 py-1.5 rounded-lg bg-[#0B1437] text-white text-sm font-semibold hover:bg-blue-900 no-underline">
+            Review
+          </a>
+          <a *ngIf="order.status !== 'pending'" [routerLink]="['/admin-orders', order.id, 'review']"
+            class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-semibold hover:bg-slate-200 no-underline">
+            View
+          </a>
         </div>
       </div>
     </div>
@@ -132,62 +132,4 @@
     </div>
   </section>
 
-</div>
-
-<!-- Approval modal -->
-<div *ngIf="showApprovalModal"
-  class="fixed inset-0 z-50 flex items-center justify-center p-8"
-  style="background: rgba(11,18,55,0.55); backdrop-filter: blur(4px);">
-  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
-    <div class="bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-5">
-      <h2 class="text-xl font-bold text-white">Order approved</h2>
-      <p class="text-sm text-green-100 mt-1">{{ approvalResult?.units?.length }} units assigned</p>
-    </div>
-    <div class="px-6 py-5 space-y-4">
-      <div class="bg-slate-50 rounded-xl p-4 text-sm font-mono text-slate-600 max-h-40 overflow-y-auto space-y-1">
-        <p *ngFor="let sn of approvalResult?.units">{{ sn }}</p>
-      </div>
-      <button *ngIf="approvalResult?.zip_url" type="button" (click)="downloadZip()"
-        class="w-full py-3 bg-[#0B1437] text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2">
-        <i data-lucide="download" class="w-4 h-4"></i>
-        Download inspection labels
-      </button>
-    </div>
-    <div class="px-6 py-4 bg-slate-50 border-t flex justify-end">
-      <button type="button" (click)="closeApprovalModal()"
-        class="px-5 py-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-600">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- Deny modal -->
-<div *ngIf="showDenialModal"
-  class="fixed inset-0 z-50 flex items-center justify-center p-8"
-  style="background: rgba(11,18,55,0.55); backdrop-filter: blur(4px);">
-  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
-    <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-5">
-      <h2 class="text-xl font-bold text-white">Deny order</h2>
-      <p class="text-sm text-red-100 mt-1">Order #{{ orderToDeny?.id }}</p>
-    </div>
-    <div class="px-6 py-5 space-y-4">
-      <p class="text-sm text-slate-500">Select a reason:</p>
-      <div class="grid grid-cols-2 gap-2">
-        <button *ngFor="let reason of denialReasons" type="button" (click)="selectedReason = reason.value"
-          [class.border-red-500]="selectedReason === reason.value"
-          [class.bg-red-50]="selectedReason === reason.value"
-          class="px-3 py-2 rounded-xl border border-slate-200 text-sm font-medium text-left">
-          {{ reason.label }}
-        </button>
-      </div>
-      <textarea *ngIf="selectedReason === 'other'" [(ngModel)]="customReason" rows="3"
-        placeholder="Describe the reason…"
-        class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm resize-none"></textarea>
-    </div>
-    <div class="px-6 py-4 bg-slate-50 border-t flex justify-end gap-2">
-      <button type="button" (click)="closeDenyModal()"
-        class="px-5 py-2.5 border border-slate-200 rounded-xl text-sm font-semibold">Cancel</button>
-      <button type="button" (click)="confirmDeny()" [disabled]="!canConfirmDeny"
-        class="px-5 py-2.5 bg-red-500 text-white rounded-xl text-sm font-semibold disabled:opacity-40">Confirm</button>
-    </div>
-  </div>
 </div>

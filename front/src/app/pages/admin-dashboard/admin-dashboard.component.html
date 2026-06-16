@@ -141,10 +141,10 @@
           {{ statusLabel(order.status) }}
         </span>
         <div *ngIf="order.status === 'pending'" class="flex items-center gap-2 ml-auto">
-          <button type="button" (click)="approveOrder(order.id)" [disabled]="approvingId === order.id"
-            class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50">
-            {{ approvingId === order.id ? '…' : 'Approve' }}
-          </button>
+          <a [routerLink]="['/admin-orders', order.id, 'review']"
+            class="px-3 py-1.5 rounded-lg bg-[#0B1437] text-white text-sm font-semibold hover:bg-blue-900 no-underline">
+            Review
+          </a>
           <button type="button" (click)="denyOrder(order.id)"
             class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-semibold hover:bg-slate-200">
             Deny

@@ -6,10 +6,11 @@ class Order extends Model
 
     public function create($data)
     {
+        $parentId = $data['parent_order_id'] ?? null;
         $query = "INSERT INTO orders (client_id, type, capacity, quantity, unit_price, total_price,
-                  delivery_address, payment_method, notes, status)
+                  delivery_address, payment_method, notes, status, parent_order_id)
                   VALUES (:client_id, :type, :capacity, :quantity, :unit_price, :total_price,
-                  :delivery_address, :payment_method, :notes, 'pending')";
+                  :delivery_address, :payment_method, :notes, 'pending', :parent_order_id)";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':client_id', $data['client_id']);
         $stmt->bindParam(':type', $data['type']);
@@ -21,6 +22,7 @@ class Order extends Model
         $stmt->bindParam(':payment_method', $data['payment_method']);
         $notes = $data['notes'] ?? null;
         $stmt->bindParam(':notes', $notes);
+        $stmt->bindParam(':parent_order_id', $parentId);
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
@@ -58,19 +60,10 @@ class Order extends Model
         ];
     }
 
-    public function findAll()
-    {
-        return $this->findPaginated(1, 1000)['data'];
-    }
-
-    public function findByClient($clientId)
-    {
-        return $this->findPaginated(1, 1000, $clientId)['data'];
-    }
-
     public function findById($id)
     {
-        $query = "SELECT o.*, c.company_name as client_name, c.email as client_email
+        $query = "SELECT o.*, c.company_name as client_name, c.email as client_email,
+                         c.phone as client_phone, c.address as client_address
                   FROM orders o LEFT JOIN clients c ON o.client_id = c.id
                   WHERE o.id = :id LIMIT 1";
         $stmt = $this->db->prepare($query);
@@ -83,13 +76,26 @@ class Order extends Model
     {
         $fields = ['status = :status'];
         $params = [':status' => $status, ':id' => $id];
+
         if (isset($extra['denial_reason'])) {
             $fields[] = 'denial_reason = :denial_reason';
             $params[':denial_reason'] = $extra['denial_reason'];
         }
+        if (isset($extra['granted_quantity'])) {
+            $fields[] = 'granted_quantity = :granted_quantity';
+            $params[':granted_quantity'] = $extra['granted_quantity'];
+        }
+        if (isset($extra['expected_delivery_date'])) {
+            $fields[] = 'expected_delivery_date = :expected_delivery_date';
+            $params[':expected_delivery_date'] = $extra['expected_delivery_date'];
+        }
         if ($status === 'delivered') {
             $fields[] = 'delivered_at = NOW()';
         }
+        if (!empty($extra['client_confirmed'])) {
+            $fields[] = 'client_confirmed_at = NOW()';
+        }
+
         $query = "UPDATE orders SET " . implode(', ', $fields) . " WHERE id = :id";
         $stmt = $this->db->prepare($query);
         return $stmt->execute($params);

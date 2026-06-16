@@ -45,6 +45,11 @@ $router->get('/api/extinguishers/{id}', ['ExtinguisherController', 'show']);
 $router->put('/api/extinguishers/{id}', ['ExtinguisherController', 'update']);
 $router->delete('/api/extinguishers/{id}', ['ExtinguisherController', 'destroy']);
 
+// Product pricing
+$router->get('/api/product-prices', ['ProductPriceController', 'index']);
+$router->get('/api/product-prices/lookup', ['ProductPriceController', 'lookup']);
+$router->put('/api/product-prices', ['ProductPriceController', 'update']);
+
 // Orders
 $router->get('/api/orders', ['OrderController', 'index']);
 $router->post('/api/orders', ['OrderController', 'store']);

@@ -7,9 +7,8 @@ import { ServiceRequestsComponent } from './pages/service-requests/service-reque
 import { InspectorsOverviewComponent } from './pages/inspectors-overview/inspectors-overview.component';
 import { LocationsDashboardComponent } from './pages/locations-dashboard/locations-dashboard.component';
 import { Reports } from './pages/reports/reports';
-import { Shop } from './pages/shop/shop';
-import { Cart } from './pages/cart/cart';
-import { Checkout } from './pages/checkout/checkout';
+import { PlaceOrderComponent } from './pages/place-order/place-order';
+import { AdminOrderReview } from './pages/admin-order-review/admin-order-review';
 
 import { ViewExtinguisherComponent } from './pages/view-extinguisher/view-extinguisher.component';
 import { SettingsComponent } from './pages/settings/settings.component';
@@ -80,6 +79,7 @@ export const routes: Routes = [
       { path: 'admin-settings', component: AdminSettings },
       { path: 'admin-notifications', component: AdminNotificationsComponent },
       { path: 'admin-orders', component: AdminOrders },
+      { path: 'admin-orders/:id/review', component: AdminOrderReview },
       { path: 'clients', component: ClientsDashboard },
       { path: 'admin-locations', component: AdminLocationsDashboard },
       { path: 'admin-location-details', component: AdminLocationDetails },
@@ -98,8 +98,9 @@ export const routes: Routes = [
   { path: 'settings', component: SettingsComponent },
   { path: 'notifications', component: NotificationsComponent },
   { path: 'reports', component: Reports },
-  { path: 'shop', component: Shop },
-  { path: 'cart', component: Cart },
-  { path: 'checkout', component: Checkout },
+  { path: 'place-order', component: PlaceOrderComponent },
+  { path: 'shop', redirectTo: 'place-order', pathMatch: 'full' },
+  { path: 'cart', redirectTo: 'place-order', pathMatch: 'full' },
+  { path: 'checkout', redirectTo: 'place-order', pathMatch: 'full' },
   { path: 'my-orders', component: MyOrdersComponent },
 ];

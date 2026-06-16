@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { PaginationComponent } from '../../shared/pagination/pagination.component';
 
@@ -17,6 +17,7 @@ declare const lucide: { createIcons: () => void } | undefined;
 export class SuperAdminClients implements OnInit, AfterViewInit {
   private auth = inject(AuthService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   tab: 'pending' | 'active' = 'pending';
   clients: any[] = [];
@@ -25,6 +26,7 @@ export class SuperAdminClients implements OnInit, AfterViewInit {
   lastPage = 1;
   total = 0;
   searchQuery = '';
+  private loadRequestId = 0;
 
   get filteredClients() {
     const q = this.searchQuery.trim().toLowerCase();
@@ -37,16 +39,18 @@ export class SuperAdminClients implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    const snap = this.route.snapshot.queryParams;
-    if (snap['tab'] === 'active' || snap['tab'] === 'pending') {
-      this.tab = snap['tab'];
+    const snapTab = this.route.snapshot.queryParamMap.get('tab');
+    if (snapTab === 'active' || snapTab === 'pending') {
+      this.tab = snapTab;
     }
     this.load(1);
 
-    this.route.queryParams.subscribe((params) => {
-      const t = params['tab'];
-      if ((t === 'active' || t === 'pending') && t !== this.tab) {
-        this.tab = t;
+    this.route.queryParamMap.subscribe((params) => {
+      const t = params.get('tab');
+      const newTab: 'pending' | 'active' = t === 'active' ? 'active' : 'pending';
+      if (newTab !== this.tab) {
+        this.tab = newTab;
+        this.clients = [];
         this.load(1);
       }
     });
@@ -57,11 +61,19 @@ export class SuperAdminClients implements OnInit, AfterViewInit {
   }
 
   switchTab(tab: 'pending' | 'active') {
-    this.tab = tab;
-    this.load(1);
+    if (this.tab === tab) {
+      this.load(1);
+      return;
+    }
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge',
+    });
   }
 
   load(page: number) {
+    const requestId = ++this.loadRequestId;
     this.page = page;
     this.loading = true;
     const req = this.tab === 'pending'
@@ -70,6 +82,7 @@ export class SuperAdminClients implements OnInit, AfterViewInit {
 
     req.subscribe({
       next: (res) => {
+        if (requestId !== this.loadRequestId) return;
         this.clients = res.data ?? [];
         this.page = res.page ?? page;
         this.lastPage = res.last_page ?? 1;
@@ -77,7 +90,10 @@ export class SuperAdminClients implements OnInit, AfterViewInit {
         this.loading = false;
         this.refreshIcons();
       },
-      error: () => { this.loading = false; },
+      error: () => {
+        if (requestId !== this.loadRequestId) return;
+        this.loading = false;
+      },
     });
   }
 

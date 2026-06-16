@@ -26,17 +26,29 @@ class User extends Model
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function findAdminsPaginated($page = 1, $limit = 10)
+    public function findAdminsPaginated($page = 1, $limit = 10, $status = null)
     {
         $offset = ($page - 1) * $limit;
-        $countStmt = $this->db->query("SELECT COUNT(*) FROM users u JOIN roles r ON r.id = u.role_id WHERE r.name = 'Admin'");
+        $where = "r.name = 'Admin'";
+        $params = [];
+        if ($status && in_array($status, ['active', 'inactive'], true)) {
+            $where .= " AND u.status = :status";
+            $params[':status'] = $status;
+        }
+
+        $countSql = "SELECT COUNT(*) FROM users u JOIN roles r ON r.id = u.role_id WHERE $where";
+        $countStmt = $this->db->prepare($countSql);
+        $countStmt->execute($params);
         $total = (int) $countStmt->fetchColumn();
 
         $query = "SELECT u.id, u.name, u.email, u.status, u.created_at, r.name as role_name
                   FROM users u JOIN roles r ON r.id = u.role_id
-                  WHERE r.name = 'Admin'
+                  WHERE $where
                   ORDER BY u.created_at DESC LIMIT :limit OFFSET :offset";
         $stmt = $this->db->prepare($query);
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
         $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
         $stmt->execute();

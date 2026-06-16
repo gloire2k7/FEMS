@@ -70,8 +70,8 @@
       <input type="text" [(ngModel)]="search" placeholder="Search by serial, type, or capacity…"
         class="client-input" />
     </div>
-    <a routerLink="/shop" class="client-btn-secondary shrink-0">
-      <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+    <a routerLink="/place-order" class="client-btn-secondary shrink-0">
+      <i data-lucide="clipboard-list" class="w-5 h-5"></i>
       Order more units
     </a>
   </section>
@@ -93,7 +93,7 @@
       <button *ngIf="statusFilter !== 'all'" type="button" (click)="setStatusFilter('all')" class="client-btn-secondary mt-6 inline-flex">
         Show all units
       </button>
-      <a *ngIf="statusFilter === 'all'" routerLink="/shop" class="client-btn-primary mt-6 inline-flex">Browse shop</a>
+      <a *ngIf="statusFilter === 'all'" routerLink="/place-order" class="client-btn-primary mt-6 inline-flex">Place order</a>
     </div>
 
     <div *ngIf="!loading && filteredUnits.length > 0" class="client-table-wrap">

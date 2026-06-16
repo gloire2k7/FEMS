@@ -34,7 +34,7 @@ class Extinguisher extends Model
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
-    public function findPaginated($page = 1, $limit = 5, $status = 'in_stock', $sort = 'newest')
+    public function findPaginated($page = 1, $limit = 5, $status = 'in_stock', $sort = 'newest', $type = null)
     {
         $offset = ($page - 1) * $limit;
 
@@ -46,14 +46,29 @@ class Extinguisher extends Model
             $where = '1=1';
         }
 
+        $params = [];
+        if ($type) {
+            $where .= ' AND fe.type = :type';
+            $params[':type'] = $type;
+        }
+
         $order = $sort === 'oldest' ? 'ASC' : 'DESC';
 
-        $total = (int) $this->db->query("SELECT COUNT(*) FROM {$this->table} fe WHERE $where")->fetchColumn();
+        $countSql = "SELECT COUNT(*) FROM {$this->table} fe WHERE $where";
+        $countStmt = $this->db->prepare($countSql);
+        foreach ($params as $k => $v) {
+            $countStmt->bindValue($k, $v);
+        }
+        $countStmt->execute();
+        $total = (int) $countStmt->fetchColumn();
 
         $query = "SELECT fe.*, c.company_name as client_name FROM {$this->table} fe
                   LEFT JOIN clients c ON fe.client_id = c.id
                   WHERE $where ORDER BY fe.created_at $order LIMIT :limit OFFSET :offset";
         $stmt = $this->db->prepare($query);
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
         $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
         $stmt->execute();
@@ -176,12 +191,14 @@ class Extinguisher extends Model
 
     public function findAvailableInStock($type, $capacity, $limit)
     {
+        $cap = preg_replace('/[^0-9]/', '', (string) $capacity);
         $query = "SELECT * FROM {$this->table}
-                  WHERE client_id IS NULL AND status = 'filled' AND type = :type AND capacity = :capacity
+                  WHERE client_id IS NULL AND status = 'filled' AND type = :type
+                  AND REPLACE(REPLACE(LOWER(capacity), ' kg', ''), 'kg', '') = :capacity
                   LIMIT :limit";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':type', $type);
-        $stmt->bindParam(':capacity', $capacity);
+        $stmt->bindParam(':capacity', $cap);
         $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

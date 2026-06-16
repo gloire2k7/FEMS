@@ -24,28 +24,8 @@ export class AdminOrders implements AfterViewInit, OnInit {
   allOrders: any[] = [];
   protected Math = Math;
 
-  // Pagination
   currentPage = 1;
   pageSize = 10;
-
-  // Modal state
-  showDenialModal = false;
-  orderToDeny: any = null;
-  selectedReason = '';
-  customReason = '';
-
-  // Approve state
-  approvingId: number | null = null;
-  approvalResult: { orderId: number, zip_url: string | null, units: string[] } | null = null;
-  showApprovalModal = false;
-
-  denialReasons = [
-    { value: 'out_of_stock', label: 'Out of Stock' },
-    { value: 'payment_issue', label: 'Payment Issue' },
-    { value: 'invalid_order', label: 'Invalid Order Details' },
-    { value: 'product_discontinued', label: 'Product Discontinued' },
-    { value: 'other', label: 'Other (specify below)' },
-  ];
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
@@ -59,22 +39,26 @@ export class AdminOrders implements AfterViewInit, OnInit {
 
   loadOrders() {
     this.isLoading = true;
-    this.orderService.getOrders().subscribe({
-      next: (data) => {
-        this.allOrders = data;
+    this.orderService.getOrders(1, 200).subscribe({
+      next: (res) => {
+        this.allOrders = res.data || res || [];
         this.isLoading = false;
         this.initIcons();
       },
       error: () => {
         this.isLoading = false;
-      }
+      },
     });
   }
 
   get filteredOrders() {
-    return this.allOrders.filter(o => {
+    return this.allOrders.filter((o) => {
       const q = this.searchQuery.toLowerCase();
-      const matchSearch = !q || o.id?.toString().includes(q) || o.client_name?.toLowerCase().includes(q) || o.type?.toLowerCase().includes(q);
+      const matchSearch =
+        !q ||
+        o.id?.toString().includes(q) ||
+        o.client_name?.toLowerCase().includes(q) ||
+        o.type?.toLowerCase().includes(q);
       const matchStatus = this.filterStatus === 'all' || o.status === this.filterStatus;
       return matchSearch && matchStatus;
     });
@@ -93,86 +77,40 @@ export class AdminOrders implements AfterViewInit, OnInit {
     if (page >= 1 && page <= this.totalPages) this.currentPage = page;
   }
 
-  get pendingCount() { return this.allOrders.filter(o => o.status === 'pending').length; }
-  get grantedCount() { return this.allOrders.filter(o => o.status === 'granted').length; }
-  get cancelledCount() { return this.allOrders.filter(o => o.status === 'cancelled').length; }
-
-  approveOrder(order: any) {
-    this.approvingId = order.id;
-    this.orderService.approveOrder(order.id).subscribe({
-      next: (res) => {
-        this.approvingId = null;
-        this.approvalResult = {
-          orderId: order.id,
-          zip_url: res.labels_zip ? `http://localhost:8000${res.labels_zip}` : null,
-          units: res.units_assigned || []
-        };
-        this.showApprovalModal = true;
-        this.loadOrders(); // Refresh
-        this.initIcons();
-      },
-      error: (err) => {
-        this.approvingId = null;
-        alert(err?.error?.message || 'Approval failed');
-      }
-    });
+  get pendingCount() {
+    return this.allOrders.filter((o) => o.status === 'pending').length;
   }
-
-  downloadZip() {
-    if (this.approvalResult?.zip_url) {
-      window.open(this.approvalResult.zip_url, '_blank');
-    }
+  get grantedCount() {
+    return this.allOrders.filter((o) => o.status === 'granted').length;
   }
-
-  closeApprovalModal() {
-    this.showApprovalModal = false;
-    this.approvalResult = null;
-  }
-
-  openDenyModal(order: any) {
-    this.orderToDeny = order;
-    this.selectedReason = '';
-    this.customReason = '';
-    this.showDenialModal = true;
-    setTimeout(() => this.initIcons(), 100);
-  }
-
-  closeDenyModal() {
-    this.showDenialModal = false;
-    this.orderToDeny = null;
-  }
-
-  confirmDeny() {
-    if (!this.orderToDeny) return;
-    this.orderService.denyOrder(this.orderToDeny.id).subscribe({
-      next: () => {
-        this.closeDenyModal();
-        this.loadOrders();
-      },
-      error: (err) => alert(err?.error?.message || 'Failed to deny order')
-    });
-  }
-
-  get canConfirmDeny(): boolean {
-    if (!this.selectedReason) return false;
-    if (this.selectedReason === 'other' && !this.customReason.trim()) return false;
-    return true;
+  get cancelledCount() {
+    return this.allOrders.filter((o) => o.status === 'cancelled').length;
   }
 
   getStatusClass(status: string) {
     switch (status) {
-      case 'pending': return 'bg-amber-50 text-amber-700 border-amber-100';
-      case 'granted': return 'bg-emerald-50 text-emerald-700 border-emerald-100';
-      case 'cancelled': return 'bg-red-50 text-red-700 border-red-100';
-      default: return 'bg-slate-50 text-slate-600 border-slate-100';
+      case 'pending':
+        return 'bg-amber-50 text-amber-700 border-amber-100';
+      case 'granted':
+        return 'bg-emerald-50 text-emerald-700 border-emerald-100';
+      case 'cancelled':
+        return 'bg-red-50 text-red-700 border-red-100';
+      case 'delivered':
+        return 'bg-blue-50 text-blue-700 border-blue-100';
+      default:
+        return 'bg-slate-50 text-slate-600 border-slate-100';
     }
   }
 
-  ngAfterViewInit() { this.initIcons(); }
+  ngAfterViewInit() {
+    this.initIcons();
+  }
 
   private initIcons() {
-    const run = () => { if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons(); };
+    const run = () => {
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    };
     run();
-    [100, 300, 600, 1000].forEach(d => setTimeout(run, d));
+    [100, 300, 600, 1000].forEach((d) => setTimeout(run, d));
   }
 }

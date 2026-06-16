@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../auth.service';
@@ -31,6 +31,7 @@ interface QuickAction {
 })
 export class AdminDashboardComponent implements AfterViewInit, OnInit {
   private orderService = inject(OrderService);
+  private router = inject(Router);
   private dashboard = inject(DashboardService);
   private authService = inject(AuthService);
 
@@ -122,21 +123,8 @@ export class AdminDashboardComponent implements AfterViewInit, OnInit {
     });
   }
 
-  approveOrder(id: number) {
-    this.approvingId = id;
-    this.orderService.approveOrder(id).subscribe({
-      next: () => {
-        this.approvingId = null;
-        this.loadOrders(this.page);
-        this.dashboard.getStats().subscribe((s) => {
-          this.stats.pendingOrders = s.pending_orders ?? 0;
-          this.stats.ordersGranted = s.orders_granted ?? 0;
-        });
-      },
-      error: () => {
-        this.approvingId = null;
-      },
-    });
+  reviewOrder(id: number) {
+    this.router.navigate(['/admin-orders', id, 'review']);
   }
 
   denyOrder(id: number) {

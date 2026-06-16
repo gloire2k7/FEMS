@@ -47,8 +47,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   quickActions: QuickAction[] = [
     {
       title: 'Order extinguishers',
-      description: 'Browse available stock and place a request',
-      route: '/shop',
+      description: 'Request extinguishers by type and size',
+      route: '/place-order',
       icon: 'shopping-bag',
       accent: 'from-blue-500/10 to-blue-600/5 text-blue-600',
     },

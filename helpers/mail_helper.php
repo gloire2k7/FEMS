@@ -241,6 +241,103 @@ HTML;
         return self::sendEmail($email, $subject, $body);
     }
 
+    /**
+     * Notify an admin that their permissions were changed by a Super Admin.
+     *
+     * @param string[] $addedKeys
+     * @param string[] $removedKeys
+     * @param string[] $currentKeys
+     */
+    public static function sendPermissionsUpdated(
+        string $email,
+        string $name,
+        array $addedKeys,
+        array $removedKeys,
+        array $currentKeys
+    ): bool {
+        $subject = 'Your FEMS Admin Permissions Have Been Updated';
+
+        $label = function (string $key): string {
+            foreach (self::$permissionGroups as $items) {
+                if (isset($items[$key])) {
+                    return $items[$key];
+                }
+            }
+            return $key;
+        };
+
+        $buildList = function (array $keys, string $color) use ($label): string {
+            if (empty($keys)) {
+                return '<p style="color:#6b7280;font-style:italic;margin:0;">None</p>';
+            }
+            $html = '<ul style="margin:0;padding-left:20px;">';
+            foreach ($keys as $key) {
+                $html .= '<li style="color:' . $color . ';margin:4px 0;">' . htmlspecialchars($label($key)) . '</li>';
+            }
+            return $html . '</ul>';
+        };
+
+        $addedHtml = $buildList($addedKeys, '#15803d');
+        $removedHtml = $buildList($removedKeys, '#dc2626');
+        $currentHtml = self::buildPermissionsHtml($currentKeys);
+        $signinUrl = 'http://localhost:4200/signin';
+
+        $body = <<<HTML
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f3f4f6;font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;padding:40px 0;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);">
+        <tr>
+          <td style="background:linear-gradient(135deg,#1e3a8a,#1d4ed8);padding:32px 40px;text-align:center;">
+            <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;">🔥 FEMS</h1>
+            <p style="margin:6px 0 0;color:#bfdbfe;font-size:14px;">Permission update notice</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:36px 40px;">
+            <h2 style="margin:0 0 8px;color:#111827;font-size:20px;">Hello, {$name}</h2>
+            <p style="margin:0 0 24px;color:#6b7280;font-size:15px;">
+              A Super Admin has updated your administrator permissions. Your sidebar and access have been adjusted accordingly.
+            </p>
+
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:18px 22px;margin-bottom:16px;">
+              <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#15803d;text-transform:uppercase;">New access granted</p>
+              {$addedHtml}
+            </div>
+
+            <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:18px 22px;margin-bottom:16px;">
+              <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#dc2626;text-transform:uppercase;">Access revoked</p>
+              {$removedHtml}
+            </div>
+
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:18px 22px;margin-bottom:24px;">
+              <p style="margin:0 0 12px;font-size:13px;font-weight:600;color:#374151;text-transform:uppercase;">Your current permissions</p>
+              {$currentHtml}
+            </div>
+
+            <div style="text-align:center;">
+              <a href="{$signinUrl}" style="display:inline-block;background:#1d4ed8;color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:600;">
+                Open Admin Portal
+              </a>
+            </div>
+            <p style="margin:24px 0 0;color:#9ca3af;font-size:13px;text-align:center;">
+              If you are already signed in, refresh the page or navigate to any menu item to see your updated sidebar.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
+HTML;
+
+        return self::sendEmail($email, $subject, $body);
+    }
+
     public static function sendClientApproval(string $email, string $name, bool $approved): bool
     {
         $subject = $approved
@@ -275,13 +372,21 @@ HTML;
         return self::sendEmail($email, $subject, $body);
     }
 
-    public static function sendOrderStatusUpdate(string $email, $orderId, string $status, ?string $reason = null): bool
-    {
+    public static function sendOrderStatusUpdate(
+        string $email,
+        $orderId,
+        string $status,
+        ?string $reason = null,
+        ?string $deliveryDate = null,
+        ?int $grantedQty = null,
+        ?int $orderedQty = null
+    ): bool {
         $labels = [
-            'granted'   => 'approved',
-            'cancelled' => 'denied',
-            'delivered' => 'marked as delivered',
-            'pending'   => 'received and pending review',
+            'granted'            => 'approved',
+            'partially_granted'  => 'partially approved',
+            'cancelled'          => 'denied',
+            'delivered'          => 'confirmed as delivered',
+            'pending'            => 'received and pending review',
         ];
         $label = $labels[$status] ?? $status;
         $subject = "Order #{$orderId} Update";
@@ -291,6 +396,12 @@ HTML;
     <h2 style="color:#111827;">Order Update</h2>
     <p>Your order <strong>#{$orderId}</strong> has been <strong>{$label}</strong>.</p>
 HTML;
+        if ($grantedQty !== null && $orderedQty !== null && $status === 'partially_granted') {
+            $body .= '<p><strong>Approved:</strong> ' . (int) $grantedQty . ' of ' . (int) $orderedQty . ' units. A new pending order was created for the remainder.</p>';
+        }
+        if ($deliveryDate) {
+            $body .= '<p><strong>Expected delivery:</strong> ' . htmlspecialchars($deliveryDate) . '</p>';
+        }
         if ($reason) {
             $body .= '<p><strong>Reason:</strong> ' . htmlspecialchars($reason) . '</p>';
         }

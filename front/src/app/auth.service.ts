@@ -1,11 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8000/api';
+  private userSubject = new BehaviorSubject<any>(this.readStoredUser());
+  readonly user$ = this.userSubject.asObservable();
 
   login(credentials: { email: string; password: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials, { withCredentials: true }).pipe(
@@ -21,8 +23,12 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/users`, { ...adminData, role_id: 2 }, { withCredentials: true });
   }
 
-  getAdmins(page = 1): Observable<any> {
-    return this.http.get(`${this.apiUrl}/users/admins?page=${page}`, { withCredentials: true });
+  getAdmins(page = 1, status?: string): Observable<any> {
+    let url = `${this.apiUrl}/users/admins?page=${page}`;
+    if (status && status !== 'all') {
+      url += `&status=${encodeURIComponent(status)}`;
+    }
+    return this.http.get(url, { withCredentials: true });
   }
 
   getClients(page = 1, status?: string): Observable<any> {
@@ -68,7 +74,19 @@ export class AuthService {
 
   refreshMe(): Observable<any> {
     return this.http.get(`${this.apiUrl}/me`, { withCredentials: true }).pipe(
-      tap((user: any) => this.setUser({ ...this.getUser(), ...user, role: user.role_name || user.role }))
+      tap((user: any) => {
+        const current = this.getUser() || {};
+        this.setUser({
+          ...current,
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role_name || user.role || current.role,
+          permissions: user.permissions || [],
+          status: user.status,
+          company_id: user.company_id ?? current.company_id,
+        });
+      })
     );
   }
 
@@ -77,16 +95,17 @@ export class AuthService {
   }
 
   getUser(): any {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    return this.userSubject.value ?? this.readStoredUser();
   }
 
   setUser(user: any): void {
     localStorage.setItem('user', JSON.stringify(user));
+    this.userSubject.next(user);
   }
 
   clearUser(): void {
     localStorage.removeItem('user');
+    this.userSubject.next(null);
   }
 
   hasPermission(key: string): boolean {
@@ -105,5 +124,10 @@ export class AuthService {
   isRole(...roles: string[]): boolean {
     const user = this.getUser();
     return user ? roles.includes(user.role) : false;
+  }
+
+  private readStoredUser(): any {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
   }
 }

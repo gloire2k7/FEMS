@@ -57,6 +57,10 @@
             [class.text-emerald-600]="admin.status === 'active'"
             [class.text-red-600]="admin.status !== 'active'">{{ admin.status }}</p>
         </div>
+        <div>
+          <p class="text-slate-400 mb-1">Joined</p>
+          <p class="font-medium text-[#0B1437]">{{ admin.created_at | date:'mediumDate' }}</p>
+        </div>
       </div>
     </section>
 
@@ -71,7 +75,7 @@
       </div>
       <div *ngIf="admin.permissions?.length; else noPerms" class="flex flex-wrap gap-2">
         <span *ngFor="let p of admin.permissions"
-          class="text-sm font-medium px-3 py-1.5 bg-violet-50 text-violet-700 rounded-lg">{{ p }}</span>
+          class="text-sm font-medium px-3 py-1.5 bg-violet-50 text-violet-700 rounded-lg">{{ permissionLabel(p) }}</span>
       </div>
       <ng-template #noPerms>
         <p class="text-sm text-slate-400">No permissions assigned.</p>
@@ -84,10 +88,11 @@
         <h2 class="text-lg font-semibold text-[#0B1437]">Edit permissions</h2>
         <button type="button" (click)="cancelEditPermissions()" class="client-btn-secondary px-4 py-2 text-sm">Cancel</button>
       </div>
+      <p class="text-sm text-slate-500 mb-5">Check permissions to grant access, uncheck to revoke. System items are always available to every admin.</p>
 
       <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Operations</p>
       <div class="grid sm:grid-cols-2 gap-3 mb-4">
-        <label *ngFor="let p of editablePermissions | slice:0:4"
+        <label *ngFor="let p of permissionsByGroup('Operations')"
           class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
           <input type="checkbox" [checked]="hasPermissionSelected(p.key)" (change)="togglePermission(p.key)">
           <span class="text-sm font-semibold text-[#0B1437]">{{ p.label }}</span>
@@ -96,27 +101,33 @@
 
       <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Compliance</p>
       <div class="grid sm:grid-cols-2 gap-3 mb-4">
-        <label *ngFor="let p of editablePermissions | slice:4:6"
+        <label *ngFor="let p of permissionsByGroup('Compliance')"
           class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
           <input type="checkbox" [checked]="hasPermissionSelected(p.key)" (change)="togglePermission(p.key)">
           <span class="text-sm font-semibold text-[#0B1437]">{{ p.label }}</span>
         </label>
       </div>
 
-      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">System</p>
+      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">System (always enabled)</p>
       <div class="grid sm:grid-cols-3 gap-3 mb-6">
-        <div *ngFor="let s of ['Notifications','Settings','AI Assistant']"
+        <div *ngFor="let p of systemPermissions"
           class="flex items-center gap-3 p-4 bg-emerald-50 rounded-xl">
           <input type="checkbox" checked disabled>
-          <span class="text-sm font-semibold text-emerald-700">{{ s }}</span>
+          <span class="text-sm font-semibold text-emerald-700">{{ p.label }}</span>
         </div>
       </div>
+
+      <div *ngIf="saveError" class="mb-4 p-3 rounded-xl bg-red-50 text-red-700 text-sm">{{ saveError }}</div>
 
       <button type="button" (click)="savePermissions()" [disabled]="savingPermissions"
         class="client-btn-primary px-6 py-3">
         {{ savingPermissions ? 'Saving…' : 'Save permissions' }}
       </button>
     </section>
+
+    <div *ngIf="saveMessage" class="client-card p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 text-sm">
+      {{ saveMessage }}
+    </div>
 
     <!-- Action buttons -->
     <div class="flex flex-wrap gap-3">

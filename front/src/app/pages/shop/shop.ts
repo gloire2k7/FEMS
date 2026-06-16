@@ -1,156 +1,16 @@
-import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { OrderService } from '../../services/order.service';
+import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
-declare const lucide: { createIcons: () => void } | undefined;
-
-export interface CartItem {
-  type: string;
-  capacity: string;
-  price: number;
-  quantity: number;
-  total_in_stock: number;
-}
-
+/** Legacy route — redirects to place-order. */
 @Component({
   selector: 'app-shop',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './shop.html',
-  styleUrl: './shop.css',
+  template: '',
 })
-export class Shop implements AfterViewInit, OnInit {
-  private orderService = inject(OrderService);
+export class Shop implements OnInit {
   private router = inject(Router);
 
-  isLoading = false;
-  products: any[] = [];
-  filteredProducts: any[] = [];
-  searchQuery = '';
-  filterType = '';
-
-  showModal = false;
-  selectedProduct: any = null;
-  modalQty = 1;
-  cart: CartItem[] = [];
-
-  categories = ['Water', 'CO2', 'Powder', 'Foam'];
-
   ngOnInit() {
-    const saved = sessionStorage.getItem('fems_cart');
-    if (saved) {
-      try { this.cart = JSON.parse(saved); } catch { this.cart = []; }
-    }
-    this.loadProducts();
-  }
-
-  loadProducts() {
-    this.isLoading = true;
-    this.orderService.getProducts().subscribe({
-      next: (data: any[]) => {
-        this.products = data.map(p => ({
-          ...p,
-          price: Number(p.price) || 0,
-          soldOut: p.total_in_stock <= 0,
-          imgBg: this.getImgBg(p.type),
-          badgeClass: this.getBadgeClass(p.type)
-        }));
-        this.isLoading = false;
-        this.applyFilter();
-        this.initIcons();
-      },
-      error: () => { this.isLoading = false; }
-    });
-  }
-
-  applyFilter() {
-    const q = this.searchQuery.trim().toLowerCase();
-    this.filteredProducts = this.products.filter(p => {
-      const matchType = !this.filterType || p.type === this.filterType;
-      const matchSearch = !q ||
-        (p.type || '').toLowerCase().includes(q) ||
-        (p.capacity || '').toLowerCase().includes(q);
-      return matchType && matchSearch;
-    });
-  }
-
-  openProductModal(p: any) {
-    if (p.total_in_stock <= 0) return;
-    this.selectedProduct = p;
-    this.modalQty = 1;
-    this.showModal = true;
-    setTimeout(() => this.initIcons(), 50);
-  }
-
-  closeModal() {
-    this.showModal = false;
-    this.selectedProduct = null;
-  }
-
-  addToCart() {
-    if (!this.selectedProduct) return;
-    const existing = this.cart.find(c =>
-      c.type === this.selectedProduct.type && c.capacity === this.selectedProduct.capacity
-    );
-    if (existing) {
-      existing.quantity = Math.min(existing.quantity + this.modalQty, this.selectedProduct.total_in_stock);
-    } else {
-      this.cart.push({
-        type: this.selectedProduct.type,
-        capacity: this.selectedProduct.capacity,
-        price: this.selectedProduct.price,
-        quantity: this.modalQty,
-        total_in_stock: this.selectedProduct.total_in_stock
-      });
-    }
-    sessionStorage.setItem('fems_cart', JSON.stringify(this.cart));
-    this.closeModal();
-    this.router.navigate(['/cart']);
-  }
-
-  increaseQty() {
-    if (this.selectedProduct && this.modalQty < this.selectedProduct.total_in_stock) this.modalQty++;
-  }
-
-  decreaseQty() {
-    if (this.modalQty > 1) this.modalQty--;
-  }
-
-  get cartCount(): number {
-    return this.cart.reduce((sum, c) => sum + c.quantity, 0);
-  }
-
-  goToCart() {
-    this.router.navigate(['/cart']);
-  }
-
-  ngAfterViewInit() {
-    this.initIcons();
-  }
-
-  getImgBg(type: string): string {
-    const t = type.toLowerCase();
-    if (t.includes('water')) return 'bg-blue-50';
-    if (t.includes('co2')) return 'bg-gray-100';
-    if (t.includes('powder')) return 'bg-amber-50';
-    if (t.includes('foam')) return 'bg-orange-50';
-    return 'bg-red-50';
-  }
-
-  getBadgeClass(type: string): string {
-    const t = type.toLowerCase();
-    if (t.includes('water')) return 'bg-blue-600 text-white';
-    if (t.includes('co2')) return 'bg-gray-800 text-white';
-    if (t.includes('powder')) return 'bg-amber-500 text-white';
-    if (t.includes('foam')) return 'bg-orange-500 text-white';
-    return 'bg-red-500 text-white';
-  }
-
-  private initIcons() {
-    setTimeout(() => {
-      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
-    }, 100);
+    this.router.navigateByUrl('/place-order');
   }
 }

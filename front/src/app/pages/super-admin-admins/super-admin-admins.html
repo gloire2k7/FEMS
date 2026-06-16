@@ -6,7 +6,7 @@
       <div>
         <p class="client-hero-eyebrow">Team management</p>
         <h1 class="client-hero-title">Administrators</h1>
-        <p class="client-hero-sub">{{ total }} admin{{ total !== 1 ? 's' : '' }} on the platform.</p>
+        <p class="client-hero-sub">{{ total }} admin{{ total !== 1 ? 's' : '' }} matching this filter.</p>
       </div>
       <a routerLink="/super-admin-add-admin" class="client-hero-btn shrink-0 border-0">
         <i data-lucide="user-plus" class="w-5 h-5"></i>
@@ -16,23 +16,23 @@
   </section>
 
   <div class="flex flex-wrap gap-2">
-    <button type="button" (click)="setFilter('all')"
-      class="px-4 py-2 rounded-xl text-sm font-semibold border transition-colors"
+    <button type="button" (click)="setFilter('all')" [disabled]="loading"
+      class="px-4 py-2 rounded-xl text-sm font-semibold border transition-colors disabled:opacity-60"
       [class.bg-[#0B1437]]="filter === 'all'" [class.text-white]="filter === 'all'"
       [class.border-slate-200]="filter !== 'all'" [class.text-slate-600]="filter !== 'all'">
-      All ({{ total }})
+      All
     </button>
-    <button type="button" (click)="setFilter('active')"
-      class="px-4 py-2 rounded-xl text-sm font-semibold border transition-colors"
+    <button type="button" (click)="setFilter('active')" [disabled]="loading"
+      class="px-4 py-2 rounded-xl text-sm font-semibold border transition-colors disabled:opacity-60"
       [class.bg-emerald-600]="filter === 'active'" [class.text-white]="filter === 'active'"
       [class.border-slate-200]="filter !== 'active'" [class.text-slate-600]="filter !== 'active'">
-      Active ({{ activeCount }})
+      Active
     </button>
-    <button type="button" (click)="setFilter('inactive')"
-      class="px-4 py-2 rounded-xl text-sm font-semibold border transition-colors"
+    <button type="button" (click)="setFilter('inactive')" [disabled]="loading"
+      class="px-4 py-2 rounded-xl text-sm font-semibold border transition-colors disabled:opacity-60"
       [class.bg-red-500]="filter === 'inactive'" [class.text-white]="filter === 'inactive'"
       [class.border-slate-200]="filter !== 'inactive'" [class.text-slate-600]="filter !== 'inactive'">
-      Inactive ({{ inactiveCount }})
+      Inactive
     </button>
   </div>
 
@@ -40,17 +40,17 @@
     <div class="h-28 skeleton rounded-2xl" *ngFor="let _ of [1,2,3]"></div>
   </div>
 
-  <section *ngIf="!loading && filteredAdmins.length === 0" class="client-card client-empty">
+  <section *ngIf="!loading && admins.length === 0" class="client-card client-empty">
     <div class="client-empty-icon"><i data-lucide="shield-off" class="w-8 h-8"></i></div>
     <p class="text-lg font-semibold text-[#0B1437]">No admins found</p>
-    <p class="text-base text-slate-500 mt-2">Create your first administrator to manage the platform.</p>
+    <p class="text-base text-slate-500 mt-2">No administrators match this filter.</p>
     <a routerLink="/super-admin-add-admin" class="client-btn-primary mt-4 inline-flex items-center gap-2 px-6 py-3 no-underline">
       <i data-lucide="user-plus" class="w-4 h-4"></i> Add admin
     </a>
   </section>
 
-  <div *ngIf="!loading && filteredAdmins.length" class="space-y-3">
-    <article *ngFor="let admin of filteredAdmins" class="client-card p-5 flex flex-wrap items-center gap-4">
+  <div *ngIf="!loading && admins.length > 0" class="space-y-3">
+    <article *ngFor="let admin of admins" class="client-card p-5 flex flex-wrap items-center gap-4">
       <span class="w-12 h-12 rounded-2xl bg-violet-50 text-violet-700 font-bold flex items-center justify-center shrink-0">
         {{ initials(admin.name) }}
       </span>

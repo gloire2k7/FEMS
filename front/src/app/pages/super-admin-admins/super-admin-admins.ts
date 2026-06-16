@@ -19,16 +19,9 @@ export class SuperAdminAdmins implements OnInit, AfterViewInit {
   page = 1;
   lastPage = 1;
   total = 0;
-  activeCount = 0;
-  inactiveCount = 0;
   loading = true;
   filter: 'all' | 'active' | 'inactive' = 'all';
-
-  get filteredAdmins() {
-    if (this.filter === 'active') return this.admins.filter(a => a.status === 'active');
-    if (this.filter === 'inactive') return this.admins.filter(a => a.status !== 'active');
-    return this.admins;
-  }
+  private loadRequestId = 0;
 
   ngOnInit() {
     this.load(1);
@@ -39,25 +32,35 @@ export class SuperAdminAdmins implements OnInit, AfterViewInit {
   }
 
   setFilter(f: 'all' | 'active' | 'inactive') {
+    if (this.filter === f && !this.loading) {
+      this.load(1);
+      return;
+    }
     this.filter = f;
-    this.refreshIcons();
+    this.admins = [];
+    this.load(1);
   }
 
   load(page: number) {
+    const requestId = ++this.loadRequestId;
     this.loading = true;
     this.page = page;
-    this.auth.getAdmins(page).subscribe({
+    const status = this.filter === 'all' ? undefined : this.filter;
+
+    this.auth.getAdmins(page, status).subscribe({
       next: (res) => {
+        if (requestId !== this.loadRequestId) return;
         this.admins = res.data || [];
         this.page = res.page;
         this.lastPage = res.last_page;
         this.total = res.total;
-        this.activeCount = this.admins.filter(a => a.status === 'active').length;
-        this.inactiveCount = this.admins.filter(a => a.status !== 'active').length;
         this.loading = false;
         this.refreshIcons();
       },
-      error: () => { this.loading = false; },
+      error: () => {
+        if (requestId !== this.loadRequestId) return;
+        this.loading = false;
+      },
     });
   }
 

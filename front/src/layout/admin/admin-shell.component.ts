@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnInit, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { AdminSidebarComponent } from './admin-sidebar.component';
 import { AdminTopbarComponent } from './admin-topbar.component';
 import { AuthService } from '../../app/auth.service';
@@ -30,10 +31,21 @@ export class AdminShellComponent implements OnInit, AfterViewInit {
     const user = this.auth.getUser();
     if (user?.must_change_password) {
       this.router.navigate(['/admin-settings']);
+      return;
     }
+    this.syncAdminSession();
+
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(() => this.syncAdminSession());
   }
 
   ngAfterViewInit() {
     setTimeout(() => lucide?.createIcons?.(), 50);
+  }
+
+  private syncAdminSession() {
+    if (!this.auth.isRole('Admin')) return;
+    this.auth.refreshMe().subscribe({ error: () => {} });
   }
 }

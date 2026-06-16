@@ -17,7 +17,8 @@ class ExtinguisherController extends Controller
         $statusMap = ['in_stock' => true, 'allocated' => true, 'all' => true];
         $status = isset($statusMap[$_GET['status'] ?? '']) ? $_GET['status'] : 'in_stock';
         $sort   = ($_GET['sort'] ?? 'newest') === 'oldest' ? 'oldest' : 'newest';
-        $this->jsonResponse($this->extModel->findPaginated($page, $limit, $status, $sort));
+        $type   = !empty($_GET['type']) ? trim($_GET['type']) : null;
+        $this->jsonResponse($this->extModel->findPaginated($page, $limit, $status, $sort, $type));
     }
 
     public function stockSummary()
@@ -60,10 +61,28 @@ class ExtinguisherController extends Controller
     {
         require_once __DIR__ . '/../helpers/qr_helper.php';
 
-        if (!$this->validateRequiredParams(['type', 'capacity', 'price'], $data)) {
+        if (!$this->validateRequiredParams(['type', 'capacity'], $data)) {
             if ($isBulk) return ['error' => 'Missing fields'];
-            $this->jsonResponse(["message" => "Type, capacity and price required"], 400);
+            $this->jsonResponse(["message" => "Type and capacity required"], 400);
         }
+
+        $priceModel = new ProductPrice();
+        if (!$priceModel->validateType($data['type'])) {
+            if ($isBulk) return ['error' => 'Invalid type'];
+            $this->jsonResponse(['message' => 'Invalid type. Use Water, CO2, Powder, or Foam.'], 400);
+        }
+        if (!$priceModel->validateCapacity($data['capacity'])) {
+            if ($isBulk) return ['error' => 'Invalid capacity'];
+            $this->jsonResponse(['message' => 'Capacity must be 6, 9, or 12 kg'], 400);
+        }
+
+        $data['capacity'] = $priceModel->normalizeCapacity($data['capacity']);
+        $unitPrice = $priceModel->getPrice($data['type'], $data['capacity']);
+        if ($unitPrice === null) {
+            if ($isBulk) return ['error' => 'Price not configured'];
+            $this->jsonResponse(['message' => 'Price not configured for this type and capacity'], 400);
+        }
+        $data['price'] = $unitPrice;
 
         $data['client_id'] = null;
         $data['serial_number'] = 'FEMS-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5));
@@ -103,7 +122,7 @@ class ExtinguisherController extends Controller
 
     public function destroy($id)
     {
-        AuthMiddleware::hasRole(['Super Admin']);
+        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
         $ext = $this->extModel->findById($id);
         if (!$ext) {
             $this->jsonResponse(["message" => "Not found"], 404);

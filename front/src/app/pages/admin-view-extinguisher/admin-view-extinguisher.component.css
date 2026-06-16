@@ -1,7 +1,8 @@
 :host {
     display: block;
-    height: 100vh;
     font-family: 'Poppins', sans-serif;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .scrollbar-hide::-webkit-scrollbar {

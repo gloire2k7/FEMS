@@ -9,7 +9,7 @@ export class ExtinguisherService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8000/api';
 
-  bulkCreate(data: { type: string, capacity: string, expiry_date: string, count: number, price: number }): Observable<any> {
+  bulkCreate(data: { type: string; capacity: string; expiry_date: string; count: number }): Observable<any> {
     return this.http.post(`${this.apiUrl}/extinguishers/bulk`, data, { withCredentials: true });
   }
 

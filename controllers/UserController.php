@@ -26,7 +26,11 @@ class UserController extends Controller
         AuthMiddleware::hasRole(['Super Admin']);
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $limit = min(50, max(5, (int) ($_GET['limit'] ?? 10)));
-        $result = $this->userModel->findAdminsPaginated($page, $limit);
+        $status = $_GET['status'] ?? null;
+        if ($status && !in_array($status, ['active', 'inactive'], true)) {
+            $status = null;
+        }
+        $result = $this->userModel->findAdminsPaginated($page, $limit, $status);
 
         $permModel = new Permission();
         foreach ($result['data'] as &$admin) {
@@ -156,13 +160,54 @@ class UserController extends Controller
         AuthMiddleware::hasRole(['Super Admin']);
         $data = $this->getJsonInput();
 
-        if ($this->userModel->update($id, $data)) {
-            if (isset($data['permissions'])) {
-                (new Permission())->setUserPermissions($id, $data['permissions']);
-            }
-            $this->jsonResponse(['message' => 'User updated successfully']);
+        $user = $this->userModel->findById($id);
+        if (!$user || $user['role_name'] !== 'Admin') {
+            $this->jsonResponse(["message" => "Admin not found"], 404);
         }
-        $this->jsonResponse(["message" => "Update failed"], 500);
+
+        $permModel = new Permission();
+        $oldPermissions = $permModel->getUserPermissions($id);
+        $added = [];
+        $removed = [];
+        $updated = false;
+
+        if (isset($data['permissions']) && is_array($data['permissions'])) {
+            $newPermissions = array_values(array_unique(array_filter($data['permissions'], 'is_string')));
+            $permModel->setUserPermissions($id, $newPermissions);
+            $added = array_values(array_diff($newPermissions, $oldPermissions));
+            $removed = array_values(array_diff($oldPermissions, $newPermissions));
+            $updated = true;
+
+            if (!empty($added) || !empty($removed)) {
+                MailHelper::sendPermissionsUpdated(
+                    $user['email'],
+                    $user['name'],
+                    $added,
+                    $removed,
+                    $newPermissions
+                );
+            }
+
+            if ((int) ($_SESSION['user_id'] ?? 0) === (int) $id) {
+                AuthMiddleware::refreshPermissions($id);
+            }
+        }
+
+        $profileFields = array_intersect_key($data, array_flip(['name', 'role_id', 'company_id', 'status']));
+        if (!empty($profileFields) && $this->userModel->update($id, $profileFields)) {
+            $updated = true;
+        }
+
+        if (!$updated) {
+            $this->jsonResponse(["message" => "Nothing to update"], 400);
+        }
+
+        $this->jsonResponse([
+            'message' => 'User updated successfully',
+            'permissions' => $permModel->getUserPermissions($id),
+            'added' => $added,
+            'removed' => $removed,
+        ]);
     }
 
     public function setStatus($id)
