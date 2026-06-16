@@ -41,6 +41,12 @@ import { ClientClientsComponent } from './pages/client-clients/client-clients';
 import { MyOrdersComponent } from './pages/my-orders/my-orders';
 import { AdminShellComponent } from '../layout/admin/admin-shell.component';
 import { SuperAdminShellComponent } from '../layout/super-admin/super-admin-shell.component';
+import { InspectorShellComponent } from '../layout/inspector/inspector-shell.component';
+import { InspectorDashboardComponent } from './pages/inspector-dashboard/inspector-dashboard';
+import { InspectorInspectionsComponent } from './pages/inspector-inspections/inspector-inspections';
+import { InspectorMyInspectionsComponent } from './pages/inspector-my-inspections/inspector-my-inspections';
+import { InspectorReportsComponent } from './pages/inspector-reports/inspector-reports';
+import { InspectorSettingsComponent } from './pages/inspector-settings/inspector-settings';
 import { AiAssistantPageComponent } from './pages/ai-assistant-page/ai-assistant-page.component';
 
 export const routes: Routes = [
@@ -83,6 +89,18 @@ export const routes: Routes = [
       { path: 'admin-view-extinguisher/:id', component: AdminViewExtinguisherComponent },
       { path: 'admin-inspection-label/:id', component: AdminInspectionLabel },
       { path: 'admin-add-extinguisher', component: AdminAddExtinguisher },
+    ],
+  },
+
+  {
+    path: '',
+    component: InspectorShellComponent,
+    children: [
+      { path: 'inspector-dashboard', component: InspectorDashboardComponent },
+      { path: 'inspector-inspections', component: InspectorInspectionsComponent },
+      { path: 'inspector-my-inspections', component: InspectorMyInspectionsComponent },
+      { path: 'inspector-reports', component: InspectorReportsComponent },
+      { path: 'inspector-settings', component: InspectorSettingsComponent },
     ],
   },
 

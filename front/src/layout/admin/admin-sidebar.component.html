@@ -53,7 +53,7 @@
     </ng-container>
 
     <!-- ── COMPLIANCE ─────────────────────────────────────── -->
-    <ng-container *ngIf="hasAnyPermission(['manage_inspections','manage_refills'])">
+    <ng-container *ngIf="hasAnyPermission(['manage_inspections','manage_inspectors','manage_refills'])">
       <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">Compliance</p>
 
       <ng-container *ngIf="hasPermission('manage_inspections')">
@@ -69,12 +69,17 @@
         <div *ngIf="inspectionsOpen" class="ml-4 pl-4 border-l border-white/10 space-y-1 mb-2">
           <a routerLink="/admin-assigned-inspections" routerLinkActive="text-white bg-white/5"
             class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white">Assigned</a>
-          <a routerLink="/admin-inspectors" routerLinkActive="text-white bg-white/5"
-            class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white">Inspectors</a>
           <a routerLink="/admin-compliance" routerLinkActive="text-white bg-white/5"
             class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white">Compliance</a>
         </div>
       </ng-container>
+
+      <a *ngIf="hasPermission('manage_inspectors')"
+        routerLink="/admin-inspectors" routerLinkActive="bg-white/10 text-white"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+        <i data-lucide="user-check" class="w-5 h-5 shrink-0"></i>
+        <span class="font-medium">Inspectors</span>
+      </a>
 
       <a *ngIf="hasPermission('manage_refills')"
         routerLink="/admin-refills" routerLinkActive="bg-white/10 text-white"

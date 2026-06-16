@@ -104,6 +104,7 @@ class MailHelper
         ],
         'Compliance' => [
             'manage_inspections'  => 'Inspections Management',
+            'manage_inspectors'   => 'Inspectors Management',
             'manage_refills'      => 'Refills Management',
         ],
         'System' => [
@@ -231,6 +232,76 @@ class MailHelper
           </td>
         </tr>
 
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
+HTML;
+
+        return self::sendEmail($email, $subject, $body);
+    }
+
+    /**
+     * Inspector invite email: credentials + sign-in CTA (no permissions — fixed role).
+     */
+    public static function sendInspectorCredentials(string $email, string $name, string $password): bool
+    {
+        $subject = 'Your FEMS Inspector Account — Action Required';
+        $signinUrl = 'http://localhost:4200/signin';
+
+        $body = <<<HTML
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f3f4f6;font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;padding:40px 0;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);">
+        <tr>
+          <td style="background:linear-gradient(135deg,#1e3a8a,#1d4ed8);padding:36px 40px;text-align:center;">
+            <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">🔥 FEMS</h1>
+            <p style="margin:6px 0 0;color:#bfdbfe;font-size:14px;">Fire Extinguisher Management System</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:36px 40px;">
+            <h2 style="margin:0 0 8px;color:#111827;font-size:20px;">Welcome, {$name}!</h2>
+            <p style="margin:0 0 24px;color:#6b7280;font-size:15px;">
+              Your inspector account has been created. Use the credentials below to sign in.
+              <strong style="color:#dc2626;">Please change your password immediately after signing in.</strong>
+            </p>
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px 24px;margin-bottom:28px;">
+              <p style="margin:0 0 10px;font-size:13px;font-weight:600;color:#64748b;text-transform:uppercase;">Your Credentials</p>
+              <table cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding:4px 12px 4px 0;color:#6b7280;font-size:14px;">Email</td>
+                  <td style="padding:4px 0;color:#111827;font-size:14px;font-weight:600;">{$email}</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px 12px 4px 0;color:#6b7280;font-size:14px;">Password</td>
+                  <td style="padding:4px 0;color:#111827;font-size:14px;font-weight:600;font-family:monospace;">{$password}</td>
+                </tr>
+              </table>
+            </div>
+            <div style="text-align:center;margin-bottom:28px;">
+              <a href="{$signinUrl}"
+                 style="display:inline-block;background:#1d4ed8;color:#ffffff;text-decoration:none;padding:14px 40px;border-radius:8px;font-size:15px;font-weight:600;">
+                Sign In &amp; Change Password
+              </a>
+            </div>
+            <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:14px 18px;">
+              <p style="margin:0;color:#92400e;font-size:13px;">
+                ⚠️ Change your password under <strong>Settings</strong> after your first sign-in.
+              </p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#f8fafc;padding:20px 40px;text-align:center;border-top:1px solid #e5e7eb;">
+            <p style="margin:0;color:#9ca3af;font-size:12px;">Sent automatically by FEMS.</p>
+          </td>
+        </tr>
       </table>
     </td></tr>
   </table>

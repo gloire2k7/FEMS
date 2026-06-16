@@ -17,9 +17,11 @@ $router->get('/api/dashboard/stats', ['DashboardController', 'stats']);
 // Users & permissions
 $router->get('/api/users', ['UserController', 'index']);
 $router->get('/api/users/admins', ['UserController', 'admins']);
+$router->get('/api/users/inspectors', ['UserController', 'inspectors']);
 $router->get('/api/users/clients', ['UserController', 'clients']);
 $router->get('/api/users/pending-clients', ['UserController', 'pendingClients']);
 $router->get('/api/permissions', ['UserController', 'permissions']);
+$router->get('/api/roles', ['UserController', 'roles']);
 $router->post('/api/users', ['UserController', 'store']);
 $router->get('/api/users/{id}', ['UserController', 'show']);
 $router->put('/api/users/{id}', ['UserController', 'update']);
@@ -92,11 +94,30 @@ $router->get('/api/shop/products', function () {
     exit;
 });
 
-// Services
+// Service requests
+$router->get('/api/service-requests/refills', ['ServiceRequestController', 'refills']);
+$router->get('/api/service-requests/pending-inspections', ['ServiceRequestController', 'pendingInspections']);
+$router->get('/api/service-requests', ['ServiceRequestController', 'index']);
+$router->post('/api/service-requests', ['ServiceRequestController', 'store']);
+$router->put('/api/service-requests/{id}/confirm-done', ['ServiceRequestController', 'confirmDone']);
+$router->put('/api/service-requests/{id}/schedule', ['ServiceRequestController', 'schedule']);
+$router->put('/api/service-requests/{id}/mark-done', ['ServiceRequestController', 'markDone']);
+$router->put('/api/service-requests/{id}/assign-inspection', ['ServiceRequestController', 'assignInspection']);
+$router->get('/api/service-fees', ['ServiceRequestController', 'getFees']);
+$router->put('/api/service-fees', ['ServiceRequestController', 'updateFees']);
+
+// Services (legacy extinguisher status endpoints)
 $router->post('/api/extinguishers/{id}/refill-request', ['ServiceController', 'requestRefill']);
 $router->post('/api/extinguishers/{id}/maintenance-request', ['ServiceController', 'requestMaintenance']);
 $router->put('/api/extinguishers/{id}/confirm-service', ['ServiceController', 'confirmRequest']);
 $router->put('/api/extinguishers/{id}/complete-service', ['ServiceController', 'completeService']);
+
+// Inspection assignments
+$router->get('/api/inspection-assignments/stats', ['InspectionAssignmentController', 'stats']);
+$router->get('/api/inspection-assignments', ['InspectionAssignmentController', 'index']);
+$router->post('/api/inspection-assignments', ['InspectionAssignmentController', 'store']);
+$router->put('/api/inspection-assignments/{id}/claim', ['InspectionAssignmentController', 'claim']);
+$router->put('/api/inspection-assignments/{id}/complete', ['InspectionAssignmentController', 'complete']);
 
 // Reports
 $router->get('/api/reports', ['ReportController', 'index']);

@@ -23,6 +23,24 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/users`, { ...adminData, role_id: 2 }, { withCredentials: true });
   }
 
+  createInspector(data: { name: string; email: string; role_id: number }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users`, data, { withCredentials: true });
+  }
+
+  getInspectors(page = 1, status?: string): Observable<any> {
+    let url = `${this.apiUrl}/users/inspectors?page=${page}`;
+    if (status && status !== 'all') url += `&status=${encodeURIComponent(status)}`;
+    return this.http.get(url, { withCredentials: true });
+  }
+
+  getRoles(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/roles`, { withCredentials: true });
+  }
+
+  setUserStatus(id: number, status: 'active' | 'inactive'): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${id}/status`, { status }, { withCredentials: true });
+  }
+
   getAdmins(page = 1, status?: string): Observable<any> {
     let url = `${this.apiUrl}/users/admins?page=${page}`;
     if (status && status !== 'all') {
@@ -85,6 +103,7 @@ export class AuthService {
           permissions: user.permissions || [],
           status: user.status,
           company_id: user.company_id ?? current.company_id,
+          must_change_password: user.must_change_password ?? current.must_change_password,
         });
       })
     );

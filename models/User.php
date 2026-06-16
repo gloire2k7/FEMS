@@ -28,9 +28,19 @@ class User extends Model
 
     public function findAdminsPaginated($page = 1, $limit = 10, $status = null)
     {
+        return $this->findByRolePaginated('Admin', $page, $limit, $status);
+    }
+
+    public function findInspectorsPaginated($page = 1, $limit = 10, $status = null)
+    {
+        return $this->findByRolePaginated('Inspector', $page, $limit, $status);
+    }
+
+    private function findByRolePaginated($roleName, $page = 1, $limit = 10, $status = null)
+    {
         $offset = ($page - 1) * $limit;
-        $where = "r.name = 'Admin'";
-        $params = [];
+        $where = "r.name = :role_name";
+        $params = [':role_name' => $roleName];
         if ($status && in_array($status, ['active', 'inactive'], true)) {
             $where .= " AND u.status = :status";
             $params[':status'] = $status;

@@ -25,12 +25,13 @@ export class AppComponent {
   showAiAssistant(): boolean {
     const path = this.router.url.split('?')[0];
     if (path === '/assistant') return false;
+    if (path.startsWith('/inspector-')) return false;
     return path !== '/' && path !== '/signin' && !!this.auth.getUser();
   }
 
   showLayout(): boolean {
     const path = this.router.url.split('?')[0];
-    if (path.startsWith('/admin-') || path.startsWith('/super-admin-') || path === '/clients') return false;
+    if (path.startsWith('/admin-') || path.startsWith('/super-admin-') || path.startsWith('/inspector-') || path === '/clients') return false;
     if (path === '/' || path === '/signin' || path === '/signup' || path === '/assistant') return false;
     return true;
   }

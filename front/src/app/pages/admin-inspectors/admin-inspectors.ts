@@ -1,95 +1,166 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../auth.service';
+import { PaginationComponent } from '../../shared/pagination/pagination.component';
 
 declare const lucide: { createIcons: () => void } | undefined;
-
-export interface AdminInspector {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  base: string;
-  status: 'Active' | 'Inactive';
-  availability: 'Available' | 'Busy' | 'On Leave';
-  totalInspections: number;
-  completionRate: number;
-  avatar: string;
-}
 
 @Component({
   selector: 'app-admin-inspectors',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './admin-inspectors.html',
-  styleUrl: './admin-inspectors.css',
+  imports: [CommonModule, FormsModule, PaginationComponent],
+  template: `
+    <div class="client-page max-w-5xl">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-[#0B1437]">Inspectors</h1>
+          <p class="text-slate-500 mt-1">Create and manage field inspectors.</p>
+        </div>
+        <button type="button" (click)="showForm = !showForm" class="client-btn-primary text-sm">
+          Add inspector
+        </button>
+      </div>
+
+      <section *ngIf="showForm" class="client-card p-6 mb-6">
+        <h2 class="text-lg font-semibold text-[#0B1437] mb-4">New inspector</h2>
+        <p *ngIf="createError" class="text-sm text-red-600 mb-3">{{ createError }}</p>
+        <p *ngIf="createSuccess" class="text-sm text-emerald-700 mb-3">{{ createSuccess }}</p>
+        <div class="grid sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-600 mb-1">Full name *</label>
+            <input type="text" [(ngModel)]="newName" class="client-input w-full" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-600 mb-1">Email *</label>
+            <input type="email" [(ngModel)]="newEmail" class="client-input w-full" />
+          </div>
+        </div>
+        <button type="button" (click)="create()" [disabled]="creating || !newName.trim() || !newEmail.trim()"
+          class="client-btn-primary disabled:opacity-40">Create &amp; send invite</button>
+      </section>
+
+      <section class="client-card overflow-hidden">
+        <div *ngIf="loading" class="client-empty py-12 text-slate-400">Loading inspectors…</div>
+        <div *ngIf="!loading && inspectors.length === 0" class="client-empty py-12">No inspectors yet.</div>
+        <div *ngIf="!loading && inspectors.length" class="client-table-wrap">
+          <table class="client-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let i of inspectors">
+                <td class="font-semibold text-[#0B1437]">{{ i.name }}</td>
+                <td>{{ i.email }}</td>
+                <td>
+                  <span class="client-badge" [class.bg-emerald-50]="i.status === 'active'"
+                    [class.text-emerald-700]="i.status === 'active'"
+                    [class.bg-slate-100]="i.status !== 'active'"
+                    [class.text-slate-600]="i.status !== 'active'">{{ i.status }}</span>
+                </td>
+                <td class="text-slate-600">{{ i.created_at | date:'mediumDate' }}</td>
+                <td class="text-right">
+                  <button type="button" (click)="toggleStatus(i)"
+                    class="text-sm font-medium text-blue-600 hover:underline">
+                    {{ i.status === 'active' ? 'Deactivate' : 'Activate' }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="px-5 pb-2" *ngIf="total > 0">
+          <app-pagination [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="load($event)" />
+        </div>
+      </section>
+    </div>
+  `
 })
-export class AdminInspectors implements AfterViewInit {
-  searchTerm = '';
-  statusFilter: 'all' | 'Active' | 'Inactive' = 'all';
-  selectedInspector: AdminInspector | null = null;
+export class AdminInspectors implements OnInit, AfterViewInit {
+  private auth = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
-  inspectors: AdminInspector[] = [
-    { id: 'INS-1024', name: 'John Doe', email: 'john.d@fems.com', phone: '+250 788 000 001', base: 'Central District', status: 'Active', availability: 'Available', totalInspections: 210, completionRate: 95, avatar: 'https://ui-avatars.com/api/?name=John+Doe&background=6366f1&color=fff' },
-    { id: 'INS-1025', name: 'Sarah Smith', email: 'sarah.s@fems.com', phone: '+250 788 000 002', base: 'North District', status: 'Active', availability: 'Available', totalInspections: 142, completionRate: 98, avatar: 'https://ui-avatars.com/api/?name=Sarah+Smith&background=10b981&color=fff' },
-    { id: 'INS-1042', name: 'Michael Brown', email: 'm.brown@fems.com', phone: '+250 788 000 003', base: 'East District', status: 'Inactive', availability: 'On Leave', totalInspections: 87, completionRate: 78, avatar: 'https://ui-avatars.com/api/?name=Michael+Brown&background=f59e0b&color=fff' },
-    { id: 'INS-1088', name: 'Emily Davis', email: 'e.davis@fems.com', phone: '+250 788 000 004', base: 'South District', status: 'Active', availability: 'Busy', totalInspections: 176, completionRate: 91, avatar: 'https://ui-avatars.com/api/?name=Emily+Davis&background=e44d26&color=fff' },
-  ];
+  loading = true;
+  inspectors: any[] = [];
+  page = 1;
+  lastPage = 1;
+  total = 0;
+  inspectorRoleId = 0;
+  showForm = false;
+  newName = '';
+  newEmail = '';
+  creating = false;
+  createError = '';
+  createSuccess = '';
 
-  get filteredInspectors() {
-    let list = this.inspectors;
-    if (this.statusFilter !== 'all') {
-      list = list.filter((i) => i.status === this.statusFilter);
+  ngOnInit() {
+    this.auth.getRoles().subscribe({
+      next: (roles) => {
+        const r = roles.find(x => x.name === 'Inspector');
+        this.inspectorRoleId = r?.id ?? 0;
+      }
+    });
+    this.load(1);
+  }
+
+  load(page: number) {
+    this.loading = true;
+    this.page = page;
+    this.auth.getInspectors(page).subscribe({
+      next: (res) => {
+        this.inspectors = res.data ?? [];
+        this.total = res.total ?? 0;
+        this.lastPage = res.last_page ?? 1;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => { this.loading = false; this.cdr.detectChanges(); }
+    });
+  }
+
+  create() {
+    if (!this.inspectorRoleId) {
+      this.createError = 'Inspector role not found. Run database migration v4.';
+      return;
     }
-    const t = this.searchTerm.trim().toLowerCase();
-    if (!t) return list;
-    return list.filter(
-      (i) =>
-        i.name.toLowerCase().includes(t) ||
-        i.id.toLowerCase().includes(t) ||
-        i.email.toLowerCase().includes(t)
-    );
+    this.creating = true;
+    this.createError = '';
+    this.createSuccess = '';
+    this.auth.createInspector({
+      name: this.newName.trim(),
+      email: this.newEmail.trim(),
+      role_id: this.inspectorRoleId
+    }).subscribe({
+      next: (res) => {
+        this.createSuccess = res.message || 'Inspector created. Credentials sent by email.';
+        this.newName = '';
+        this.newEmail = '';
+        this.showForm = false;
+        this.creating = false;
+        this.load(1);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.createError = err.error?.message || 'Failed to create inspector.';
+        this.creating = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  get totalActive() {
-    return this.inspectors.filter((i) => i.status === 'Active').length;
+  toggleStatus(inspector: any) {
+    const next = inspector.status === 'active' ? 'inactive' : 'active';
+    this.auth.setAdminStatus(inspector.id, next).subscribe({
+      next: () => this.load(this.page),
+      error: () => {}
+    });
   }
 
-  get totalAvailable() {
-    return this.inspectors.filter((i) => i.availability === 'Available').length;
-  }
-
-  selectInspector(inspector: AdminInspector) {
-    this.selectedInspector = inspector;
-    this.refreshIcons();
-  }
-
-  closePanel() {
-    this.selectedInspector = null;
-  }
-
-  setFilter(filter: 'all' | 'Active' | 'Inactive') {
-    this.statusFilter = filter;
-    this.refreshIcons();
-  }
-
-  getStatusClass(status: string) {
-    return status === 'Active' ? 'bg-emerald-50 text-emerald-700 ring-emerald-200/60' : 'bg-slate-50 text-slate-600 ring-slate-200/60';
-  }
-
-  getAvailClass(av: string) {
-    if (av === 'Available') return 'bg-blue-50 text-blue-700';
-    if (av === 'Busy') return 'bg-amber-50 text-amber-700';
-    return 'bg-red-50 text-red-600';
-  }
-
-  ngAfterViewInit() {
-    this.refreshIcons();
-  }
-
-  private refreshIcons() {
-    setTimeout(() => lucide?.createIcons?.(), 0);
-    setTimeout(() => lucide?.createIcons?.(), 120);
-  }
+  ngAfterViewInit() { setTimeout(() => lucide?.createIcons?.(), 50); }
 }

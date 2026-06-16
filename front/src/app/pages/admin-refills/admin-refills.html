@@ -3,116 +3,92 @@
   <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
     <div class="client-hero-inner">
       <p class="client-hero-eyebrow">Maintenance</p>
-      <h1 class="client-hero-title">Refills & service</h1>
-      <p class="client-hero-sub">Track refill requests, technician assignments, and completed maintenance work.</p>
+      <h1 class="client-hero-title">Refills &amp; service</h1>
+      <p class="client-hero-sub">Review client refill and maintenance requests, confirm dates, and track completion.</p>
     </div>
   </section>
 
-  <section *ngIf="pendingCount > 0"
-    class="flex items-start gap-4 px-5 py-4 rounded-2xl bg-amber-50 border border-amber-100">
-    <span class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-      <i data-lucide="droplet" class="w-5 h-5 text-amber-600"></i>
-    </span>
-    <div>
-      <p class="font-semibold text-amber-900">{{ pendingCount }} refill request{{ pendingCount > 1 ? 's' : '' }} awaiting assignment</p>
-      <p class="text-sm text-amber-700 mt-0.5">Assign technicians to keep units compliant.</p>
+  <section class="client-card p-5 mb-5">
+    <button type="button" (click)="showFeeForm = !showFeeForm"
+      class="flex items-center justify-between w-full text-left">
+      <span class="font-semibold text-[#0B1437]">Service fees (per unit)</span>
+      <i [attr.data-lucide]="showFeeForm ? 'chevron-up' : 'chevron-down'" class="w-5 h-5 text-slate-400"></i>
+    </button>
+    <div *ngIf="showFeeForm" class="mt-4 pt-4 border-t border-slate-100 grid sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-600 mb-1">Refill fee (RWF)</label>
+        <input type="number" [(ngModel)]="refillFee" class="client-input w-full" min="0" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-600 mb-1">Maintenance fee (RWF)</label>
+        <input type="number" [(ngModel)]="maintenanceFee" class="client-input w-full" min="0" />
+      </div>
+      <div class="sm:col-span-2 flex gap-3 items-center">
+        <button type="button" (click)="saveFees()" class="client-btn-primary text-sm">Save fees</button>
+        <p *ngIf="feeMessage" class="text-sm text-emerald-700">{{ feeMessage }}</p>
+      </div>
     </div>
   </section>
 
-  <section class="client-stat-grid client-stat-grid--4">
-    <button type="button" (click)="setStatusFilter('all')"
-      class="client-stat client-stat--primary client-stat-link text-left"
-      [class.client-stat-link--active]="statusFilter === 'all'">
-      <div class="relative z-10 flex items-start justify-between gap-3">
-        <div>
-          <p class="client-stat-label">Total requests</p>
-          <p class="client-stat-value">{{ refillRequests.length }}</p>
-        </div>
-        <span class="client-stat-icon"><i data-lucide="list-ordered" class="w-5 h-5"></i></span>
-      </div>
+  <p *ngIf="actionMessage" class="mb-4 px-4 py-3 rounded-xl text-sm bg-blue-50 text-blue-800">{{ actionMessage }}</p>
+
+  <section class="client-stat-grid client-stat-grid--3 mb-5">
+    <button type="button" (click)="setStatusFilter('all')" class="client-stat client-stat--primary client-stat-link text-left">
+      <p class="client-stat-label">Total</p>
+      <p class="client-stat-value">{{ total }}</p>
     </button>
-    <button type="button" (click)="setStatusFilter('Pending')"
-      class="client-stat client-stat--warning client-stat-link text-left"
-      [class.client-stat-link--active]="statusFilter === 'Pending'">
-      <div class="relative z-10 flex items-start justify-between gap-3">
-        <div>
-          <p class="client-stat-label">Pending</p>
-          <p class="client-stat-value">{{ pendingCount }}</p>
-        </div>
-        <span class="client-stat-icon"><i data-lucide="clock" class="w-5 h-5"></i></span>
-      </div>
+    <button type="button" (click)="setStatusFilter('pending')" class="client-stat client-stat--warning client-stat-link text-left">
+      <p class="client-stat-label">Pending</p>
+      <p class="client-stat-value">{{ pendingCount }}</p>
     </button>
-    <button type="button" (click)="setStatusFilter('In Progress')"
-      class="client-stat client-stat--info client-stat-link text-left"
-      [class.client-stat-link--active]="statusFilter === 'In Progress'">
-      <div class="relative z-10 flex items-start justify-between gap-3">
-        <div>
-          <p class="client-stat-label">In progress</p>
-          <p class="client-stat-value">{{ inProgressCount }}</p>
-        </div>
-        <span class="client-stat-icon"><i data-lucide="refresh-cw" class="w-5 h-5"></i></span>
-      </div>
-    </button>
-    <button type="button" (click)="setStatusFilter('Completed')"
-      class="client-stat client-stat--success client-stat-link text-left"
-      [class.client-stat-link--active]="statusFilter === 'Completed'">
-      <div class="relative z-10 flex items-start justify-between gap-3">
-        <div>
-          <p class="client-stat-label">Completed</p>
-          <p class="client-stat-value">{{ completedCount }}</p>
-        </div>
-        <span class="client-stat-icon"><i data-lucide="check-circle" class="w-5 h-5"></i></span>
-      </div>
+    <button type="button" (click)="setStatusFilter('awaiting_client')" class="client-stat client-stat--featured client-stat-link text-left">
+      <p class="client-stat-label">Awaiting client</p>
+      <p class="client-stat-value">{{ awaitingCount }}</p>
     </button>
   </section>
 
-  <div class="client-search">
+  <div class="client-search mb-5">
     <i data-lucide="search" class="client-search-icon"></i>
-    <input type="text" [(ngModel)]="searchTerm" placeholder="Search by unit ID or location…"
-      class="client-input w-full">
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Search by serial or client…" class="client-input w-full" />
   </div>
 
   <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-    <div class="px-6 py-5 border-b border-slate-100">
-      <h2 class="text-lg font-semibold text-[#0B1437]">Service queue</h2>
-      <p class="text-sm text-slate-500">{{ filteredRequests.length }} requests</p>
-    </div>
-
-    <div *ngIf="filteredRequests.length === 0" class="px-6 py-16 text-center">
-      <span class="inline-flex w-14 h-14 rounded-2xl bg-slate-50 items-center justify-center mb-4">
-        <i data-lucide="inbox" class="w-7 h-7 text-slate-300"></i>
-      </span>
-      <p class="font-medium text-[#0B1437]">No requests found</p>
-      <p class="text-sm text-slate-500 mt-1">Try a different status filter.</p>
-    </div>
-
-    <div *ngIf="filteredRequests.length > 0" class="divide-y divide-slate-50">
-      <div *ngFor="let req of filteredRequests"
-        class="flex flex-wrap items-center gap-4 px-6 py-4 hover:bg-slate-50/50 transition-colors">
-        <span class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0">
-          <i data-lucide="flame" class="w-5 h-5 text-slate-400"></i>
-        </span>
-        <div class="flex-1 min-w-[160px]">
-          <p class="font-semibold text-[#0B1437]">{{ req.extinguisherId }}</p>
-          <p class="text-sm text-slate-500">{{ req.type }} · {{ req.capacity }}</p>
+    <div *ngIf="loading" class="py-12 text-center text-slate-400">Loading…</div>
+    <div *ngIf="!loading && filteredRequests.length === 0" class="py-12 text-center text-slate-500">No requests found.</div>
+    <div *ngIf="!loading && filteredRequests.length" class="divide-y divide-slate-50">
+      <div *ngFor="let req of filteredRequests" class="px-6 py-5">
+        <div class="flex flex-wrap items-start justify-between gap-4 mb-3">
+          <div>
+            <p class="font-semibold text-[#0B1437]">{{ req.serial_number }}</p>
+            <p class="text-sm text-slate-500 capitalize">{{ req.service_type }} · {{ req.type }} {{ req.capacity }}</p>
+            <p class="text-sm text-slate-500">{{ req.company_name }}</p>
+          </div>
+          <span class="client-badge text-sm font-semibold px-3 py-1 rounded-full ring-1" [ngClass]="statusClass(req.status)">
+            {{ req.status }}
+          </span>
         </div>
-        <div class="min-w-[140px]">
-          <p class="text-sm font-medium text-[#0B1437]">{{ req.location }}</p>
-          <p class="text-xs text-slate-400">{{ req.subLocation }}</p>
+        <p *ngIf="req.client_notes" class="text-sm text-slate-600 mb-3">{{ req.client_notes }}</p>
+        <p class="text-sm text-slate-500">Preferred: {{ req.preferred_date || '—' }} · Confirmed: {{ req.confirmed_date || '—' }}
+          <span *ngIf="req.fee"> · Fee: {{ req.fee | number }} RWF</span>
+        </p>
+        <div *ngIf="req.status === 'pending'" class="flex flex-wrap gap-3 mt-4 items-end">
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">Confirmed date</label>
+            <input type="date" [(ngModel)]="scheduleDates[req.id]" class="client-input text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">Fee (RWF)</label>
+            <input type="number" [(ngModel)]="scheduleFees[req.id]" class="client-input text-sm w-32" min="0" />
+          </div>
+          <button type="button" (click)="confirmSchedule(req)" class="client-btn-primary text-sm">Confirm date</button>
         </div>
-        <div class="text-sm text-slate-600">{{ req.issue }}</div>
-        <div class="text-sm text-slate-400">
-          {{ req.requestDate | date:'mediumDate' }}
-          <span *ngIf="req.dueDate" class="block text-xs" [class.text-red-600]="req.dueDate === 'Overdue'">{{ req.dueDate }}</span>
+        <div *ngIf="req.status === 'scheduled'" class="mt-4">
+          <button type="button" (click)="markDone(req)" class="client-btn-secondary text-sm">Mark service complete</button>
         </div>
-        <span class="client-badge text-sm font-semibold px-3 py-1 rounded-full ring-1 shrink-0" [ngClass]="statusClass(req.status)">
-          {{ req.status }}
-        </span>
-        <span class="text-sm text-slate-500 w-24 text-right shrink-0">
-          {{ req.technician || 'Unassigned' }}
-        </span>
       </div>
     </div>
+    <div class="px-5 pb-2" *ngIf="!loading && total > 0">
+      <app-pagination [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="load($event)" />
+    </div>
   </section>
-
 </div>

@@ -1,91 +1,121 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ServiceRequestService } from '../../services/service-request.service';
+import { PaginationComponent } from '../../shared/pagination/pagination.component';
 
 declare const lucide: { createIcons: () => void } | undefined;
-
-export type RefillStatus = 'Pending' | 'In Progress' | 'Completed' | 'Condemned';
-
-export interface RefillRequest {
-  id: string;
-  extinguisherId: string;
-  type: string;
-  capacity: string;
-  location: string;
-  subLocation: string;
-  issue: string;
-  requestDate: string;
-  dueDate?: string;
-  doneDate?: string;
-  status: RefillStatus;
-  technician?: string;
-}
 
 @Component({
   selector: 'app-admin-refills',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, FormsModule, PaginationComponent],
   templateUrl: './admin-refills.html',
   styleUrls: ['./admin-refills.css'],
 })
-export class AdminRefills implements AfterViewInit {
-  searchTerm = '';
-  statusFilter: 'all' | RefillStatus = 'all';
+export class AdminRefills implements OnInit, AfterViewInit {
+  private svc = inject(ServiceRequestService);
+  private cdr = inject(ChangeDetectorRef);
 
-  refillRequests: RefillRequest[] = [
-    { id: '1', extinguisherId: 'EXT-00142', type: 'CO₂', capacity: '5kg', location: 'Tech Corp HQ', subLocation: 'Server Room B', issue: 'Refill required', requestDate: '2024-10-24', dueDate: '2024-10-26', status: 'Pending' },
-    { id: '2', extinguisherId: 'EXT-00892', type: 'Dry Powder', capacity: '9kg', location: 'Westside Warehouse', subLocation: 'Loading Dock 4', issue: 'Valve repair', requestDate: '2024-10-22', status: 'In Progress', technician: 'Mike R.' },
-    { id: '3', extinguisherId: 'EXT-00221', type: 'Foam', capacity: '6L', location: 'City Mall', subLocation: 'Food Court', issue: 'Inspection failed', requestDate: '2024-10-10', dueDate: 'Overdue', status: 'Condemned' },
-    { id: '4', extinguisherId: 'EXT-00445', type: 'Water', capacity: '9L', location: 'Office Block A', subLocation: 'Lobby', issue: 'Routine check', requestDate: '2024-10-20', doneDate: '2024-10-21', status: 'Completed', technician: 'Sarah L.' },
-  ];
+  loading = true;
+  requests: any[] = [];
+  page = 1;
+  lastPage = 1;
+  total = 0;
+  statusFilter = 'all';
+  searchTerm = '';
+  showFeeForm = false;
+  refillFee = 0;
+  maintenanceFee = 0;
+  feeMessage = '';
+  actionMessage = '';
+
+  scheduleDates: Record<number, string> = {};
+  scheduleFees: Record<number, number> = {};
 
   get filteredRequests() {
-    let list = this.refillRequests;
-    if (this.statusFilter !== 'all') {
-      list = list.filter((r) => r.status === this.statusFilter);
-    }
     const q = this.searchTerm.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter(
-      (r) =>
-        r.extinguisherId.toLowerCase().includes(q) ||
-        r.location.toLowerCase().includes(q)
+    if (!q) return this.requests;
+    return this.requests.filter(r =>
+      (r.serial_number || '').toLowerCase().includes(q) ||
+      (r.company_name || '').toLowerCase().includes(q)
     );
   }
 
-  get pendingCount() {
-    return this.refillRequests.filter((r) => r.status === 'Pending').length;
+  get pendingCount() { return this.requests.filter(r => r.status === 'pending').length; }
+  get scheduledCount() { return this.requests.filter(r => r.status === 'scheduled').length; }
+  get awaitingCount() { return this.requests.filter(r => r.status === 'awaiting_client').length; }
+
+  ngOnInit() { this.load(1); }
+
+  load(page: number) {
+    this.loading = true;
+    this.page = page;
+    const status = this.statusFilter === 'all' ? undefined : this.statusFilter;
+    this.svc.getRefills(page, status).subscribe({
+      next: (res) => {
+        this.requests = res.data ?? [];
+        this.total = res.total ?? 0;
+        this.lastPage = res.last_page ?? 1;
+        const fees = res.fees ?? [];
+        for (const f of fees) {
+          if (f.service_type === 'refill') this.refillFee = +f.fee_per_unit;
+          if (f.service_type === 'maintenance') this.maintenanceFee = +f.fee_per_unit;
+        }
+        for (const r of this.requests) {
+          if (!this.scheduleDates[r.id]) {
+            this.scheduleDates[r.id] = r.preferred_date || '';
+            this.scheduleFees[r.id] = r.fee ?? (r.service_type === 'refill' ? this.refillFee : this.maintenanceFee);
+          }
+        }
+        this.loading = false;
+        this.cdr.detectChanges();
+        this.refreshIcons();
+      },
+      error: () => { this.loading = false; this.cdr.detectChanges(); }
+    });
   }
 
-  get inProgressCount() {
-    return this.refillRequests.filter((r) => r.status === 'In Progress').length;
+  setStatusFilter(f: string) {
+    this.statusFilter = f;
+    this.load(1);
   }
 
-  get completedCount() {
-    return this.refillRequests.filter((r) => r.status === 'Completed').length;
+  saveFees() {
+    this.svc.updateFees(this.refillFee, this.maintenanceFee).subscribe({
+      next: (res) => {
+        this.feeMessage = res.message || 'Fees saved.';
+        this.showFeeForm = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  setStatusFilter(filter: 'all' | RefillStatus) {
-    this.statusFilter = filter;
-    this.refreshIcons();
+  confirmSchedule(r: any) {
+    const date = this.scheduleDates[r.id];
+    if (!date) { this.actionMessage = 'Please set a confirmed date.'; return; }
+    this.svc.schedule(r.id, date, this.scheduleFees[r.id]).subscribe({
+      next: (res) => { this.actionMessage = res.message; this.load(this.page); },
+      error: (err) => { this.actionMessage = err.error?.message || 'Failed.'; this.cdr.detectChanges(); }
+    });
   }
 
-  statusClass(status: RefillStatus): string {
-    return {
-      Pending: 'bg-amber-50 text-amber-700 ring-amber-200/60',
-      'In Progress': 'bg-blue-50 text-blue-700 ring-blue-200/60',
-      Completed: 'bg-emerald-50 text-emerald-700 ring-emerald-200/60',
-      Condemned: 'bg-red-50 text-red-700 ring-red-200/60',
-    }[status];
+  markDone(r: any) {
+    this.svc.markDone(r.id).subscribe({
+      next: (res) => { this.actionMessage = res.message; this.load(this.page); },
+      error: (err) => { this.actionMessage = err.error?.message || 'Failed.'; this.cdr.detectChanges(); }
+    });
   }
 
-  ngAfterViewInit() {
-    this.refreshIcons();
+  statusClass(status: string): string {
+    return ({
+      pending: 'bg-amber-50 text-amber-700 ring-amber-200/60',
+      scheduled: 'bg-blue-50 text-blue-700 ring-blue-200/60',
+      awaiting_client: 'bg-purple-50 text-purple-700 ring-purple-200/60',
+      completed: 'bg-emerald-50 text-emerald-700 ring-emerald-200/60',
+    } as any)[status] || 'bg-slate-50 text-slate-600';
   }
 
-  private refreshIcons() {
-    setTimeout(() => lucide?.createIcons?.(), 0);
-    setTimeout(() => lucide?.createIcons?.(), 120);
-  }
+  ngAfterViewInit() { this.refreshIcons(); }
+  private refreshIcons() { setTimeout(() => lucide?.createIcons?.(), 50); }
 }

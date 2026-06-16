@@ -40,6 +40,8 @@ export class SigninComponent implements AfterViewInit {
           this.router.navigate(['/super-admin-dashboard']);
         } else if (response.user.role === 'Admin') {
           this.router.navigate(['/admin-dashboard']);
+        } else if (response.user.role === 'Inspector') {
+          this.router.navigate(['/inspector-dashboard']);
         } else {
           this.router.navigate(['/dashboard']);
         }

@@ -37,6 +37,7 @@ export class SuperAdminAdminDetails implements OnInit, AfterViewInit {
     manage_inventory: 'Inventory Management',
     manage_orders: 'Orders Management',
     manage_inspections: 'Inspections Management',
+    manage_inspectors: 'Inspectors Management',
     manage_refills: 'Refills Management',
     manage_notifications: 'Notifications',
     manage_settings: 'Settings',
@@ -49,6 +50,7 @@ export class SuperAdminAdminDetails implements OnInit, AfterViewInit {
     { key: 'manage_inventory',  label: 'Inventory Management',  group: 'Operations' },
     { key: 'manage_orders',     label: 'Orders Management',     group: 'Operations' },
     { key: 'manage_inspections',label: 'Inspections Management',group: 'Compliance' },
+    { key: 'manage_inspectors', label: 'Inspectors Management', group: 'Compliance' },
     { key: 'manage_refills',    label: 'Refills Management',    group: 'Compliance' },
   ];
 

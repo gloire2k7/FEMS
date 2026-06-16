@@ -1,102 +1,113 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ServiceRequestService } from '../../services/service-request.service';
+import { AuthService } from '../../auth.service';
+import { PaginationComponent } from '../../shared/pagination/pagination.component';
 
 declare const lucide: { createIcons: () => void } | undefined;
-
-export type InspectionStatus = 'passed' | 'refill' | 'expired' | 'pending';
-
-export interface AssignedInspection {
-  id: string;
-  location: string;
-  inspector: string;
-  date: string;
-  status: InspectionStatus;
-  notes?: string;
-}
 
 @Component({
   selector: 'app-admin-assigned-inspections',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './admin-assigned-inspections.html',
-  styleUrl: './admin-assigned-inspections.css',
+  imports: [CommonModule, FormsModule, PaginationComponent],
+  template: `
+    <div class="client-page max-w-5xl">
+      <h1 class="text-2xl font-bold text-[#0B1437] mb-2">Pending inspection requests</h1>
+      <p class="text-slate-500 mb-6">Assign client inspection requests to active inspectors and confirm the date.</p>
+
+      <p *ngIf="message" class="mb-4 px-4 py-3 rounded-xl text-sm"
+        [class.bg-emerald-50]="!messageError" [class.text-emerald-700]="!messageError"
+        [class.bg-red-50]="messageError" [class.text-red-700]="messageError">{{ message }}</p>
+
+      <div *ngIf="loading" class="text-center py-16 text-slate-400">Loading…</div>
+
+      <section *ngIf="!loading" class="client-card overflow-hidden">
+        <div *ngIf="items.length === 0" class="client-empty py-12">No pending inspection requests.</div>
+        <div *ngIf="items.length" class="divide-y divide-slate-100">
+          <div *ngFor="let r of items" class="p-6">
+            <div class="flex flex-wrap justify-between gap-3 mb-3">
+              <div>
+                <p class="font-bold text-[#0B1437]">{{ r.serial_number }}</p>
+                <p class="text-sm text-slate-500">{{ r.company_name }} · {{ r.type }} {{ r.capacity }}</p>
+                <p *ngIf="r.client_notes" class="text-sm text-slate-600 mt-1">{{ r.client_notes }}</p>
+              </div>
+              <p class="text-sm text-slate-500">Preferred: {{ r.preferred_date || '—' }}</p>
+            </div>
+            <div class="grid sm:grid-cols-3 gap-3 items-end">
+              <div>
+                <label class="block text-xs text-slate-500 mb-1">Inspector</label>
+                <select [(ngModel)]="assignForm[r.id].inspector_id" class="client-input text-sm w-full">
+                  <option [ngValue]="null">Select inspector…</option>
+                  <option *ngFor="let i of inspectors" [ngValue]="i.id">{{ i.name }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs text-slate-500 mb-1">Confirmed date</label>
+                <input type="date" [(ngModel)]="assignForm[r.id].confirmed_date" class="client-input text-sm w-full" />
+              </div>
+              <button type="button" (click)="assign(r.id)" [disabled]="!assignForm[r.id]?.inspector_id || !assignForm[r.id]?.confirmed_date"
+                class="client-btn-primary text-sm disabled:opacity-40">Assign</button>
+            </div>
+          </div>
+        </div>
+        <div class="px-5 pb-2" *ngIf="total > 0">
+          <app-pagination [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="load($event)" />
+        </div>
+      </section>
+    </div>
+  `
 })
-export class AdminAssignedInspections implements AfterViewInit {
-  searchTerm = '';
-  statusFilter: 'all' | InspectionStatus = 'all';
-  selected: AssignedInspection | null = null;
+export class AdminAssignedInspections implements OnInit, AfterViewInit {
+  private svc = inject(ServiceRequestService);
+  private auth = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
-  inspections: AssignedInspection[] = [
-    { id: 'EXT-2023-89', location: 'Building A, Floor 2', inspector: 'Sarah Jenkins', date: '2024-10-24', status: 'passed', notes: 'All readings within normal range. Seal intact.' },
-    { id: 'EXT-2023-42', location: 'Warehouse Zone B', inspector: 'Mike Ross', date: '2024-10-23', status: 'refill', notes: 'Pressure below green zone. Bracket screws loose — refill recommended.' },
-    { id: 'EXT-2020-11', location: 'Cafeteria Kitchen', inspector: 'Elena Fisher', date: '2024-10-22', status: 'expired', notes: 'Certification period exceeded. Unit flagged for replacement.' },
-    { id: 'EXT-2024-01', location: 'Main Hall Lobby', inspector: 'John Doe', date: '2024-10-21', status: 'pending', notes: 'Awaiting admin review.' },
-  ];
+  loading = true;
+  items: any[] = [];
+  inspectors: any[] = [];
+  assignForm: Record<number, { inspector_id: number | null; confirmed_date: string }> = {};
+  page = 1;
+  lastPage = 1;
+  total = 0;
+  message = '';
+  messageError = false;
 
-  constructor(private router: Router) {}
-
-  get filteredInspections() {
-    let list = this.inspections;
-    if (this.statusFilter !== 'all') {
-      list = list.filter((i) => i.status === this.statusFilter);
-    }
-    const q = this.searchTerm.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter(
-      (i) =>
-        i.id.toLowerCase().includes(q) ||
-        i.location.toLowerCase().includes(q) ||
-        i.inspector.toLowerCase().includes(q)
-    );
+  ngOnInit() {
+    this.auth.getInspectors(1, 'active').subscribe({
+      next: (res) => this.inspectors = res.data ?? []
+    });
+    this.load(1);
   }
 
-  get pendingCount() {
-    return this.inspections.filter((i) => i.status === 'pending').length;
+  load(page: number) {
+    this.loading = true;
+    this.page = page;
+    this.svc.getPendingInspections(page).subscribe({
+      next: (res) => {
+        this.items = res.data ?? [];
+        this.total = res.total ?? 0;
+        this.lastPage = res.last_page ?? 1;
+        for (const r of this.items) {
+          if (!this.assignForm[r.id]) {
+            this.assignForm[r.id] = { inspector_id: null, confirmed_date: r.preferred_date || '' };
+          }
+        }
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => { this.loading = false; this.cdr.detectChanges(); }
+    });
   }
 
-  get passedCount() {
-    return this.inspections.filter((i) => i.status === 'passed').length;
+  assign(id: number) {
+    const f = this.assignForm[id];
+    if (!f?.inspector_id || !f.confirmed_date) return;
+    this.svc.assignInspection(id, f.inspector_id, f.confirmed_date).subscribe({
+      next: (res) => { this.message = res.message; this.messageError = false; this.load(this.page); },
+      error: (err) => { this.message = err.error?.message || 'Failed.'; this.messageError = true; this.cdr.detectChanges(); }
+    });
   }
 
-  get issueCount() {
-    return this.inspections.filter((i) => i.status === 'refill' || i.status === 'expired').length;
-  }
-
-  select(item: AssignedInspection) {
-    this.selected = item;
-    this.refreshIcons();
-  }
-
-  approveInspection() {
-    this.router.navigate(['/admin-inventory']);
-  }
-
-  setFilter(filter: 'all' | InspectionStatus) {
-    this.statusFilter = filter;
-    this.refreshIcons();
-  }
-
-  statusLabel(s: InspectionStatus): string {
-    return { passed: 'Passed', refill: 'Needs refill', expired: 'Expired', pending: 'Pending review' }[s];
-  }
-
-  statusClass(s: InspectionStatus): string {
-    return {
-      passed: 'bg-emerald-50 text-emerald-700 ring-emerald-200/60',
-      refill: 'bg-amber-50 text-amber-700 ring-amber-200/60',
-      expired: 'bg-red-50 text-red-700 ring-red-200/60',
-      pending: 'bg-sky-50 text-sky-700 ring-sky-200/60',
-    }[s];
-  }
-
-  ngAfterViewInit() {
-    this.refreshIcons();
-  }
-
-  private refreshIcons() {
-    setTimeout(() => lucide?.createIcons?.(), 0);
-    setTimeout(() => lucide?.createIcons?.(), 120);
-  }
+  ngAfterViewInit() { setTimeout(() => lucide?.createIcons?.(), 50); }
 }

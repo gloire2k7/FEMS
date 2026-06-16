@@ -12,15 +12,21 @@ class AiController extends Controller
 
         $message     = trim($input['message']);
         $role        = $_SESSION['role_name'] ?? 'Guest';
-        $userName    = $_SESSION['name']     ?? 'there';
+        $userName    = $_SESSION['name']      ?? 'there';
         $permissions = $_SESSION['permissions'] ?? [];
         $companyId   = isset($_SESSION['company_id']) ? (int) $_SESSION['company_id'] : null;
         $db          = Database::getConnection();
+        $lower       = strtolower($message);
 
+        // PDF report requests are handled entirely by PHP (reliable date parsing + generation)
+        if ($this->isReportRequest($lower)) {
+            $this->jsonResponse($this->handleReportRequest($lower, $role, $permissions, $db, $companyId));
+            return;
+        }
+
+        // Everything else goes to GPT with full context
         $context = $this->buildContext($db, $role, $permissions, $companyId);
-        $result  = $this->generateReply($message, $role, $userName, $context, $permissions, $db, $companyId);
-
-        $this->jsonResponse($result);
+        $this->jsonResponse($this->callGPT($message, $role, $userName, $context, $permissions));
     }
 
     // ─────────────────────────────────────────────────────────
@@ -29,7 +35,7 @@ class AiController extends Controller
 
     private function buildContext(PDO $db, string $role, array $permissions, ?int $companyId): array
     {
-        $ctx = ['role' => $role];
+        $ctx = [];
 
         if ($role === 'Super Admin') {
             $ctx['clients'] = (int) $db->query(
@@ -38,8 +44,10 @@ class AiController extends Controller
             $ctx['pending_clients'] = (int) $db->query(
                 "SELECT COUNT(*) FROM users u JOIN roles r ON r.id=u.role_id WHERE r.name='Company User' AND u.status='pending'"
             )->fetchColumn();
-            $ctx['pending_orders'] = (int) $db->query("SELECT COUNT(*) FROM orders WHERE status='pending'")->fetchColumn();
-            $ctx['admins']  = (int) $db->query(
+            $ctx['pending_orders'] = (int) $db->query(
+                "SELECT COUNT(*) FROM orders WHERE status='pending'"
+            )->fetchColumn();
+            $ctx['admins'] = (int) $db->query(
                 "SELECT COUNT(*) FROM users u JOIN roles r ON r.id=u.role_id WHERE r.name='Admin' AND u.status='active'"
             )->fetchColumn();
             $ctx['in_stock'] = (int) $db->query(
@@ -48,7 +56,9 @@ class AiController extends Controller
 
         } elseif ($role === 'Admin') {
             if (in_array('manage_orders', $permissions, true)) {
-                $ctx['pending_orders'] = (int) $db->query("SELECT COUNT(*) FROM orders WHERE status='pending'")->fetchColumn();
+                $ctx['pending_orders'] = (int) $db->query(
+                    "SELECT COUNT(*) FROM orders WHERE status='pending'"
+                )->fetchColumn();
             }
             if (in_array('manage_clients', $permissions, true)) {
                 $ctx['pending_clients'] = (int) $db->query(
@@ -68,7 +78,9 @@ class AiController extends Controller
                 $s->execute([$companyId]);
                 $ctx['my_units'] = (int) $s->fetchColumn();
 
-                $s = $db->prepare("SELECT status, COUNT(*) as count FROM orders WHERE client_id = ? GROUP BY status");
+                $s = $db->prepare(
+                    "SELECT status, COUNT(*) as count FROM orders WHERE client_id = ? GROUP BY status"
+                );
                 $s->execute([$companyId]);
                 $ctx['orders_by_status'] = $s->fetchAll(PDO::FETCH_ASSOC);
             }
@@ -78,239 +90,263 @@ class AiController extends Controller
     }
 
     // ─────────────────────────────────────────────────────────
-    //  Main reply router
+    //  GPT call
     // ─────────────────────────────────────────────────────────
 
-    private function generateReply(
-        string $q, string $role, string $userName,
-        array $ctx, array $permissions, PDO $db, ?int $companyId
+    private function callGPT(
+        string $message, string $role, string $userName,
+        array $ctx, array $permissions
     ): array {
-        $lower = strtolower($q);
-        $first = explode(' ', trim($userName))[0];
-
-        // ── Report / PDF generation request ──────────────────────
-        if ($this->isReportRequest($lower) && !$this->isExplanationQuery($lower)) {
-            return $this->handleReportRequest($lower, $role, $permissions, $db, $companyId);
+        $apiKey = defined('OPENAI_API_KEY') ? OPENAI_API_KEY : '';
+        if (!$apiKey || $apiKey === 'YOUR_OPENAI_API_KEY') {
+            return $this->fallbackReply($role);
         }
 
-        // ── Greetings ────────────────────────────────────────────
-        if (preg_match('/\b(hi|hello|hey|good\s+morning|good\s+afternoon|help)\b/', $lower)) {
-            return $this->reply(
-                "Hi {$first}! I'm your FEMS assistant. I can help you navigate the portal, explain workflows, and generate PDF reports based on your **{$role}** access.",
-                $this->defaultSuggestions($role)
-            );
+        $systemPrompt = $this->buildSystemPrompt($role, $userName, $ctx, $permissions);
+
+        $payload = [
+            'model'           => 'gpt-4o-mini',
+            'messages'        => [
+                ['role' => 'system', 'content' => $systemPrompt],
+                ['role' => 'user',   'content' => $message],
+            ],
+            'response_format' => ['type' => 'json_object'],
+            'temperature'     => 0.7,
+            'max_tokens'      => 600,
+        ];
+
+        $ch = curl_init('https://api.openai.com/v1/chat/completions');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            "Authorization: Bearer {$apiKey}",
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch); // no-op in PHP 8.5+, safe in all versions
+
+        if (!$response || $httpCode !== 200) {
+            return $this->fallbackReply($role);
         }
 
-        // ── Stats / dashboard ─────────────────────────────────────
-        if (preg_match('/\b(stats|summary|overview|dashboard|how many|status)\b/', $lower)) {
-            return $this->statsReply($role, $ctx, $permissions);
+        $data    = json_decode($response, true);
+        $content = $data['choices'][0]['message']['content'] ?? '';
+        $parsed  = json_decode($content, true);
+
+        if (!$parsed || !isset($parsed['reply'])) {
+            return $this->fallbackReply($role);
         }
 
-        // ── Orders ────────────────────────────────────────────────
-        if (preg_match('/\b(order|orders|purchase|buy|shop)\b/', $lower)) {
-            if ($role === 'Company User' && preg_match('/\b(all|everyone|other|global|total)\b/', $lower)) {
-                return $this->reply('You can only view your own orders. Navigate to **My Orders** to track your requests.', ['Track my orders', 'Browse shop'], ['route' => '/my-orders', 'label' => 'My Orders']);
-            }
-            if ($role === 'Company User') {
-                if (preg_match('/\b(approve|grant|review)\b/', $lower)) {
-                    return $this->reply('Your orders are reviewed by an administrator. Check **My Orders** for the current status of each request.', ['Track my orders', 'Browse shop'], ['route' => '/my-orders', 'label' => 'Open My Orders']);
+        $result = [
+            'reply'       => $parsed['reply'],
+            'suggestions' => $parsed['suggestions'] ?? $this->defaultSuggestions($role),
+        ];
+
+        // Validate that any route GPT suggests actually exists for this role
+        if (!empty($parsed['action']['route'])) {
+            $validRoutes = array_keys($this->getAvailableRoutes($role, $permissions));
+            if (in_array($parsed['action']['route'], $validRoutes, true)) {
+                $result['action'] = [
+                    'route' => $parsed['action']['route'],
+                    'label' => $parsed['action']['label'] ?? 'Open',
+                ];
+                if (!empty($parsed['action']['query']) && is_array($parsed['action']['query'])) {
+                    $result['action']['query'] = $parsed['action']['query'];
                 }
-                return $this->reply(
-                    'Browse the **Shop** to order extinguishers from available stock. After checkout, track progress under **My Orders**.',
-                    ['Track my orders', 'What is in stock?'],
-                    ['route' => '/shop', 'label' => 'Open Shop']
-                );
             }
-            if ($role === 'Admin' && !in_array('manage_orders', $permissions, true)) {
-                if ($this->isExplanationQuery($lower)) {
-                    return $this->reply(
-                        'The **Orders** module lets admins review client purchase requests, grant or deny them, and mark them delivered once fulfilled. Clients place orders via the Shop.',
-                        ['How does inventory work?', 'What is compliance?']
-                    );
-                }
-                return $this->reply("You don't have permission to access order data. Contact your Super Admin to request **Orders Management** access.");
-            }
-            if (preg_match('/\b(approve|grant|review|pending)\b/', $lower)) {
-                $n = $ctx['pending_orders'] ?? 0;
-                return $this->reply(
-                    "There are **{$n} pending order(s)** awaiting review. Open Orders to approve or deny each request.",
-                    ['How do I approve an order?', 'Show stats'],
-                    ['route' => '/admin-orders', 'label' => 'Go to Orders', 'query' => ['status' => 'pending']]
-                );
-            }
-            return $this->reply(
-                'Client orders appear in **Admin Orders**. Approve or deny each request, then mark approved orders as delivered once fulfilled.',
-                ['Approve orders', 'Check inventory'],
-                ['route' => '/admin-orders', 'label' => 'View Orders']
-            );
         }
 
-        // ── Stock / inventory ─────────────────────────────────────
-        if (preg_match('/\b(stock|inventory|warehouse|extinguisher|units)\b/', $lower)) {
-            if ($role === 'Company User') {
-                if (preg_match('/\b(all|everyone|other|global|total\s+stock|warehouse|admin)\b/', $lower)) {
-                    return $this->reply("You don't have access to the warehouse inventory. You can only view your own assigned extinguisher units.");
-                }
-                $units = $ctx['my_units'] ?? 0;
-                return $this->reply(
-                    "Your company has **{$units} extinguisher unit(s)** registered. View details, locations, and service status under **My Extinguishers**.",
-                    ['Order more units', 'Track orders'],
-                    ['route' => '/extinguishers', 'label' => 'My Extinguishers']
-                );
-            }
-            if ($role === 'Admin' && !in_array('manage_inventory', $permissions, true)) {
-                if ($this->isExplanationQuery($lower)) {
-                    return $this->reply(
-                        'The **Inventory** module tracks all fire extinguisher units in the FEMS warehouse. Admins with inventory permission can register new units (with auto-generated QR codes), filter by status — In Stock or Allocated to a client — sort by date, and view detailed unit information.',
-                        ['How do orders work?', 'What is compliance?']
-                    );
-                }
-                return $this->reply("You don't have permission to access inventory data. Contact your Super Admin to request **Inventory Management** access.");
-            }
-            $stock = $ctx['in_stock'] ?? 0;
-            return $this->reply(
-                "The warehouse currently has **{$stock} unit(s)** in stock. Register new units or review levels from **Inventory**.",
-                ['Register new units', 'Pending orders'],
-                ['route' => '/admin-inventory', 'label' => 'Open Inventory']
-            );
-        }
-
-        // ── Clients ───────────────────────────────────────────────
-        if (preg_match('/\b(client|company|companies|registration|approve\s+client)\b/', $lower)) {
-            if ($role === 'Company User') {
-                return $this->reply("You can't access other clients' data. Client account management is handled by FEMS administrators only.");
-            }
-            if ($role === 'Admin' && !in_array('manage_clients', $permissions, true)) {
-                if ($this->isExplanationQuery($lower)) {
-                    return $this->reply(
-                        'Companies register through the FEMS portal and wait for an admin with client management permission to approve their account. Once approved, they can browse the shop and place orders.',
-                        ['How do orders work?', 'Show stats']
-                    );
-                }
-                return $this->reply("You don't have permission to manage clients. Contact your Super Admin to request **Clients Management** access.");
-            }
-            $n = $ctx['pending_clients'] ?? 0;
-            $route = $role === 'Super Admin' ? '/super-admin-clients' : '/clients';
-            return $this->reply(
-                "**{$n} client registration(s)** are pending approval. Review their company details, then approve or reject.",
-                ['How do I add an admin?', 'Show stats'],
-                ['route' => $route, 'label' => 'Review Clients', 'query' => ['tab' => 'pending']]
-            );
-        }
-
-        // ── Admins (super admin only) ──────────────────────────────
-        if (preg_match('/\b(admin|administrator|permission|role)\b/', $lower)) {
-            if ($role !== 'Super Admin') {
-                return $this->reply('Only Super Admins can create and manage administrator accounts. If you need a permission added to your account, contact your Super Admin.');
-            }
-            $n = $ctx['admins'] ?? 0;
-            return $this->reply(
-                "There are **{$n} active admin(s)** on the platform. Create new admins and assign granular permissions from **Add Admin**.",
-                ['Approve clients', 'Inventory report'],
-                ['route' => '/super-admin-add-admin', 'label' => 'Add Admin']
-            );
-        }
-
-        // ── Password / settings ───────────────────────────────────
-        if (preg_match('/\b(password|settings|account|profile)\b/', $lower)) {
-            $route = $role === 'Super Admin' ? '/super-admin-dashboard'
-                   : ($role === 'Admin' ? '/admin-settings' : '/settings');
-            return $this->reply(
-                'Update your password and account details from **Settings**. Use a strong password that you don\'t reuse elsewhere.',
-                ['Show stats', 'Help with orders'],
-                ['route' => $route, 'label' => 'Open Settings']
-            );
-        }
-
-        // ── Reports (nav / explanation) ───────────────────────────
-        if (preg_match('/\b(report|export|pdf|csv)\b/', $lower)) {
-            if ($role === 'Company User') {
-                return $this->reply(
-                    "I can generate a PDF of your own orders or your assigned extinguishers.\nTry:\n• \"Generate my orders report\"\n• \"Make a PDF of my extinguishers\"",
-                    ['Generate my orders report', 'My extinguishers PDF']
-                );
-            }
-            return $this->reply(
-                "I can generate PDF reports for you! Try:\n• \"Make an inventory report since June 2026\"\n• \"Generate an orders report for last month\"\n• \"Create a compliance report for last year\"\n• \"Expired units report\"",
-                ['Inventory report last month', 'Orders report', 'Compliance report', 'Expired units report'],
-                ['route' => '/super-admin-reports', 'label' => 'View all reports']
-            );
-        }
-
-        // ── Notifications ─────────────────────────────────────────
-        if (preg_match('/\b(notification|alert|bell)\b/', $lower)) {
-            $route = $role === 'Admin' ? '/admin-notifications' : '/notifications';
-            return $this->reply(
-                'Check your notifications inbox for order updates, client approvals, and stock alerts.',
-                ['Show stats', 'Help with orders'],
-                ['route' => $route, 'label' => 'View Notifications']
-            );
-        }
-
-        // ── Inspections / compliance ──────────────────────────────
-        if (preg_match('/\b(inspection|compliance|refill|maintenance)\b/', $lower)) {
-            if ($role === 'Company User') {
-                return $this->reply(
-                    'Request refills or maintenance from your extinguisher list. Inspection records can be downloaded from the extinguisher detail page.',
-                    ['My extinguishers', 'Service requests'],
-                    ['route' => '/service-requests', 'label' => 'Service Requests']
-                );
-            }
-            if ($role === 'Admin' && !in_array('manage_inspections', $permissions, true) && !$this->isExplanationQuery($lower)) {
-                return $this->reply("You don't have permission to manage inspections. Contact your Super Admin to request **Inspections Management** access.");
-            }
-            return $this->reply(
-                'Manage inspections, compliance alerts, and refill requests from the **Compliance** and **Refills** sections in the admin sidebar.',
-                ['Check inventory', 'Pending orders'],
-                ['route' => '/admin-compliance', 'label' => 'Compliance']
-            );
-        }
-
-        // ── Locations ─────────────────────────────────────────────
-        if (preg_match('/\b(location|site|map)\b/', $lower)) {
-            if ($role === 'Admin' && !in_array('manage_locations', $permissions, true) && !$this->isExplanationQuery($lower)) {
-                return $this->reply("You don't have permission to manage locations. Contact your Super Admin to request **Location Management** access.");
-            }
-            if ($role === 'Company User') {
-                return $this->reply('View your company sites and extinguisher placement under **Locations**.', [], ['route' => '/locations', 'label' => 'Locations']);
-            }
-            return $this->reply('Manage client locations and site-level units from **Admin Locations**.', [], ['route' => '/admin-locations', 'label' => 'Locations']);
-        }
-
-        // ── Fallback ──────────────────────────────────────────────
-        return $this->reply(
-            "I can help with orders, inventory, clients, navigation, and generating PDF reports. Try asking something like \"What's pending?\" or tap a suggestion below.",
-            $this->defaultSuggestions($role)
-        );
+        return $result;
     }
 
     // ─────────────────────────────────────────────────────────
-    //  Report generation
+    //  System prompt
+    // ─────────────────────────────────────────────────────────
+
+    private function buildSystemPrompt(
+        string $role, string $userName, array $ctx, array $permissions
+    ): string {
+        $first = explode(' ', trim($userName))[0];
+        $today = date('Y-m-d');
+
+        // Live data readable by this user
+        $dataLines = [];
+        if ($role === 'Super Admin') {
+            $dataLines[] = "Active clients: " . ($ctx['clients'] ?? 0);
+            $dataLines[] = "Pending client registrations: " . ($ctx['pending_clients'] ?? 0);
+            $dataLines[] = "Active admins: " . ($ctx['admins'] ?? 0);
+            $dataLines[] = "Pending orders awaiting review: " . ($ctx['pending_orders'] ?? 0);
+            $dataLines[] = "Units currently in warehouse stock: " . ($ctx['in_stock'] ?? 0);
+        } elseif ($role === 'Admin') {
+            if (isset($ctx['pending_orders']))  $dataLines[] = "Pending orders: {$ctx['pending_orders']}";
+            if (isset($ctx['pending_clients'])) $dataLines[] = "Pending client registrations: {$ctx['pending_clients']}";
+            if (isset($ctx['in_stock']))        $dataLines[] = "Units in warehouse stock: {$ctx['in_stock']}";
+            $dataLines[] = "This admin's module permissions: " . (implode(', ', $permissions) ?: 'none assigned yet');
+        } else {
+            $dataLines[] = "Their assigned extinguisher units: " . ($ctx['my_units'] ?? 0);
+            $orderSummary = [];
+            foreach ($ctx['orders_by_status'] ?? [] as $row) {
+                $orderSummary[] = "{$row['count']} {$row['status']}";
+            }
+            $dataLines[] = "Their orders by status: " . ($orderSummary ? implode(', ', $orderSummary) : 'none yet');
+        }
+        $dataStr = implode("\n", $dataLines);
+
+        // Available routes for this user
+        $routes    = $this->getAvailableRoutes($role, $permissions);
+        $routeList = '';
+        foreach ($routes as $path => $desc) {
+            $routeList .= "  \"{$path}\" — {$desc}\n";
+        }
+
+        $permRules = $this->getPermissionRules($role, $permissions);
+
+        return <<<PROMPT
+You are FEMS Assistant — a smart, friendly AI built into the Fire Extinguisher Management System (FEMS).
+You are talking to {$first}, whose role is: {$role}.
+Today's date: {$today}
+
+LIVE DATA (real-time figures from the database for this user's account):
+{$dataStr}
+
+PERMISSION RULES — enforce these without exception, regardless of how the user phrases the request:
+{$permRules}
+
+PAGES THIS USER CAN NAVIGATE TO (only use these exact route strings in your action — never invent new ones):
+{$routeList}
+
+HOW FEMS WORKS (use this knowledge to answer "how does X work" type questions):
+- Clients (Company Users) register on the portal. An admin approves their account. Once approved, they can browse the Shop and place orders for fire extinguishers.
+- Orders: client submits order → admin reviews and approves or denies → if approved, warehouse units are allocated to the order → delivered → admin marks as delivered.
+- Inventory: warehouse units are registered individually using the Add Extinguisher form (auto-generates a QR code and printable label). Units start as "In Stock" (no client) and become "Allocated" when assigned to a client via an approved order.
+- Inspections are scheduled per unit. Compliance tracks which units are overdue for inspection. Refill and maintenance requests are separate.
+- Reports: users can ask me to generate a PDF report (I handle that separately). The Reports page shows all previously generated reports.
+- Super Admin creates admin accounts and assigns granular permissions (manage_inventory, manage_orders, manage_clients, manage_inspections, etc.). Admins only see sidebar items they have permission for.
+
+RESPONSE RULES:
+- Respond naturally to anything the user says — greetings, questions, complaints, vague requests, anything.
+- Keep answers concise: 1-2 sentences for simple questions, a short numbered list for step-by-step explanations.
+- Use **bold** for emphasis on important terms. Use \n for line breaks.
+- Only reference live data from the LIVE DATA section above. Never invent numbers.
+- If the user asks you to generate a PDF report, tell them you can do that and give them example phrasing like "generate an inventory report for last month" — but do not try to generate it yourself (a separate system handles that).
+- Be warm and helpful, but stay focused on FEMS topics.
+
+RESPONSE FORMAT — always return valid JSON only, no extra text outside the JSON:
+{
+  "reply": "Your response here. Use **bold** and \\n as needed.",
+  "suggestions": ["short follow-up phrase 1", "short follow-up phrase 2", "short follow-up phrase 3"],
+  "action": {
+    "route": "/exact-route-from-the-list-above",
+    "label": "Short button label",
+    "query": { "optional": "query params" }
+  }
+}
+
+Notes on the JSON:
+- "action" is optional — only include it when there is a clearly relevant page to link to. Omit the field entirely if unsure.
+- "query" inside action is optional — only include when needed (e.g. filtering by status).
+- "suggestions" should be 3 short phrases the user might naturally want to ask next.
+- Only use route strings from the list above. If no route fits, omit "action" entirely.
+PROMPT;
+    }
+
+    private function getAvailableRoutes(string $role, array $permissions): array
+    {
+        if ($role === 'Super Admin') {
+            return [
+                '/super-admin-dashboard' => 'Main dashboard with platform stats',
+                '/super-admin-clients'   => 'All clients and pending registrations',
+                '/super-admin-admins'    => 'All admins',
+                '/super-admin-add-admin' => 'Create a new admin account',
+                '/super-admin-reports'   => 'All generated reports',
+                '/super-admin-logs'      => 'System activity logs',
+                '/super-admin-inventory' => 'Warehouse inventory management',
+            ];
+        }
+        if ($role === 'Admin') {
+            $routes = ['/admin-dashboard' => 'Admin dashboard'];
+            if (in_array('manage_orders', $permissions, true))      $routes['/admin-orders']    = 'Client orders (review, approve, deny)';
+            if (in_array('manage_inventory', $permissions, true))   $routes['/admin-inventory'] = 'Warehouse inventory';
+            if (in_array('manage_clients', $permissions, true))     $routes['/clients']          = 'Client accounts';
+            if (in_array('manage_inspections', $permissions, true)) {
+                $routes['/admin-compliance'] = 'Compliance and inspection tracking';
+                $routes['/admin-refills']    = 'Refill and maintenance requests';
+            }
+            $routes['/admin-notifications'] = 'Notifications';
+            $routes['/admin-settings']      = 'Account settings';
+            return $routes;
+        }
+        // Company User
+        return [
+            '/dashboard'        => 'Client dashboard',
+            '/extinguishers'    => 'My registered extinguisher units',
+            '/place-order'      => 'Shop — browse and order extinguishers',
+            '/my-orders'        => 'My orders and their current status',
+            '/locations'        => 'My company site locations',
+            '/service-requests' => 'Request service, refill, or maintenance',
+            '/notifications'    => 'Notifications',
+            '/settings'         => 'Account settings',
+        ];
+    }
+
+    private function getPermissionRules(string $role, array $permissions): string
+    {
+        if ($role === 'Super Admin') {
+            return 'Super Admin has full unrestricted access. Answer all data questions freely using the live data provided.';
+        }
+        if ($role === 'Admin') {
+            $lines = [];
+            $map = [
+                'manage_inventory'   => 'warehouse inventory data',
+                'manage_orders'      => 'order data',
+                'manage_clients'     => 'client account data',
+                'manage_inspections' => 'inspection and compliance data',
+                'manage_locations'   => 'location data',
+            ];
+            foreach ($map as $perm => $label) {
+                if (in_array($perm, $permissions, true)) {
+                    $lines[] = "ALLOWED: access and discuss {$label}";
+                } else {
+                    $lines[] = "DENIED: {$label} — you may explain how the module works conceptually, but refuse to show actual data and tell them to ask their Super Admin for access";
+                }
+            }
+            return implode("\n", $lines);
+        }
+        // Company User
+        return implode("\n", [
+            'This user is a Company User (client). Rules:',
+            '- ONLY discuss their own orders, their own extinguisher units, and their own locations.',
+            '- NEVER reveal other clients data, global warehouse stock levels, admin operations, or platform-wide stats.',
+            '- They can ask how ordering works, check their own order status, browse the shop, or request service.',
+            '- If they ask about anything outside their own account, politely explain you cannot share that information.',
+        ]);
+    }
+
+    // ─────────────────────────────────────────────────────────
+    //  Report generation (PHP-handled — not sent to GPT)
     // ─────────────────────────────────────────────────────────
 
     private function isReportRequest(string $lower): bool
     {
-        $hasGenerate = (bool) preg_match('/\b(generate|make|create|produce|export|build|give\s+me|can\s+you)\b.{0,40}\b(report|pdf)\b/i', $lower);
+        $hasGenerate   = (bool) preg_match('/\b(generate|make|create|produce|export|build|give\s+me|can\s+you)\b.{0,40}\b(report|pdf)\b/i', $lower);
         $hasTypeReport = (bool) preg_match('/\b(inventory|orders?|compliance|inspection|expired|expiry)\s+report\b/i', $lower);
         return $hasGenerate || $hasTypeReport;
     }
 
-    private function isExplanationQuery(string $lower): bool
-    {
-        return (bool) preg_match('/\b(how\s+does|what\s+is|explain|how\s+to|guide|tell\s+me\s+about|what\s+should|walkthrough|describe)\b/', $lower);
-    }
-
-    private function handleReportRequest(string $lower, string $role, array $permissions, PDO $db, ?int $companyId): array
-    {
-        // Detect report type from the message
+    private function handleReportRequest(
+        string $lower, string $role, array $permissions, PDO $db, ?int $companyId
+    ): array {
         $type = 'inventory';
-        if (preg_match('/\b(order|orders|purchases?)\b/', $lower)) $type = 'orders';
+        if (preg_match('/\b(order|orders|purchases?)\b/', $lower))         $type = 'orders';
         if (preg_match('/\b(compliance|inspection|inspections)\b/', $lower)) $type = 'compliance';
-        if (preg_match('/\b(expired|expiry|expiring)\b/', $lower)) $type = 'expired';
+        if (preg_match('/\b(expired|expiry|expiring)\b/', $lower))          $type = 'expired';
 
-        // Permission gate
         if ($role === 'Company User') {
-            if (!in_array($type, ['orders', 'inventory'])) {
+            if (!in_array($type, ['orders', 'inventory'], true)) {
                 return $this->reply(
                     "You can only generate reports for your own orders or your assigned extinguishers.\nTry:\n• \"Generate my orders report\"\n• \"My extinguishers PDF\"",
                     ['Generate my orders report', 'My extinguishers PDF']
@@ -330,15 +366,12 @@ class AiController extends Controller
             }
         }
 
-        // Parse date range from message
-        $dates = $this->parseDateRange($lower);
-
-        // Generate PDF
+        $dates  = $this->parseDateRange($lower);
         $result = $this->generateReportPdf($type, $dates['start'], $dates['end'], $db, $role, $companyId);
 
         if (!$result) {
             return $this->reply(
-                'Sorry, I encountered an error generating the report. Please try using the **Reports** page directly.',
+                'Sorry, something went wrong generating the report. Please try using the **Reports** page directly.',
                 [],
                 ['route' => '/super-admin-reports', 'label' => 'Reports page']
             );
@@ -350,7 +383,7 @@ class AiController extends Controller
             : '';
 
         return $this->reply(
-            "Your **{$result['title']}{$dateLabel}** PDF is ready. Download it below — you'll also find it in the **Reports** page for future reference.",
+            "Your **{$result['title']}{$dateLabel}** PDF is ready. Download it below — you'll also find it saved in the **Reports** page for future reference.",
             [],
             ['route' => '__download__', 'label' => 'Download PDF', 'query' => ['url' => $fileUrl]]
         );
@@ -367,7 +400,6 @@ class AiController extends Controller
         $title   = '';
 
         switch ($type) {
-
             case 'inventory':
                 $title   = 'Inventory Report';
                 $headers = ['ID', 'Serial', 'Type', 'Capacity', 'Status', 'Client'];
@@ -462,7 +494,6 @@ class AiController extends Controller
         $filePath = ReportPDFHelper::generate($title, $headers, $data);
         if (!$filePath) return null;
 
-        // Save to the reports log so it appears in the Reports page
         $reportName = $title . ($start && $end ? " ({$start} to {$end})" : ' - ' . date('Y-m-d'));
         $stmt = $db->prepare(
             "INSERT INTO generated_reports (name, type, file_path, format, start_date, end_date)
@@ -477,90 +508,39 @@ class AiController extends Controller
     {
         $today = new DateTime();
 
-        // "last year" / "last year's"
         if (preg_match("/last\s+year'?s?/", $text)) {
             $y = (int) $today->format('Y') - 1;
             return ['start' => "{$y}-01-01", 'end' => "{$y}-12-31"];
         }
-        // "this year"
         if (preg_match('/this\s+year/', $text)) {
             return ['start' => $today->format('Y') . '-01-01', 'end' => $today->format('Y-m-d')];
         }
-        // "last month"
         if (preg_match('/last\s+month/', $text)) {
             return [
                 'start' => (new DateTime('first day of last month'))->format('Y-m-d'),
                 'end'   => (new DateTime('last day of last month'))->format('Y-m-d'),
             ];
         }
-        // "this month"
         if (preg_match('/this\s+month/', $text)) {
             return ['start' => $today->format('Y-m') . '-01', 'end' => $today->format('Y-m-d')];
         }
-        // "last N days / weeks / months"
         if (preg_match('/last\s+(\d+)\s+(day|week|month)s?/', $text, $m)) {
-            $days  = $m[2] === 'week'  ? (int)$m[1] * 7
-                   : ($m[2] === 'month' ? (int)$m[1] * 30 : (int)$m[1]);
+            $days  = $m[2] === 'week'  ? (int) $m[1] * 7
+                   : ($m[2] === 'month' ? (int) $m[1] * 30 : (int) $m[1]);
             $start = (clone $today)->modify("-{$days} days");
             return ['start' => $start->format('Y-m-d'), 'end' => $today->format('Y-m-d')];
         }
-        // "since DATE" (e.g. "since 11 June 2026", "since June 2026", "since 2025-01-01")
         if (preg_match('/since\s+(.+?)(?:\s*$)/i', $text, $m)) {
             $ts = strtotime(trim($m[1]));
-            if ($ts) {
-                return ['start' => date('Y-m-d', $ts), 'end' => $today->format('Y-m-d')];
-            }
+            if ($ts) return ['start' => date('Y-m-d', $ts), 'end' => $today->format('Y-m-d')];
         }
-        // "from DATE to DATE"
         if (preg_match('/from\s+(.+?)\s+(?:to|until)\s+(.+?)(?:\s*$)/i', $text, $m)) {
             $s = strtotime(trim($m[1]));
             $e = strtotime(trim($m[2]));
-            if ($s && $e) {
-                return ['start' => date('Y-m-d', $s), 'end' => date('Y-m-d', $e)];
-            }
+            if ($s && $e) return ['start' => date('Y-m-d', $s), 'end' => date('Y-m-d', $e)];
         }
 
         return ['start' => null, 'end' => null];
-    }
-
-    // ─────────────────────────────────────────────────────────
-    //  Stats reply
-    // ─────────────────────────────────────────────────────────
-
-    private function statsReply(string $role, array $ctx, array $permissions): array
-    {
-        if ($role === 'Super Admin') {
-            $text = sprintf(
-                "Platform snapshot:\n• **%d** active clients (%d pending approval)\n• **%d** administrators\n• **%d** pending orders\n• **%d** units in warehouse stock",
-                $ctx['clients'] ?? 0, $ctx['pending_clients'] ?? 0,
-                $ctx['admins'] ?? 0, $ctx['pending_orders'] ?? 0, $ctx['in_stock'] ?? 0
-            );
-            return $this->reply($text, ['Approve clients', 'Add admin', 'Inventory report'], ['route' => '/super-admin-dashboard', 'label' => 'Dashboard']);
-        }
-
-        if ($role === 'Admin') {
-            $lines = [];
-            if (isset($ctx['pending_orders']))  $lines[] = "**{$ctx['pending_orders']}** pending orders";
-            if (isset($ctx['pending_clients'])) $lines[] = "**{$ctx['pending_clients']}** clients awaiting approval";
-            if (isset($ctx['in_stock']))        $lines[] = "**{$ctx['in_stock']}** units in stock";
-            if (!$lines) {
-                return $this->reply(
-                    "Your account doesn't have module permissions assigned yet. The stats you can access depend on what your Super Admin has granted you.",
-                    ['How does inventory work?', 'How do orders work?']
-                );
-            }
-            $text = "Operations snapshot:\n• " . implode("\n• ", $lines);
-            return $this->reply($text, ['Approve orders', 'Review clients', 'Check inventory'], ['route' => '/admin-dashboard', 'label' => 'Dashboard']);
-        }
-
-        // Company User
-        $units   = $ctx['my_units'] ?? 0;
-        $pending = 0;
-        foreach ($ctx['orders_by_status'] ?? [] as $row) {
-            if (($row['status'] ?? '') === 'pending') $pending = (int) $row['count'];
-        }
-        $text = sprintf("Your account:\n• **%d** extinguisher unit(s) assigned\n• **%d** pending order(s)", $units, $pending);
-        return $this->reply($text, ['Browse shop', 'Track orders', 'My extinguishers'], ['route' => '/dashboard', 'label' => 'Dashboard']);
     }
 
     // ─────────────────────────────────────────────────────────
@@ -574,6 +554,14 @@ class AiController extends Controller
             'Admin'       => ['Show stats', 'Approve orders', 'Check inventory', 'Pending clients'],
             default       => ['Show stats', 'How do I order?', 'Track my orders', 'My extinguishers'],
         };
+    }
+
+    private function fallbackReply(string $role): array
+    {
+        return [
+            'reply'       => "I'm having trouble connecting right now. Please try again in a moment, or use the navigation menu to find what you need.",
+            'suggestions' => $this->defaultSuggestions($role),
+        ];
     }
 
     private function reply(string $text, array $suggestions = [], ?array $action = null): array

@@ -4,6 +4,38 @@ class ReportController extends Controller
 {
     public function index()
     {
+        AuthMiddleware::check();
+        $role = $_SESSION['role_name'] ?? '';
+
+        if ($role === 'Inspector') {
+            $userId = (int) $_SESSION['user_id'];
+            $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+            $limit = 10;
+            $offset = ($page - 1) * $limit;
+
+            $db = Database::getConnection();
+            $stmt = $db->prepare("SELECT COUNT(*) FROM generated_reports WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            $totalReports = $stmt->fetchColumn();
+
+            $stmt = $db->prepare(
+                "SELECT * FROM generated_reports WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?"
+            );
+            $stmt->bindValue(1, $userId, PDO::PARAM_INT);
+            $stmt->bindValue(2, $limit, PDO::PARAM_INT);
+            $stmt->bindValue(3, $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $this->jsonResponse([
+                "reports" => $reports,
+                "total" => $totalReports,
+                "page" => $page,
+                "last_page" => ceil($totalReports / $limit)
+            ]);
+            return;
+        }
+
         AuthMiddleware::hasRole(['Super Admin', 'Admin']);
 
         $db = Database::getConnection();
@@ -31,12 +63,23 @@ class ReportController extends Controller
 
     public function generate()
     {
-        AuthMiddleware::hasRole(['Super Admin', 'Admin']);
+        AuthMiddleware::check();
+        $role = $_SESSION['role_name'] ?? '';
 
         $type = isset($_POST['type']) ? $_POST['type'] : 'inventory';
         $format = isset($_POST['format']) ? $_POST['format'] : 'pdf';
         $startDate = isset($_POST['start_date']) ? $_POST['start_date'] : null;
         $endDate = isset($_POST['end_date']) ? $_POST['end_date'] : null;
+        $userId = null;
+
+        if ($role === 'Inspector') {
+            if ($type !== 'my_inspections') {
+                $this->jsonResponse(["message" => "Inspectors can only generate my_inspections reports"], 403);
+            }
+            $userId = (int) $_SESSION['user_id'];
+        } else {
+            AuthMiddleware::hasRole(['Super Admin', 'Admin']);
+        }
 
         require_once __DIR__ . '/../helpers/report_pdf_helper.php';
         require_once __DIR__ . '/../helpers/excel_helper.php';
@@ -47,6 +90,24 @@ class ReportController extends Controller
         $title = "";
 
         switch ($type) {
+            case 'my_inspections':
+                $title = "My Inspections Report";
+                $headers = ['ID', 'Serial', 'Location', 'Client', 'Result', 'Inspection Date', 'Notes'];
+                $assignmentModel = new InspectionAssignment();
+                $rows = $assignmentModel->getCompletedForInspector($userId);
+                foreach ($rows as $row) {
+                    $data[] = [
+                        'ID' => $row['id'],
+                        'Serial' => $row['serial_number'],
+                        'Location' => $row['location_name'] ?? '—',
+                        'Client' => $row['company_name'] ?? '—',
+                        'Result' => $row['result_status'],
+                        'Inspection Date' => $row['inspection_date'],
+                        'Notes' => $row['notes'] ?? '',
+                    ];
+                }
+                break;
+
             case 'inventory':
                 $title = "Inventory Report";
                 $headers = ['ID', 'Serial', 'Type', 'Capacity', 'Status', 'Client'];
@@ -154,8 +215,8 @@ class ReportController extends Controller
         }
 
         // Save to DB
-        $stmt = $db->prepare("INSERT INTO generated_reports (name, type, file_path, format, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$reportName, $title, $filePath, $format, $startDate, $endDate]);
+        $stmt = $db->prepare("INSERT INTO generated_reports (user_id, name, type, file_path, format, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$userId, $reportName, $title, $filePath, $format, $startDate, $endDate]);
 
         $this->jsonResponse([
             "message" => "Report generated successfully",

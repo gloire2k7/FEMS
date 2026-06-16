@@ -39,6 +39,18 @@ class UserController extends Controller
         $this->jsonResponse($result);
     }
 
+    public function inspectors()
+    {
+        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspectors');
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = min(50, max(5, (int) ($_GET['limit'] ?? 10)));
+        $status = $_GET['status'] ?? null;
+        if ($status && !in_array($status, ['active', 'inactive'], true)) {
+            $status = null;
+        }
+        $this->jsonResponse($this->userModel->findInspectorsPaginated($page, $limit, $status));
+    }
+
     public function pendingClients()
     {
         AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_clients');
@@ -59,6 +71,14 @@ class UserController extends Controller
         AuthMiddleware::hasRole(['Super Admin']);
         $permModel = new Permission();
         $this->jsonResponse($permModel->findAllKeys());
+    }
+
+    public function roles()
+    {
+        AuthMiddleware::check();
+        $db = Database::getConnection();
+        $roles = $db->query("SELECT id, name FROM roles ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
+        $this->jsonResponse($roles);
     }
 
     public function store()
@@ -112,6 +132,12 @@ class UserController extends Controller
             $data['password'] = $plainPassword;
             $data['status'] = 'active';
             $data['must_change_password'] = 1;
+        } elseif ($role['name'] === 'Inspector') {
+            AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspectors');
+            $plainPassword = bin2hex(random_bytes(6));
+            $data['password'] = $plainPassword;
+            $data['status'] = 'active';
+            $data['must_change_password'] = 1;
         } elseif ($role['name'] === 'Super Admin') {
             $this->jsonResponse(["message" => "Cannot create Super Admin via this endpoint."], 403);
         }
@@ -127,6 +153,15 @@ class UserController extends Controller
             MailHelper::sendAdminCredentials($data['email'], $data['name'], $plainPassword, $permKeys);
             $this->jsonResponse([
                 'message' => 'Admin created. Credentials sent by email.',
+                'id' => $id,
+                'generated_password' => $plainPassword,
+            ], 201);
+        }
+
+        if ($role['name'] === 'Inspector') {
+            MailHelper::sendInspectorCredentials($data['email'], $data['name'], $plainPassword);
+            $this->jsonResponse([
+                'message' => 'Inspector created. Credentials sent by email.',
                 'id' => $id,
                 'generated_password' => $plainPassword,
             ], 201);
@@ -212,18 +247,24 @@ class UserController extends Controller
 
     public function setStatus($id)
     {
-        AuthMiddleware::hasRole(['Super Admin']);
         $data = $this->getJsonInput();
         $status = $data['status'] ?? '';
         if (!in_array($status, ['active', 'inactive'], true)) {
             $this->jsonResponse(["message" => "Invalid status"], 400);
         }
         $user = $this->userModel->findById($id);
-        if (!$user || $user['role_name'] !== 'Admin') {
-            $this->jsonResponse(["message" => "Admin not found"], 404);
+        if (!$user) {
+            $this->jsonResponse(["message" => "User not found"], 404);
+        }
+        if ($user['role_name'] === 'Admin') {
+            AuthMiddleware::hasRole(['Super Admin']);
+        } elseif ($user['role_name'] === 'Inspector') {
+            AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspectors');
+        } else {
+            $this->jsonResponse(["message" => "Forbidden"], 403);
         }
         $this->userModel->setStatus($id, $status);
-        $this->jsonResponse(['message' => "Admin {$status}"]);
+        $this->jsonResponse(['message' => ucfirst($user['role_name']) . " {$status}"]);
     }
 
     public function approveClient($id)

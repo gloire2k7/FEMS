@@ -16,6 +16,7 @@ seed_test.php
 .env
 .env.*
 config/database.php
+config/app.php
 config/*.local.php
 
 ############################
