@@ -4,6 +4,12 @@
     height: 100vh;
 }
 
+input.auth-input::placeholder,
+:host input::placeholder {
+  color: #A3AED0 !important;
+  opacity: 1;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

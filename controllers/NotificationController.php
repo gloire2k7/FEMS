@@ -16,7 +16,7 @@ class NotificationController extends Controller
         AuthMiddleware::check();
         NotificationHelper::syncScheduledAlerts();
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(1, (int) ($_GET['limit'] ?? 20)));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $this->jsonResponse($this->model->findByUserPaginated($_SESSION['user_id'], $page, $limit));
     }
 

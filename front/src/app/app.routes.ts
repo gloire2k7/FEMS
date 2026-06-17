@@ -53,6 +53,7 @@ import { AiAssistantPageComponent } from './pages/ai-assistant-page/ai-assistant
 
 export const routes: Routes = [
   { path: '', component: SignupComponent },
+  { path: 'signup', component: SignupComponent },
   { path: 'signin', component: SigninComponent },
   { path: 'assistant', component: AiAssistantPageComponent },
   { path: 'dashboard', component: DashboardComponent },

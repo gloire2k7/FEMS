@@ -1,18 +1,21 @@
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, OnDestroy, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../app/auth.service';
+import { SidebarStateService } from '../../app/services/sidebar-state.service';
 
 declare const lucide: { createIcons(): void };
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })
 export class SidebarComponent implements AfterViewInit, OnDestroy {
+  protected sidebar = inject(SidebarStateService);
   /** Role-scoped destinations for shared (client layout) sidebar. */
   clientsLink: string = '/client-clients';
   settingsLink: string = '/settings';

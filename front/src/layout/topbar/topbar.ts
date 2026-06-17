@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NotificationService } from '../../app/services/notification.service';
+import { SidebarStateService } from '../../app/services/sidebar-state.service';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
@@ -14,6 +15,7 @@ declare const lucide: { createIcons: () => void } | undefined;
 })
 export class Topbar implements OnInit, AfterViewInit {
   protected notifications = inject(NotificationService);
+  protected sidebar = inject(SidebarStateService);
 
   get unreadCount() {
     return this.notifications.unreadCount();

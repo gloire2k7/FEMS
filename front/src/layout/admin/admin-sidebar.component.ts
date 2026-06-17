@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../app/auth.service';
 import { DashboardService } from '../../app/services/dashboard.service';
 import { NotificationService } from '../../app/services/notification.service';
+import { SidebarStateService } from '../../app/services/sidebar-state.service';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
@@ -18,6 +19,7 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
   private dashboard = inject(DashboardService);
   private notifications = inject(NotificationService);
   private router = inject(Router);
+  protected sidebar = inject(SidebarStateService);
 
   userName = 'Admin';
   pendingOrders = 0;

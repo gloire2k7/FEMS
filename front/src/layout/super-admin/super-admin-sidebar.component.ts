@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../app/auth.service';
 import { DashboardService } from '../../app/services/dashboard.service';
+import { SidebarStateService } from '../../app/services/sidebar-state.service';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
@@ -16,6 +17,7 @@ export class SuperAdminSidebarComponent implements OnInit, AfterViewInit {
   private auth = inject(AuthService);
   private dashboard = inject(DashboardService);
   private router = inject(Router);
+  protected sidebar = inject(SidebarStateService);
 
   userName = 'Super Admin';
   pendingClients = 0;

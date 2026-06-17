@@ -105,7 +105,7 @@ class AiController extends Controller
         $systemPrompt = $this->buildSystemPrompt($role, $userName, $ctx, $permissions);
 
         $payload = [
-            'model'           => 'gpt-4o-mini',
+            'model'           => 'llama-3.3-70b-versatile',
             'messages'        => [
                 ['role' => 'system', 'content' => $systemPrompt],
                 ['role' => 'user',   'content' => $message],
@@ -115,7 +115,7 @@ class AiController extends Controller
             'max_tokens'      => 600,
         ];
 
-        $ch = curl_init('https://api.openai.com/v1/chat/completions');
+        $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
@@ -124,12 +124,17 @@ class AiController extends Controller
             "Authorization: Bearer {$apiKey}",
         ]);
         curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+        // Windows PHP does not ship with a CA bundle — disable peer verification for local dev
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch); // no-op in PHP 8.5+, safe in all versions
+        $response  = curl_exec($ch);
+        $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
+        curl_close($ch);
 
         if (!$response || $httpCode !== 200) {
+            error_log("[FEMS AI] GPT call failed. HTTP={$httpCode} cURL={$curlError} Response=" . substr((string)$response, 0, 300));
             return $this->fallbackReply($role);
         }
 

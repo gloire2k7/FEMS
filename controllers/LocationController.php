@@ -26,7 +26,7 @@ class LocationController extends Controller
     {
         $clientId = $this->requireClientId();
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(1, (int) ($_GET['limit'] ?? 5)));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $this->jsonResponse($this->locationModel->findPaginatedByClient($clientId, $page, $limit));
     }
 
@@ -77,7 +77,7 @@ class LocationController extends Controller
         }
 
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(1, (int) ($_GET['limit'] ?? 5)));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $search = !empty($_GET['search']) ? trim($_GET['search']) : null;
 
         $this->jsonResponse(

@@ -11,17 +11,17 @@ export class InspectionService {
     return this.http.get(`${this.apiUrl}/inspection-assignments/stats`, { withCredentials: true });
   }
 
-  getPool(page = 1, limit = 10): Observable<any> {
+  getPool(page = 1, limit = 5): Observable<any> {
     return this.http.get(`${this.apiUrl}/inspection-assignments?pool=1&page=${page}&limit=${limit}`, { withCredentials: true });
   }
 
-  getMine(page = 1, limit = 10, status?: string): Observable<any> {
+  getMine(page = 1, limit = 5, status?: string): Observable<any> {
     let url = `${this.apiUrl}/inspection-assignments?page=${page}&limit=${limit}`;
     if (status) url += `&status=${status}`;
     return this.http.get(url, { withCredentials: true });
   }
 
-  getAll(page = 1, limit = 10): Observable<any> {
+  getAll(page = 1, limit = 5): Observable<any> {
     return this.http.get(`${this.apiUrl}/inspection-assignments?page=${page}&limit=${limit}`, { withCredentials: true });
   }
 

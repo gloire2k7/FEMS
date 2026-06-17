@@ -4,6 +4,7 @@ import { filter } from 'rxjs/operators';
 import { AdminSidebarComponent } from './admin-sidebar.component';
 import { AdminTopbarComponent } from './admin-topbar.component';
 import { AuthService } from '../../app/auth.service';
+import { SidebarStateService } from '../../app/services/sidebar-state.service';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
@@ -13,10 +14,13 @@ declare const lucide: { createIcons: () => void } | undefined;
   imports: [RouterOutlet, AdminSidebarComponent, AdminTopbarComponent],
   template: `
     <div class="flex h-screen bg-[#F6F8FC] font-['Poppins'] overflow-hidden">
+      @if (sidebar.mobileOpen()) {
+        <div class="fixed inset-0 bg-black/50 z-30 lg:hidden" (click)="sidebar.closeMobile()"></div>
+      }
       <app-admin-sidebar />
       <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <app-admin-topbar />
-        <main class="flex-1 overflow-y-auto px-6 py-5 md:px-8">
+        <main class="flex-1 overflow-y-auto px-4 py-5 md:px-8">
           <router-outlet />
         </main>
       </div>
@@ -24,6 +28,7 @@ declare const lucide: { createIcons: () => void } | undefined;
   `,
 })
 export class AdminShellComponent implements OnInit, AfterViewInit {
+  protected sidebar = inject(SidebarStateService);
   private auth = inject(AuthService);
   private router = inject(Router);
 

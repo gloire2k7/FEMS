@@ -1,11 +1,13 @@
 @if (showLayout()) {
   <div class="flex min-h-screen bg-[#F6F8FC]">
+    @if (sidebar.mobileOpen()) {
+      <div class="fixed inset-0 bg-black/50 z-30 lg:hidden" (click)="sidebar.closeMobile()"></div>
+    }
     <app-sidebar></app-sidebar>
 
-    <!-- Main content: light grey page bg (white cards on grey), scrollable -->
-    <div class="flex-1 min-h-0 overflow-y-auto bg-[#F6F8FC]">
+    <div class="flex-1 min-h-0 min-w-0 overflow-y-auto bg-[#F6F8FC] lg:ml-0">
       <app-topbar></app-topbar>
-      <div class="px-6 py-5">
+      <div class="px-4 py-5 md:px-6">
         <router-outlet></router-outlet>
       </div>
     </div>

@@ -10,7 +10,7 @@ class ReportController extends Controller
         if ($role === 'Inspector') {
             $userId = (int) $_SESSION['user_id'];
             $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-            $limit = 10;
+            $limit = 5;
             $offset = ($page - 1) * $limit;
 
             $db = Database::getConnection();
@@ -40,7 +40,7 @@ class ReportController extends Controller
 
         $db = Database::getConnection();
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $limit = 10;
+        $limit = 5;
         $offset = ($page - 1) * $limit;
 
         $stmt = $db->prepare("SELECT COUNT(*) FROM generated_reports");

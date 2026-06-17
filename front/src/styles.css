@@ -818,3 +818,23 @@ button.client-stat-link--active.client-stat--info {
   min-width: 1.5rem;
   text-align: right;
 }
+
+/* Collapsible portal sidebars */
+@media (min-width: 1024px) {
+  .fems-sidebar.is-collapsed .sidebar-text,
+  .fems-sidebar.is-collapsed .sidebar-section {
+    display: none !important;
+  }
+
+  .fems-sidebar.is-collapsed nav a,
+  .fems-sidebar.is-collapsed nav button {
+    justify-content: center;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .fems-sidebar.is-collapsed .mt-auto > div {
+    justify-content: center;
+    padding: 0.75rem;
+  }
+}

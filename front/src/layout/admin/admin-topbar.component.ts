@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DashboardService } from '../../app/services/dashboard.service';
 import { NotificationService } from '../../app/services/notification.service';
+import { SidebarStateService } from '../../app/services/sidebar-state.service';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
@@ -15,6 +16,7 @@ declare const lucide: { createIcons: () => void } | undefined;
 export class AdminTopbarComponent implements OnInit, AfterViewInit {
   private dashboard = inject(DashboardService);
   protected notifications = inject(NotificationService);
+  protected sidebar = inject(SidebarStateService);
   pendingOrders = 0;
 
   get unreadCount() {

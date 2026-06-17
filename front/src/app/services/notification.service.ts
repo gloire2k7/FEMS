@@ -31,7 +31,7 @@ export class NotificationService {
   readonly adminUnreadCount = computed(() => this.unreadSignal());
 
   refresh(page = 1): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}?page=${page}`, { withCredentials: true }).pipe(
+    return this.http.get<any>(`${this.apiUrl}?page=${page}&limit=5`, { withCredentials: true }).pipe(
       tap(res => {
         const mapped = (res.data ?? []).map((n: any) => this.mapNotification(n));
         this.listSignal.set(mapped);

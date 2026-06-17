@@ -22,7 +22,7 @@ class OrderController extends Controller
         $roleName = $_SESSION['role_name'] ?? '';
         $companyId = $_SESSION['company_id'] ?? null;
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(5, (int) ($_GET['limit'] ?? 10)));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
 
         if (in_array($roleName, ['Super Admin', 'Admin'], true)) {
             if ($roleName === 'Admin') {

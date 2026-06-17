@@ -7,7 +7,7 @@ export class OrderService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8000/api';
 
-  getOrders(page = 1, limit = 10): Observable<any> {
+  getOrders(page = 1, limit = 5): Observable<any> {
     return this.http.get(`${this.apiUrl}/orders?page=${page}&limit=${limit}`, { withCredentials: true });
   }
 

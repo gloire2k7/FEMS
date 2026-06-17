@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -6,6 +6,7 @@ import { SidebarComponent } from '../layout/sidebar/sidebar';
 import { Topbar } from '../layout/topbar/topbar';
 import { AiAssistantComponent } from './shared/ai-assistant/ai-assistant.component';
 import { AuthService } from './auth.service';
+import { SidebarStateService } from './services/sidebar-state.service';
 
 declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
 
@@ -16,6 +17,8 @@ declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | 
   templateUrl: './app.component.html'
 })
 export class AppComponent {
+  protected sidebar = inject(SidebarStateService);
+
   constructor(private router: Router, private auth: AuthService) {
     this.router.events.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd)).subscribe(() => {
       this.runCreateIcons();

@@ -1,23 +1,26 @@
 import { AfterViewInit, Component, OnInit, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { InspectorSidebarComponent } from './inspector-sidebar.component';
+import { InspectorTopbarComponent } from './inspector-topbar.component';
 import { AuthService } from '../../app/auth.service';
+import { SidebarStateService } from '../../app/services/sidebar-state.service';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
 @Component({
   selector: 'app-inspector-shell',
   standalone: true,
-  imports: [RouterOutlet, InspectorSidebarComponent],
+  imports: [CommonModule, RouterOutlet, InspectorSidebarComponent, InspectorTopbarComponent],
   template: `
     <div class="flex h-screen bg-[#F6F8FC] font-['Poppins'] overflow-hidden">
+      @if (sidebar.mobileOpen()) {
+        <div class="fixed inset-0 bg-black/50 z-30 lg:hidden" (click)="sidebar.closeMobile()"></div>
+      }
       <app-inspector-sidebar />
       <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0">
-          <p class="text-sm text-slate-500">Inspector portal</p>
-          <p class="text-sm font-semibold text-[#0B1437]">{{ userName }}</p>
-        </header>
-        <main class="flex-1 overflow-y-auto px-6 py-5 md:px-8">
+        <app-inspector-topbar />
+        <main class="flex-1 overflow-y-auto px-4 py-5 md:px-8">
           <router-outlet />
         </main>
       </div>
@@ -25,13 +28,12 @@ declare const lucide: { createIcons: () => void } | undefined;
   `,
 })
 export class InspectorShellComponent implements OnInit, AfterViewInit {
+  protected sidebar = inject(SidebarStateService);
   private auth = inject(AuthService);
   private router = inject(Router);
-  userName = '';
 
   ngOnInit() {
     const user = this.auth.getUser();
-    this.userName = user?.name ?? 'Inspector';
     if (user?.must_change_password) {
       this.router.navigate(['/inspector-settings']);
     }

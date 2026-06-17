@@ -138,7 +138,7 @@ class MandatoryInspectionController extends Controller
             $this->jsonResponse(['message' => 'Forbidden'], 403);
         }
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(1, (int) ($_GET['limit'] ?? 10)));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $this->jsonResponse($this->instanceModel->findByInspectorPaginated($_SESSION['user_id'], $page, $limit));
     }
 

@@ -26,7 +26,7 @@ class UserController extends Controller
     {
         AuthMiddleware::hasRole(['Super Admin']);
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(5, (int) ($_GET['limit'] ?? 10)));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $status = $_GET['status'] ?? null;
         if ($status && !in_array($status, ['active', 'inactive'], true)) {
             $status = null;
@@ -44,7 +44,7 @@ class UserController extends Controller
     {
         AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspectors');
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(5, (int) ($_GET['limit'] ?? 10)));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $status = $_GET['status'] ?? null;
         if ($status && !in_array($status, ['active', 'inactive'], true)) {
             $status = null;
@@ -56,15 +56,17 @@ class UserController extends Controller
     {
         AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_clients');
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $this->jsonResponse($this->userModel->findPendingClients($page, 10));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
+        $this->jsonResponse($this->userModel->findPendingClients($page, $limit));
     }
 
     public function clients()
     {
         AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'manage_clients');
         $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $status = $_GET['status'] ?? null;
-        $this->jsonResponse($this->userModel->findClientsPaginated($page, 10, $status));
+        $this->jsonResponse($this->userModel->findClientsPaginated($page, $limit, $status));
     }
 
     public function permissions()

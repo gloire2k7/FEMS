@@ -26,7 +26,7 @@ export class AdminOrders implements AfterViewInit, OnInit {
   protected Math = Math;
 
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 5;
 
   ngOnInit() {
     this.loadOrders();

@@ -59,4 +59,8 @@ export class SigninComponent implements AfterViewInit {
       setTimeout(() => lucide.createIcons(), 100);
     }
   }
+
+  goToSignup() {
+    this.router.navigate(['/signup']);
+  }
 }

@@ -13,7 +13,7 @@ class ExtinguisherController extends Controller
     {
         AuthMiddleware::check();
         $page  = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(1, (int) ($_GET['limit'] ?? 5)));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $sort  = ($_GET['sort'] ?? 'newest') === 'oldest' ? 'oldest' : 'newest';
         $type  = !empty($_GET['type']) ? trim($_GET['type']) : null;
         $role  = $_SESSION['role_name'] ?? '';

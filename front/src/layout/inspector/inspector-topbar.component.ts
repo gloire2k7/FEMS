@@ -1,37 +1,36 @@
 import { AfterViewInit, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { DashboardService } from '../../app/services/dashboard.service';
 import { NotificationService } from '../../app/services/notification.service';
 import { SidebarStateService } from '../../app/services/sidebar-state.service';
+import { AuthService } from '../../app/auth.service';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
 @Component({
-  selector: 'app-super-admin-topbar',
+  selector: 'app-inspector-topbar',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './super-admin-topbar.component.html',
+  templateUrl: './inspector-topbar.component.html',
 })
-export class SuperAdminTopbarComponent implements OnInit, AfterViewInit {
-  private dashboard = inject(DashboardService);
+export class InspectorTopbarComponent implements OnInit, AfterViewInit {
   protected notifications = inject(NotificationService);
   protected sidebar = inject(SidebarStateService);
-  pendingClients = 0;
+  private auth = inject(AuthService);
+
+  userName = 'Inspector';
 
   get unreadCount() {
-    return this.notifications.adminUnreadCount();
+    return this.notifications.unreadCount();
   }
 
   ngOnInit() {
+    const user = this.auth.getUser();
+    if (user?.name) this.userName = user.name;
     this.notifications.refreshUnreadCount().subscribe();
   }
 
   ngAfterViewInit() {
-    this.dashboard.getStats().subscribe({
-      next: (s) => { this.pendingClients = s.pending_clients ?? 0; },
-      error: () => {},
-    });
     setTimeout(() => lucide?.createIcons?.(), 50);
   }
 }

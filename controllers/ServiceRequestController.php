@@ -179,7 +179,7 @@ class ServiceRequestController extends Controller
     {
         AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_refills');
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(1, (int) ($_GET['limit'] ?? 10)));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $status = !empty($_GET['status']) ? $_GET['status'] : null;
         $result = $this->batchModel->findPaginatedForAdmin(['refill', 'maintenance'], $page, $limit, $status);
         $result['fees'] = $this->feeModel->getAll();
@@ -190,7 +190,7 @@ class ServiceRequestController extends Controller
     {
         AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(1, (int) ($_GET['limit'] ?? 10)));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $this->jsonResponse($this->batchModel->findPaginatedForAdmin(['inspection'], $page, $limit, 'pending'));
     }
 
@@ -198,7 +198,7 @@ class ServiceRequestController extends Controller
     {
         AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
         $page = max(1, (int) ($_GET['page'] ?? 1));
-        $limit = min(50, max(1, (int) ($_GET['limit'] ?? 10)));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $status = !empty($_GET['status']) ? $_GET['status'] : 'scheduled';
         if (!in_array($status, ['scheduled', 'awaiting_client', 'completed'], true)) {
             $status = 'scheduled';

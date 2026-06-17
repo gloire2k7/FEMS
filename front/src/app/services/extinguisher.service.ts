@@ -13,7 +13,7 @@ export class ExtinguisherService {
     return this.http.post(`${this.apiUrl}/extinguishers/bulk`, data, { withCredentials: true });
   }
 
-  getExtinguishers(page = 1, limit = 15): Observable<any> {
+  getExtinguishers(page = 1, limit = 5): Observable<any> {
     return this.http.get(`${this.apiUrl}/extinguishers?page=${page}&limit=${limit}`, { withCredentials: true });
   }
 

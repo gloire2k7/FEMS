@@ -35,7 +35,7 @@ export class MandatoryInspectionService {
     return this.http.delete(`${this.apiUrl}/assignments/${id}`, { withCredentials: true });
   }
 
-  getMine(page = 1, limit = 10): Observable<any> {
+  getMine(page = 1, limit = 5): Observable<any> {
     return this.http.get(`${this.apiUrl}/mine?page=${page}&limit=${limit}`, { withCredentials: true });
   }
 

@@ -29,7 +29,7 @@ export class AdminLocationDetails implements OnInit, AfterViewInit {
   paginatedExtinguishers: any[] = [];
   
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 5;
   totalPages = 1;
 
   get totalCount() {
