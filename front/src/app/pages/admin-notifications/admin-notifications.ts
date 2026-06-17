@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { NotificationService, AppNotification } from '../../services/notification.service';
@@ -11,15 +11,23 @@ declare const lucide: { createIcons: () => void } | undefined;
   imports: [CommonModule, RouterModule],
   templateUrl: './admin-notifications.html',
 })
-export class AdminNotificationsComponent implements AfterViewInit {
+export class AdminNotificationsComponent implements OnInit, AfterViewInit {
   private notificationService = inject(NotificationService);
   private router = inject(Router);
 
   filter: 'all' | 'unread' = 'all';
+  loading = true;
+
+  ngOnInit() {
+    this.notificationService.refresh().subscribe({
+      next: () => { this.loading = false; this.refreshIcons(); },
+      error: () => { this.loading = false; }
+    });
+  }
 
   get list(): AppNotification[] {
     const all = this.notificationService.adminNotifications();
-    if (this.filter === 'unread') return all.filter(n => !n.read);
+    if (this.filter === 'unread') return all.filter(n => !n.read && !n.is_read);
     return all;
   }
 

@@ -86,6 +86,108 @@ class InspectionAssignment extends Model
 
     public function findPoolPaginated($page = 1, $limit = 10)
     {
+        return $this->findPoolBatchesPaginated($page, $limit);
+    }
+
+    public function findPoolBatchesPaginated($page = 1, $limit = 10)
+    {
+        $offset = ($page - 1) * $limit;
+        $where = "ia.inspector_id IS NULL AND ia.status = 'pending'";
+
+        $countSql = "SELECT COUNT(DISTINCT COALESCE(sr.batch_id, ia.id)) FROM {$this->table} ia
+                     LEFT JOIN service_requests sr ON sr.id = ia.service_request_id
+                     WHERE $where";
+        $count = (int) $this->db->query($countSql)->fetchColumn();
+
+        $query = "SELECT COALESCE(sr.batch_id, ia.id) AS pool_key,
+                         sr.batch_id,
+                         MIN(ia.id) AS first_assignment_id,
+                         COUNT(ia.id) AS unit_count,
+                         MIN(sr.preferred_date) AS preferred_date,
+                         MIN(sr.client_notes) AS client_notes,
+                         MIN(c.company_name) AS company_name,
+                         MIN(fe.serial_number) AS sample_serial,
+                         GROUP_CONCAT(DISTINCT fe.serial_number ORDER BY fe.serial_number SEPARATOR ', ') AS serial_numbers
+                  FROM {$this->table} ia
+                  JOIN fire_extinguishers fe ON fe.id = ia.extinguisher_id
+                  LEFT JOIN clients c ON c.id = fe.client_id
+                  LEFT JOIN service_requests sr ON sr.id = ia.service_request_id
+                  WHERE $where
+                  GROUP BY COALESCE(sr.batch_id, ia.id)
+                  ORDER BY MIN(ia.created_at) ASC
+                  LIMIT :limit OFFSET :offset";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as &$row) {
+            $row['id'] = (int) $row['first_assignment_id'];
+            $row['items'] = $this->findPendingByPoolKey($row['batch_id'] ?: null, (int) $row['first_assignment_id']);
+        }
+
+        return [
+            'data'      => $rows,
+            'total'     => $count,
+            'page'      => (int) $page,
+            'last_page' => max(1, (int) ceil($count / $limit)),
+        ];
+    }
+
+    public function findPendingByPoolKey($batchId, $assignmentId)
+    {
+        if ($batchId) {
+            $query = $this->baseSelect() . " WHERE ia.inspector_id IS NULL AND ia.status = 'pending'
+                      AND sr.batch_id = :batch_id ORDER BY fe.serial_number";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindValue(':batch_id', (int) $batchId, PDO::PARAM_INT);
+        } else {
+            $query = $this->baseSelect() . " WHERE ia.id = :id AND ia.status = 'pending'";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindValue(':id', (int) $assignmentId, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function claimBatch($batchId, $assignmentId, $inspectorId, $confirmedDate)
+    {
+        if ($batchId) {
+            $stmt = $this->db->prepare(
+                "UPDATE {$this->table} ia
+                 JOIN service_requests sr ON sr.id = ia.service_request_id
+                 SET ia.inspector_id = :inspector_id, ia.status = 'assigned', ia.due_date = :due_date
+                 WHERE sr.batch_id = :batch_id AND ia.inspector_id IS NULL AND ia.status = 'pending'"
+            );
+            $stmt->bindValue(':inspector_id', (int) $inspectorId, PDO::PARAM_INT);
+            $stmt->bindValue(':due_date', $confirmedDate);
+            $stmt->bindValue(':batch_id', (int) $batchId, PDO::PARAM_INT);
+        } else {
+            return $this->claimWithDate((int) $assignmentId, (int) $inspectorId, $confirmedDate);
+        }
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
+    }
+
+    public function assignBatchWithDate($batchId, $inspectorId, $assignedBy, $confirmedDate)
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE {$this->table} ia
+             JOIN service_requests sr ON sr.id = ia.service_request_id
+             SET ia.inspector_id = :inspector_id, ia.assigned_by = :assigned_by,
+                 ia.status = 'assigned', ia.due_date = :due_date
+             WHERE sr.batch_id = :batch_id AND ia.status = 'pending'"
+        );
+        $stmt->bindValue(':inspector_id', (int) $inspectorId, PDO::PARAM_INT);
+        $stmt->bindValue(':assigned_by', (int) $assignedBy, PDO::PARAM_INT);
+        $stmt->bindValue(':due_date', $confirmedDate);
+        $stmt->bindValue(':batch_id', (int) $batchId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
+    }
+
+    public function findPoolPaginatedLegacy($page = 1, $limit = 10)
+    {
         $offset = ($page - 1) * $limit;
         $where = "ia.inspector_id IS NULL AND ia.status = 'pending'";
 

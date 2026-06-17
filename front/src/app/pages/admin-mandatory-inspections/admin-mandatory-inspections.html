@@ -1,0 +1,155 @@
+<div class="client-page max-w-6xl pb-10">
+
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20 mb-6">
+    <div class="client-hero-inner">
+      <p class="client-hero-eyebrow">Compliance</p>
+      <h1 class="client-hero-title">Mandatory inspections</h1>
+      <p class="client-hero-sub">Define recurring inspection schedules and assign responsible inspectors per client.</p>
+    </div>
+  </section>
+
+  <div *ngIf="loadingPage" class="client-card py-16 text-center text-slate-400">
+    <span class="inline-block w-8 h-8 border-2 border-slate-300 border-t-[#0B1437] rounded-full animate-spin mb-3"></span>
+    <p>Loading mandatory inspections…</p>
+  </div>
+
+  <ng-container *ngIf="!loadingPage">
+    <p *ngIf="message" class="mb-5 px-4 py-3 rounded-xl text-sm flex items-center gap-2"
+      [class.bg-emerald-50]="!messageError" [class.text-emerald-800]="!messageError"
+      [class.bg-red-50]="messageError" [class.text-red-800]="messageError">
+      <span *ngIf="savingAssignment" class="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+      {{ message }}
+    </p>
+
+    <div class="grid lg:grid-cols-2 gap-6 mb-6">
+      <!-- Type form -->
+      <section class="client-card p-6">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="w-10 h-10 rounded-xl bg-[#0B1437]/5 flex items-center justify-center">
+            <i data-lucide="calendar-clock" class="w-5 h-5 text-[#0B1437]"></i>
+          </span>
+          <div>
+            <h2 class="font-bold text-[#0B1437]">{{ editingType ? 'Edit type' : 'New inspection type' }}</h2>
+            <p class="text-sm text-slate-500">Name, interval, and completion deadline</p>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="client-label">Name</label>
+            <input type="text" [(ngModel)]="typeForm.name" class="client-input w-full" placeholder="Semi-annual safety audit" />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="client-label">Every (months)</label>
+              <input type="number" [(ngModel)]="typeForm.interval_months" class="client-input w-full" min="1" />
+            </div>
+            <div>
+              <label class="client-label">Deadline (days after due)</label>
+              <input type="number" [(ngModel)]="typeForm.deadline_days" class="client-input w-full" min="1" />
+            </div>
+          </div>
+          <div class="flex gap-3 pt-1">
+            <button type="button" (click)="saveType()" [disabled]="savingType || !typeForm.name.trim()"
+              class="client-btn-primary text-sm flex items-center gap-2 disabled:opacity-50">
+              <span *ngIf="savingType" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+              {{ savingType ? 'Saving…' : (editingType ? 'Update type' : 'Create type') }}
+            </button>
+            <button *ngIf="editingType" type="button" (click)="cancelEdit()" class="client-btn-secondary text-sm">Cancel</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Assign form -->
+      <section class="client-card p-6 relative" [class.opacity-60]="savingAssignment" [class.pointer-events-none]="savingAssignment">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+            <i data-lucide="user-check" class="w-5 h-5 text-emerald-700"></i>
+          </span>
+          <div>
+            <h2 class="font-bold text-[#0B1437]">Assign client → inspector</h2>
+            <p class="text-sm text-slate-500">Both parties receive email and in-app notification</p>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="client-label">Mandatory type</label>
+            <select [(ngModel)]="assignForm.mandatory_type_id" class="client-input w-full">
+              <option [ngValue]="null">Select type…</option>
+              <option *ngFor="let t of types" [ngValue]="+t.id">{{ t.name }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="client-label">Client</label>
+            <select [(ngModel)]="assignForm.client_id" class="client-input w-full">
+              <option [ngValue]="null">Select client…</option>
+              <option *ngFor="let c of clients" [ngValue]="+c.id">{{ c.company_name }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="client-label">Inspector</label>
+            <select [(ngModel)]="assignForm.inspector_id" class="client-input w-full">
+              <option [ngValue]="null">Select inspector…</option>
+              <option *ngFor="let i of inspectors" [ngValue]="+i.id">{{ i.name }}</option>
+            </select>
+          </div>
+          <button type="button" (click)="saveAssignment()"
+            [disabled]="savingAssignment || !assignForm.mandatory_type_id || !assignForm.client_id || !assignForm.inspector_id"
+            class="client-btn-primary w-full text-sm flex items-center justify-center gap-2 disabled:opacity-50">
+            <span *ngIf="savingAssignment" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            {{ savingAssignment ? 'Assigning & notifying…' : 'Save & notify both parties' }}
+          </button>
+        </div>
+        <div *ngIf="savingAssignment" class="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/40 backdrop-blur-[1px]">
+          <p class="text-sm font-semibold text-[#0B1437] bg-white px-4 py-2 rounded-xl shadow">Sending notifications…</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Types list -->
+    <section class="client-card overflow-hidden mb-6">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+        <h2 class="font-semibold text-[#0B1437]">Inspection types</h2>
+        <span class="text-sm text-slate-500">{{ types.length }} defined</span>
+      </div>
+      <div *ngIf="types.length === 0" class="py-10 text-center text-slate-500">No types yet — create one above.</div>
+      <div *ngFor="let t of types" class="px-6 py-4 border-t border-slate-50 flex flex-wrap justify-between gap-3 items-center hover:bg-slate-50/50">
+        <div>
+          <p class="font-semibold text-[#0B1437]">{{ t.name }}</p>
+          <p class="text-sm text-slate-500">Every {{ t.interval_months }} mo · {{ t.deadline_days }}-day deadline</p>
+        </div>
+        <div class="flex gap-2">
+          <button type="button" (click)="editType(t)" class="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">Edit</button>
+          <button type="button" (click)="deleteType(t.id)" [disabled]="deletingTypeId === t.id"
+            class="text-sm px-3 py-1.5 rounded-lg text-red-600 hover:bg-red-50 disabled:opacity-40">
+            {{ deletingTypeId === t.id ? '…' : 'Delete' }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Assignments list -->
+    <section class="client-card overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+        <h2 class="font-semibold text-[#0B1437]">Active assignments</h2>
+        <span class="text-sm text-slate-500">{{ assignments.length }} total</span>
+      </div>
+      <div *ngIf="assignments.length === 0" class="py-10 text-center text-slate-500">No assignments yet.</div>
+      <div *ngFor="let a of assignments" class="px-6 py-4 border-t border-slate-50 flex flex-wrap justify-between gap-3 items-center">
+        <div class="flex items-start gap-3">
+          <span class="w-9 h-9 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0">
+            {{ (a.inspector_name || '?')[0] }}
+          </span>
+          <div>
+            <p class="font-medium text-[#0B1437]">{{ a.mandatory_name }}</p>
+            <p class="text-sm text-slate-500">{{ a.company_name }} → {{ a.inspector_name }}</p>
+          </div>
+        </div>
+        <button type="button" (click)="deleteAssignment(a.id)" [disabled]="deletingAssignmentId === a.id"
+          class="text-sm text-red-600 hover:underline disabled:opacity-40">
+          {{ deletingAssignmentId === a.id ? 'Removing…' : 'Remove' }}
+        </button>
+      </div>
+    </section>
+  </ng-container>
+</div>
+

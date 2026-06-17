@@ -37,10 +37,20 @@ declare const lucide: { createIcons: () => void } | undefined;
           <i data-lucide="list-checks" class="w-5 h-5 shrink-0"></i>
           <span class="font-medium">My inspections</span>
         </a>
+        <a routerLink="/inspector-mandatory-inspections" routerLinkActive="bg-white/10 text-white"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+          <i data-lucide="calendar-check" class="w-5 h-5 shrink-0"></i>
+          <span class="font-medium">Mandatory</span>
+        </a>
         <a routerLink="/inspector-reports" routerLinkActive="bg-white/10 text-white"
           class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
           <i data-lucide="file-text" class="w-5 h-5 shrink-0"></i>
           <span class="font-medium">Reports</span>
+        </a>
+        <a routerLink="/inspector-notifications" routerLinkActive="bg-white/10 text-white"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+          <i data-lucide="bell" class="w-5 h-5 shrink-0"></i>
+          <span class="font-medium">Notifications</span>
         </a>
         <a routerLink="/inspector-settings" routerLinkActive="bg-white/10 text-white"
           class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">

@@ -32,8 +32,12 @@ export class InspectionService {
     }, { withCredentials: true });
   }
 
-  claim(id: number | string, confirmedDate: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/inspection-assignments/${id}/claim`, { confirmed_date: confirmedDate }, { withCredentials: true });
+  claim(id: number | string, confirmedDate: string, batchId?: number | null): Observable<any> {
+    return this.http.put(`${this.apiUrl}/inspection-assignments/${id}/claim`, {
+      confirmed_date: confirmedDate,
+      batch_id: batchId ?? null,
+      assignment_id: id
+    }, { withCredentials: true });
   }
 
   complete(id: number | string, data: { result_status: string; notes?: string; inspection_date?: string }): Observable<any> {

@@ -31,7 +31,9 @@
     </button>
   </div>
 
-  <section *ngIf="list.length === 0" class="client-card client-empty">
+  <section *ngIf="loading" class="client-card client-empty py-12 text-slate-400">Loading notifications…</section>
+
+  <section *ngIf="!loading && list.length === 0" class="client-card client-empty">
     <div class="client-empty-icon">
       <i data-lucide="bell-off" class="w-8 h-8"></i>
     </div>
@@ -41,17 +43,17 @@
     </p>
   </section>
 
-  <section *ngIf="list.length > 0" class="space-y-3">
+  <section *ngIf="!loading && list.length > 0" class="space-y-3">
     <button type="button" *ngFor="let n of list" (click)="openNotification(n)"
       class="client-card client-card--lift w-full text-left p-5 flex items-start gap-4 transition-colors"
-      [class.ring-2]="!n.read" [class.ring-[#0B1437]/10]="!n.read">
+      [class.ring-2]="!n.read && !n.is_read" [class.ring-[#0B1437]/10]="!n.read && !n.is_read">
       <span class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" [ngClass]="n.iconClass">
         <i [attr.data-lucide]="n.icon" class="w-5 h-5"></i>
       </span>
       <div class="flex-1 min-w-0">
         <div class="flex items-start justify-between gap-2">
-          <h3 class="text-base font-semibold text-[#0B1437]" [class.text-slate-500]="n.read">{{ n.title }}</h3>
-          <span *ngIf="!n.read" class="w-2 h-2 rounded-full bg-[#0B1437] shrink-0 mt-2"></span>
+          <h3 class="text-base font-semibold text-[#0B1437]" [class.text-slate-500]="n.read || n.is_read">{{ n.title }}</h3>
+          <span *ngIf="!n.read && !n.is_read" class="w-2 h-2 rounded-full bg-[#0B1437] shrink-0 mt-2"></span>
         </div>
         <p class="text-sm text-slate-500 mt-1 leading-relaxed">{{ n.message }}</p>
         <p class="text-xs text-slate-400 mt-2">{{ n.time }}</p>

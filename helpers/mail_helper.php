@@ -500,4 +500,42 @@ HTML;
 HTML;
         return self::sendEmail($email, $subject, $body);
     }
+
+    public static function sendMandatoryAssignmentNotice(array $assignment): bool
+    {
+        $typeName = htmlspecialchars($assignment['mandatory_name'] ?? 'Mandatory inspection');
+        $clientName = htmlspecialchars($assignment['company_name'] ?? 'Client');
+        $inspectorName = htmlspecialchars($assignment['inspector_name'] ?? 'Inspector');
+        $interval = (int) ($assignment['interval_months'] ?? 0);
+        $deadline = (int) ($assignment['deadline_days'] ?? 0);
+
+        $inspectorBody = <<<HTML
+<!DOCTYPE html><html><body style="font-family:'Segoe UI',Arial,sans-serif;background:#f3f4f6;padding:40px;">
+  <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:12px;padding:36px;">
+    <h2 style="color:#0B1437;">Mandatory inspection assigned</h2>
+    <p>You are now responsible for <strong>{$typeName}</strong> at <strong>{$clientName}</strong>.</p>
+    <p>Schedule: every {$interval} months, must be completed within {$deadline} days after due date.</p>
+    <p>Sign in to the inspector portal to manage this assignment.</p>
+  </div>
+</body></html>
+HTML;
+
+        $clientBody = <<<HTML
+<!DOCTYPE html><html><body style="font-family:'Segoe UI',Arial,sans-serif;background:#f3f4f6;padding:40px;">
+  <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:12px;padding:36px;">
+    <h2 style="color:#0B1437;">Mandatory inspection inspector assigned</h2>
+    <p>For <strong>{$typeName}</strong>, your assigned inspector is <strong>{$inspectorName}</strong>.</p>
+    <p>They will conduct regular inspections every {$interval} months. You will confirm completion in your service requests portal.</p>
+  </div>
+</body></html>
+HTML;
+
+        $ok1 = !empty($assignment['inspector_email'])
+            ? self::sendEmail($assignment['inspector_email'], "FEMS: Mandatory inspection — {$typeName}", $inspectorBody)
+            : true;
+        $ok2 = !empty($assignment['client_email'])
+            ? self::sendEmail($assignment['client_email'], "FEMS: Your mandatory inspection inspector", $clientBody)
+            : true;
+        return $ok1 && $ok2;
+    }
 }

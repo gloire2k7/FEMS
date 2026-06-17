@@ -21,6 +21,7 @@ import { AdminAddExtinguisher } from './pages/admin-add-extinguisher/admin-add-e
 import { AdminViewExtinguisherComponent } from './pages/admin-view-extinguisher/admin-view-extinguisher.component';
 import { AdminInspectionLabel } from './pages/admin-inspection-label/admin-inspection-label';
 import { AdminAssignedInspections } from './pages/admin-assigned-inspections/admin-assigned-inspections';
+import { AdminMandatoryInspections } from './pages/admin-mandatory-inspections/admin-mandatory-inspections';
 import { AdminInventoryComponent } from './pages/admin-inventory/admin-inventory';
 import { AdminInspectors } from './pages/admin-inspectors/admin-inspectors';
 import { AdminCompliance } from './pages/admin-compliance/admin-compliance';
@@ -47,6 +48,7 @@ import { InspectorInspectionsComponent } from './pages/inspector-inspections/ins
 import { InspectorMyInspectionsComponent } from './pages/inspector-my-inspections/inspector-my-inspections';
 import { InspectorReportsComponent } from './pages/inspector-reports/inspector-reports';
 import { InspectorSettingsComponent } from './pages/inspector-settings/inspector-settings';
+import { InspectorMandatoryInspectionsComponent } from './pages/inspector-mandatory-inspections/inspector-mandatory-inspections';
 import { AiAssistantPageComponent } from './pages/ai-assistant-page/ai-assistant-page.component';
 
 export const routes: Routes = [
@@ -68,6 +70,7 @@ export const routes: Routes = [
       { path: 'super-admin-logs', component: SuperAdminLogs },
       { path: 'super-admin-admin-details/:id', component: SuperAdminAdminDetails },
       { path: 'super-admin-inventory', component: AdminInventoryComponent },
+      { path: 'super-admin-notifications', component: AdminNotificationsComponent },
     ],
   },
 
@@ -77,6 +80,7 @@ export const routes: Routes = [
     children: [
       { path: 'admin-dashboard', component: AdminDashboardComponent },
       { path: 'admin-assigned-inspections', component: AdminAssignedInspections },
+      { path: 'admin-mandatory-inspections', component: AdminMandatoryInspections },
       { path: 'admin-inventory', component: AdminInventoryComponent },
       { path: 'admin-inspectors', component: AdminInspectors },
       { path: 'admin-compliance', component: AdminCompliance },
@@ -99,8 +103,10 @@ export const routes: Routes = [
       { path: 'inspector-dashboard', component: InspectorDashboardComponent },
       { path: 'inspector-inspections', component: InspectorInspectionsComponent },
       { path: 'inspector-my-inspections', component: InspectorMyInspectionsComponent },
+      { path: 'inspector-mandatory-inspections', component: InspectorMandatoryInspectionsComponent },
       { path: 'inspector-reports', component: InspectorReportsComponent },
       { path: 'inspector-settings', component: InspectorSettingsComponent },
+      { path: 'inspector-notifications', component: NotificationsComponent },
     ],
   },
 

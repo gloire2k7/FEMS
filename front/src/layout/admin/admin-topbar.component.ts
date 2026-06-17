@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DashboardService } from '../../app/services/dashboard.service';
@@ -12,13 +12,17 @@ declare const lucide: { createIcons: () => void } | undefined;
   imports: [CommonModule, RouterModule],
   templateUrl: './admin-topbar.component.html',
 })
-export class AdminTopbarComponent implements AfterViewInit {
+export class AdminTopbarComponent implements OnInit, AfterViewInit {
   private dashboard = inject(DashboardService);
   protected notifications = inject(NotificationService);
   pendingOrders = 0;
 
   get unreadCount() {
     return this.notifications.adminUnreadCount();
+  }
+
+  ngOnInit() {
+    this.notifications.refreshUnreadCount().subscribe();
   }
 
   ngAfterViewInit() {

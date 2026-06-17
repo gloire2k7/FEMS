@@ -14,7 +14,7 @@ export class ServiceRequestService {
   }
 
   createRequest(data: {
-    serial_number: string;
+    serial_numbers: string[];
     service_type: string;
     preferred_date?: string;
     client_notes?: string;
@@ -22,8 +22,11 @@ export class ServiceRequestService {
     return this.http.post(`${this.apiUrl}/service-requests`, data, { withCredentials: true });
   }
 
-  confirmDone(id: number | string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/service-requests/${id}/confirm-done`, {}, { withCredentials: true });
+  confirmDone(id: number | string, kind: 'batch' | 'mandatory' = 'batch', mandatoryInstanceId?: number): Observable<any> {
+    const body = kind === 'mandatory'
+      ? { kind: 'mandatory', mandatory_instance_id: mandatoryInstanceId ?? id }
+      : { kind: 'batch' };
+    return this.http.put(`${this.apiUrl}/service-requests/${id}/confirm-done`, body, { withCredentials: true });
   }
 
   getRefills(page = 1, status?: string): Observable<any> {
@@ -34,6 +37,10 @@ export class ServiceRequestService {
 
   getPendingInspections(page = 1): Observable<any> {
     return this.http.get(`${this.apiUrl}/service-requests/pending-inspections?page=${page}`, { withCredentials: true });
+  }
+
+  getAssignedInspections(page = 1, status = 'scheduled'): Observable<any> {
+    return this.http.get(`${this.apiUrl}/service-requests/assigned-inspections?page=${page}&status=${status}`, { withCredentials: true });
   }
 
   schedule(id: number | string, confirmedDate: string, fee?: number): Observable<any> {

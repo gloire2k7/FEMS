@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../helpers/mail_helper.php';
+require_once __DIR__ . '/../helpers/notification_helper.php';
 
 class UserController extends Controller
 {
@@ -168,6 +169,9 @@ class UserController extends Controller
         }
 
         if ($role['name'] === 'Company User') {
+            NotificationHelper::notifyByPermission('manage_clients', 'info', 'New client registration',
+                "{$data['company_name']} ({$data['email']}) is awaiting approval.",
+                '/clients?tab=pending', 'user', (int) $id, "client_pending:{$id}");
             $this->jsonResponse([
                 'message' => 'Registration submitted. Await admin approval before signing in.',
                 'id' => $id,
@@ -276,6 +280,9 @@ class UserController extends Controller
         }
         $this->userModel->setStatus($id, 'active');
         MailHelper::sendClientApproval($user['email'], $user['name'], true);
+        NotificationHelper::notify((int) $id, 'info', 'Account approved',
+            'Your FEMS account has been approved. You can now sign in and use the portal.',
+            '/dashboard', 'user', (int) $id, "client_approved:{$id}");
         $this->jsonResponse(['message' => 'Client approved']);
     }
 

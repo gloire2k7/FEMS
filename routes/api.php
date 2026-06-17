@@ -97,6 +97,7 @@ $router->get('/api/shop/products', function () {
 // Service requests
 $router->get('/api/service-requests/refills', ['ServiceRequestController', 'refills']);
 $router->get('/api/service-requests/pending-inspections', ['ServiceRequestController', 'pendingInspections']);
+$router->get('/api/service-requests/assigned-inspections', ['ServiceRequestController', 'assignedInspections']);
 $router->get('/api/service-requests', ['ServiceRequestController', 'index']);
 $router->post('/api/service-requests', ['ServiceRequestController', 'store']);
 $router->put('/api/service-requests/{id}/confirm-done', ['ServiceRequestController', 'confirmDone']);
@@ -105,6 +106,17 @@ $router->put('/api/service-requests/{id}/mark-done', ['ServiceRequestController'
 $router->put('/api/service-requests/{id}/assign-inspection', ['ServiceRequestController', 'assignInspection']);
 $router->get('/api/service-fees', ['ServiceRequestController', 'getFees']);
 $router->put('/api/service-fees', ['ServiceRequestController', 'updateFees']);
+
+// Mandatory inspections
+$router->get('/api/mandatory-inspections/types', ['MandatoryInspectionController', 'indexTypes']);
+$router->post('/api/mandatory-inspections/types', ['MandatoryInspectionController', 'storeType']);
+$router->put('/api/mandatory-inspections/types/{id}', ['MandatoryInspectionController', 'updateType']);
+$router->delete('/api/mandatory-inspections/types/{id}', ['MandatoryInspectionController', 'destroyType']);
+$router->get('/api/mandatory-inspections/assignments', ['MandatoryInspectionController', 'indexAssignments']);
+$router->post('/api/mandatory-inspections/assignments', ['MandatoryInspectionController', 'storeAssignment']);
+$router->delete('/api/mandatory-inspections/assignments/{id}', ['MandatoryInspectionController', 'destroyAssignment']);
+$router->get('/api/mandatory-inspections/mine', ['MandatoryInspectionController', 'inspectorIndex']);
+$router->put('/api/mandatory-inspections/{id}/complete', ['MandatoryInspectionController', 'inspectorComplete']);
 
 // Services (legacy extinguisher status endpoints)
 $router->post('/api/extinguishers/{id}/refill-request', ['ServiceController', 'requestRefill']);
@@ -123,6 +135,14 @@ $router->put('/api/inspection-assignments/{id}/complete', ['InspectionAssignment
 $router->get('/api/reports', ['ReportController', 'index']);
 $router->post('/api/reports', ['ReportController', 'generate']);
 $router->get('/api/reports/export-zip', ['ReportController', 'exportZip']);
+
+$router->get('/api/compliance/alerts', ['ComplianceController', 'index']);
+
+// Notifications
+$router->get('/api/notifications', ['NotificationController', 'index']);
+$router->get('/api/notifications/unread-count', ['NotificationController', 'unreadCount']);
+$router->put('/api/notifications/{id}/read', ['NotificationController', 'markRead']);
+$router->put('/api/notifications/read-all', ['NotificationController', 'markAllRead']);
 
 // AI assistant
 $router->post('/api/ai/chat', ['AiController', 'chat']);

@@ -37,8 +37,8 @@ export class AdminRefills implements OnInit, AfterViewInit {
     const q = this.searchTerm.trim().toLowerCase();
     if (!q) return this.requests;
     return this.requests.filter(r =>
-      (r.serial_number || '').toLowerCase().includes(q) ||
-      (r.company_name || '').toLowerCase().includes(q)
+      (r.company_name || '').toLowerCase().includes(q) ||
+      (r.items || []).some((u: any) => (u.serial_number || '').toLowerCase().includes(q))
     );
   }
 

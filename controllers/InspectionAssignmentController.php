@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../helpers/notification_helper.php';
+
 class InspectionAssignmentController extends Controller
 {
     private $assignmentModel;
@@ -91,17 +93,23 @@ class InspectionAssignmentController extends Controller
 
         $inspectorId = (int) $_SESSION['user_id'];
         $confirmedDate = $data['confirmed_date'];
+        $batchId = !empty($data['batch_id']) ? (int) $data['batch_id'] : null;
+        $assignmentId = !empty($data['assignment_id']) ? (int) $data['assignment_id'] : (int) $id;
 
         $requestModel = new ServiceRequest();
-        if ($requestModel->inspectorHasConflict($inspectorId, $confirmedDate)) {
+        if ($requestModel->inspectorHasConflict($inspectorId, $confirmedDate, $batchId)) {
             $this->jsonResponse(['message' => 'You already have an inspection scheduled on that date.'], 409);
         }
 
-        if (!$this->assignmentModel->claimWithDate($id, $inspectorId, $confirmedDate)) {
+        if (!$this->assignmentModel->claimBatch($batchId, $assignmentId, $inspectorId, $confirmedDate)) {
             $this->jsonResponse(['message' => 'Could not claim this inspection. It may already be taken.'], 409);
         }
 
-        if (!empty($assignment['service_request_id'])) {
+        if ($batchId) {
+            $batchModel = new ServiceRequestBatch();
+            $batchModel->scheduleInspection($batchId, $inspectorId, $inspectorId, $confirmedDate);
+            $requestModel->scheduleBatchItems($batchId, $inspectorId, $inspectorId, $confirmedDate);
+        } elseif (!empty($assignment['service_request_id'])) {
             $requestModel->scheduleInspection(
                 $assignment['service_request_id'],
                 $inspectorId,
@@ -112,7 +120,7 @@ class InspectionAssignmentController extends Controller
 
         $this->jsonResponse([
             'message'    => 'Inspection assigned to you',
-            'assignment' => $this->assignmentModel->findById($id),
+            'assignment' => $this->assignmentModel->findById($assignmentId),
         ]);
     }
 
@@ -158,6 +166,43 @@ class InspectionAssignmentController extends Controller
                 'inspector_notes' => $data['notes'] ?? null,
                 'result_status'   => $data['result_status'],
             ]);
+            $req = $requestModel->findById($assignment['service_request_id']);
+            if (!empty($req['batch_id'])) {
+                $items = $requestModel->findByBatchId($req['batch_id']);
+                $allDone = count($items) > 0 && !array_filter($items, fn($i) => !in_array($i['status'], ['awaiting_client', 'completed'], true));
+                if ($allDone) {
+                    $batchModel = new ServiceRequestBatch();
+                    $batchModel->markAwaitingClient($req['batch_id']);
+                    NotificationHelper::notifyCompanyUsers(
+                        (int) $req['client_id'],
+                        'info',
+                        'Inspection completed',
+                        "Inspection batch #{$req['batch_id']} is complete. Please confirm on your service requests page.",
+                        '/service-requests',
+                        'inspection_batch',
+                        (int) $req['batch_id'],
+                        "insp_done_batch:{$req['batch_id']}"
+                    );
+                }
+            } elseif ($req) {
+                NotificationHelper::notifyCompanyUsers(
+                    (int) $req['client_id'],
+                    'info',
+                    'Inspection completed',
+                    "Inspection for unit {$assignment['serial_number']} is awaiting your confirmation.",
+                    '/service-requests',
+                    'service_request',
+                    (int) $assignment['service_request_id'],
+                    "insp_done:{$assignment['service_request_id']}"
+                );
+            }
+            NotificationHelper::notifyByPermission('manage_inspections', 'info', 'Inspection submitted',
+                "Inspector submitted results for {$assignment['serial_number']}.",
+                '/admin-assigned-inspections',
+                'inspection',
+                (int) $id,
+                "insp_submitted:{$id}"
+            );
         }
 
         $this->jsonResponse([
