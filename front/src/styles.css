@@ -820,10 +820,13 @@ button.client-stat-link--active.client-stat--info {
 }
 
 /* Collapsible portal sidebars */
+.fems-sidebar {
+  overflow-x: hidden;
+}
+
 @media (min-width: 1024px) {
-  .fems-sidebar.is-collapsed .sidebar-text,
-  .fems-sidebar.is-collapsed .sidebar-section {
-    display: none !important;
+  .fems-sidebar.is-collapsed {
+    overflow-x: hidden;
   }
 
   .fems-sidebar.is-collapsed nav a,

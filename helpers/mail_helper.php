@@ -293,6 +293,33 @@ HTML;
     }
 
     /**
+     * Password reset OTP email.
+     */
+    public static function sendPasswordResetOtp(string $email, string $name, string $otp): bool
+    {
+        $subject = 'Your FEMS password reset code';
+        $nameEsc = htmlspecialchars($name);
+        $otpEsc = htmlspecialchars($otp);
+        $resetUrl = self::APP_URL . '/reset-password?email=' . urlencode($email);
+
+        $inner = self::p("Hello <strong>{$nameEsc}</strong>,")
+            . self::p('Use the verification code below to reset your FEMS password.')
+            . self::box(
+                '<p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.08em;">Your code</p>'
+                . '<p style="margin:0;font-size:32px;font-weight:800;color:#0B1437;letter-spacing:.35em;font-family:Consolas,monospace;text-align:center;">'
+                . $otpEsc . '</p>',
+                '#F8FAFC',
+                '#E2E8F0'
+            )
+            . self::box(
+                '<p style="margin:0;color:#64748B;font-size:13px;line-height:1.6;">This code expires in <strong>10 minutes</strong>. If you did not request a reset, ignore this email — your password will not change.</p>'
+            );
+
+        $body = self::emailShell('Password reset code', $inner, 'Enter code on FEMS', $resetUrl);
+        return self::sendEmail($email, $subject, $body);
+    }
+
+    /**
      * Notify an admin that their permissions were changed by a Super Admin.
      *
      * @param string[] $addedKeys

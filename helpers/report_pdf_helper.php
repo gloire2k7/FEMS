@@ -1,74 +1,78 @@
 <?php
 
+require_once __DIR__ . '/pdf_branding_helper.php';
+
 class ReportPDFHelper
 {
     /**
-     * Generate Tabular PDF Report
+     * Generate a branded tabular PDF report.
      */
-    public static function generate($title, $headers, $data)
+    public static function generate($title, $headers, $data, ?string $dateRange = null)
     {
         $fpdfPath = __DIR__ . '/fpdf.php';
         if (!file_exists($fpdfPath)) {
-            die("FPDF Library missing in helpers/fpdf.php");
+            return null;
         }
 
-        require_once($fpdfPath);
+        require_once $fpdfPath;
 
-        $pdf = new FPDF('L', 'mm', 'A4'); // Landscape A4
+        $rows = PdfBrandingHelper::normalizeRows($data);
+        $count = max(1, count($headers));
+        $colWidth = 277 / $count;
+        $margin = 10;
+        $pageBottom = 185;
+
+        $pdf = new FPDF('L', 'mm', 'A4');
+        $pdf->SetMargins($margin, $margin, $margin);
+        $pdf->SetAutoPageBreak(true, 18);
         $pdf->AddPage();
 
-        // Title
-        $pdf->SetFont('Helvetica', 'B', 20);
-        $pdf->Cell(0, 15, $title, 0, 1, 'C');
-        $pdf->SetFont('Helvetica', '', 10);
-        $pdf->Cell(0, 5, 'Generated on: ' . date('Y-m-d H:i:s'), 0, 1, 'R');
-        $pdf->Ln(10);
+        $y = PdfBrandingHelper::drawReportHeader($pdf, $title, $dateRange);
+        $y = PdfBrandingHelper::drawReportTableHeader($pdf, $headers, $colWidth, $y);
 
-        // Header
-        $pdf->SetFillColor(230, 230, 230);
-        $pdf->SetFont('Helvetica', 'B', 11);
+        $pdf->SetFont('Helvetica', '', 9);
+        $rowIndex = 0;
 
-        // Calculate dynamic column widths (simple version)
-        $count = count($headers);
-        $width = 277 / $count; // A4 landscape width is ~297mm - margins
-
-        foreach ($headers as $header) {
-            $pdf->Cell($width, 10, $header, 1, 0, 'C', true);
-        }
-        $pdf->Ln();
-
-        // Data
-        $pdf->SetFont('Helvetica', '', 10);
-        foreach ($data as $row) {
-            // Check if we need a new page
-            if ($pdf->GetY() > 180) {
-                $pdf->AddPage('L');
-                $pdf->SetFillColor(230, 230, 230);
-                $pdf->SetFont('Helvetica', 'B', 11);
-                foreach ($headers as $header) {
-                    $pdf->Cell($width, 10, $header, 1, 0, 'C', true);
-                }
-                $pdf->Ln();
-                $pdf->SetFont('Helvetica', '', 10);
+        foreach ($rows as $row) {
+            if ($y > $pageBottom) {
+                PdfBrandingHelper::drawReportFooter($pdf);
+                $pdf->AddPage();
+                $y = PdfBrandingHelper::drawReportHeader($pdf, $title, $dateRange);
+                $y = PdfBrandingHelper::drawReportTableHeader($pdf, $headers, $colWidth, $y);
+                $pdf->SetFont('Helvetica', '', 9);
             }
 
+            $fill = ($rowIndex % 2 === 1);
+            if ($fill) {
+                PdfBrandingHelper::setFill($pdf, PdfBrandingHelper::ROW_ALT);
+            } else {
+                PdfBrandingHelper::setFill($pdf, PdfBrandingHelper::WHITE);
+            }
+            PdfBrandingHelper::setText($pdf, PdfBrandingHelper::SLATE_DARK);
+            PdfBrandingHelper::setDraw($pdf, PdfBrandingHelper::BORDER);
+
+            $pdf->SetXY($margin, $y);
             foreach ($row as $cell) {
-                // MultiCell or truncation for long text
-                $pdf->Cell($width, 8, substr((string)$cell, 0, 40), 1);
+                $text = substr((string) $cell, 0, 48);
+                $pdf->Cell($colWidth, 8, $text, 1, 0, 'L', $fill);
             }
             $pdf->Ln();
+            $y = $pdf->GetY();
+            $rowIndex++;
         }
 
-        // Footer
-        $pdf->SetY(-15);
-        $pdf->SetFont('Helvetica', '', 8);
-        $pdf->Cell(0, 10, 'Page ' . $pdf->PageNo() . ' - FEMS Reporting System', 0, 0, 'C');
+        if (empty($rows)) {
+            PdfBrandingHelper::setText($pdf, PdfBrandingHelper::SLATE);
+            $pdf->SetFont('Helvetica', 'I', 10);
+            $pdf->SetXY($margin, $y + 4);
+            $pdf->Cell(277, 8, 'No records found for this report.', 0, 1, 'C');
+        }
 
-        // Output to file
-        $filename = str_replace(' ', '_', strtolower($title)) . '_' . date('YmdHis') . '.pdf';
+        PdfBrandingHelper::drawReportFooter($pdf);
+
+        $filename = preg_replace('/[^a-z0-9_\-]+/i', '_', strtolower($title)) . '_' . date('YmdHis') . '.pdf';
         $path = __DIR__ . '/../uploads/reports/' . $filename;
 
-        // Ensure directory exists
         if (!file_exists(dirname($path))) {
             mkdir(dirname($path), 0777, true);
         }

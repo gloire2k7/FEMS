@@ -187,6 +187,7 @@ class ReportController extends Controller
         }
 
         $reportName = $title . ($startDate && $endDate ? " - ($startDate to $endDate)" : " - " . date('Y-m-d'));
+        $dateRange = ($startDate && $endDate) ? "{$startDate} to {$endDate}" : null;
         $fileName = str_replace([' ', '/', '\\'], '_', strtolower($reportName)) . '_' . time() . '.' . $format;
         $uploadDir = __DIR__ . '/../uploads/reports/';
         
@@ -194,29 +195,25 @@ class ReportController extends Controller
             mkdir($uploadDir, 0777, true);
         }
 
-        $filePath = '/uploads/reports/' . $fileName;
         $fullPath = $uploadDir . $fileName;
 
         if ($format === 'csv') {
-            $output = fopen($fullPath, 'w');
-            fputcsv($output, $headers);
-            foreach ($data as $row) {
-                fputcsv($output, $row);
-            }
-            fclose($output);
-        } else {
-            // Assuming ReportPDFHelper handles full path or returns one
-            // Existing code used: $pdfPath = ReportPDFHelper::generate($title, $headers, $data);
-            // We'll modify the helper or wrap it if needed, but let's assume it returns relative path or we can move it
-            $generatedPath = ReportPDFHelper::generate($title, $headers, $data);
-            // Move if it's not in our target dir
-            $fileName = basename($generatedPath);
+            require_once __DIR__ . '/../helpers/pdf_branding_helper.php';
+            PdfBrandingHelper::writeCsvFile($fullPath, $title, $headers, $data, $dateRange);
             $filePath = '/uploads/reports/' . $fileName;
+        } else {
+            $filePath = ReportPDFHelper::generate($title, $headers, $data, $dateRange);
+            $fileName = basename($filePath);
         }
 
         // Save to DB
         $stmt = $db->prepare("INSERT INTO generated_reports (user_id, name, type, file_path, format, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([$userId, $reportName, $title, $filePath, $format, $startDate, $endDate]);
+        $reportId = (int) $db->lastInsertId();
+
+        require_once __DIR__ . '/../helpers/audit_helper.php';
+        AuditHelper::log('export', 'report', $reportId, $reportName,
+            strtoupper($format) . ' report generated');
 
         $this->jsonResponse([
             "message" => "Report generated successfully",
@@ -264,6 +261,8 @@ class ReportController extends Controller
         $zip->close();
 
         if (file_exists($zipPath)) {
+            require_once __DIR__ . '/../helpers/audit_helper.php';
+            AuditHelper::log('export', 'report', null, $zipName, 'Bulk reports ZIP export');
             $this->jsonResponse([
                 "message" => "ZIP exported successfully",
                 "file_path" => "/uploads/reports/" . $zipName

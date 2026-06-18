@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../helpers/mail_helper.php';
 require_once __DIR__ . '/../helpers/notification_helper.php';
+require_once __DIR__ . '/../helpers/audit_helper.php';
 
 class UserController extends Controller
 {
@@ -154,6 +155,7 @@ class UserController extends Controller
             $permKeys = $data['permissions'] ?? [];
             (new Permission())->setUserPermissions($id, $permKeys);
             MailHelper::sendAdminCredentials($data['email'], $data['name'], $plainPassword, $permKeys);
+            AuditHelper::log('create', 'user', (int) $id, $data['name'], "Admin account created ({$data['email']})");
             $this->jsonResponse([
                 'message' => 'Admin created. Credentials sent by email.',
                 'id' => $id,
@@ -163,6 +165,7 @@ class UserController extends Controller
 
         if ($role['name'] === 'Inspector') {
             MailHelper::sendInspectorCredentials($data['email'], $data['name'], $plainPassword);
+            AuditHelper::log('create', 'user', (int) $id, $data['name'], "Inspector account created ({$data['email']})");
             $this->jsonResponse([
                 'message' => 'Inspector created. Credentials sent by email.',
                 'id' => $id,
@@ -174,6 +177,7 @@ class UserController extends Controller
             NotificationHelper::notifyByPermission('manage_clients', 'info', 'New client registration',
                 "{$data['company_name']} ({$data['email']}) is awaiting approval.",
                 '/clients?tab=pending', 'user', (int) $id, "client_pending:{$id}");
+            AuditHelper::log('create', 'client', (int) $id, $data['company_name'], "Registration pending ({$data['email']})");
             $this->jsonResponse([
                 'message' => 'Registration submitted. Await admin approval before signing in.',
                 'id' => $id,
@@ -285,6 +289,7 @@ class UserController extends Controller
         NotificationHelper::notify((int) $id, 'info', 'Account approved',
             'Your FEMS account has been approved. You can now sign in and use the portal.',
             '/dashboard', 'user', (int) $id, "client_approved:{$id}");
+        AuditHelper::log('approve', 'client', (int) $id, $user['name'], 'Client account approved');
         $this->jsonResponse(['message' => 'Client approved']);
     }
 
@@ -297,6 +302,7 @@ class UserController extends Controller
         }
         $this->userModel->setStatus($id, 'inactive');
         MailHelper::sendClientApproval($user['email'], $user['name'], false);
+        AuditHelper::log('reject', 'client', (int) $id, $user['name'], 'Client registration rejected');
         $this->jsonResponse(['message' => 'Client rejected']);
     }
 
@@ -323,7 +329,9 @@ class UserController extends Controller
     public function destroy($id)
     {
         AuthMiddleware::hasRole(['Super Admin']);
+        $user = $this->userModel->findById($id);
         if ($this->userModel->delete($id)) {
+            AuditHelper::log('delete', 'user', (int) $id, $user['name'] ?? "User #{$id}", 'User account deleted');
             $this->jsonResponse(["message" => "User deleted"]);
         }
         $this->jsonResponse(["message" => "Deletion failed"], 500);

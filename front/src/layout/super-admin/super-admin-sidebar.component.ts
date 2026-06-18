@@ -40,6 +40,11 @@ export class SuperAdminSidebarComponent implements OnInit, AfterViewInit {
     setTimeout(() => lucide?.createIcons?.(), 50);
   }
 
+  toggleSidebar() {
+    this.sidebar.toggle();
+    setTimeout(() => lucide?.createIcons?.(), 50);
+  }
+
   onLogout() {
     this.auth.logout().subscribe({
       next: () => {

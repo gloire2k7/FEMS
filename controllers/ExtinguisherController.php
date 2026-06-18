@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../helpers/audit_helper.php';
+
 class ExtinguisherController extends Controller
 {
     private $extModel;
@@ -65,6 +67,7 @@ class ExtinguisherController extends Controller
         for ($i = 0; $i < $count; $i++) {
             $results[] = $this->createSingle($data, true);
         }
+        AuditHelper::log('create', 'extinguisher', null, 'Bulk registration', "Registered {$count} units");
         $this->jsonResponse(['message' => "Registered $count units", 'results' => $results], 201);
     }
 
@@ -114,6 +117,8 @@ class ExtinguisherController extends Controller
 
         $result = ['id' => $id, 'serial_number' => $data['serial_number'], 'qr_path' => $qrPath];
         if ($isBulk) return $result;
+        AuditHelper::log('create', 'extinguisher', (int) $id, $data['serial_number'],
+            "{$data['type']} {$data['capacity']} kg");
         $this->jsonResponse(array_merge(['message' => 'Unit registered'], $result), 201);
     }
 
@@ -126,6 +131,7 @@ class ExtinguisherController extends Controller
             $this->jsonResponse(["message" => "Not found"], 404);
         }
         if ($this->extModel->update($id, array_merge($ext, $data))) {
+            AuditHelper::log('update', 'extinguisher', (int) $id, $ext['serial_number'] ?? "Unit #{$id}", 'Inventory updated');
             $this->jsonResponse(['message' => 'Updated']);
         }
         $this->jsonResponse(["message" => "Update failed"], 500);
@@ -140,6 +146,7 @@ class ExtinguisherController extends Controller
         }
         $this->extModel->logMovement($id, 'removed', $_SESSION['user_id'], $ext['serial_number']);
         if ($this->extModel->delete($id)) {
+            AuditHelper::log('delete', 'extinguisher', (int) $id, $ext['serial_number'], 'Unit removed from inventory');
             $this->jsonResponse(['message' => 'Deleted']);
         }
         $this->jsonResponse(["message" => "Deletion failed"], 500);

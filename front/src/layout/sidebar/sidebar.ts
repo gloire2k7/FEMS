@@ -43,6 +43,11 @@ export class SidebarComponent implements AfterViewInit, OnDestroy {
     this.refreshIcons();
   }
 
+  toggleSidebar(): void {
+    this.sidebar.toggle();
+    setTimeout(() => this.refreshIcons(), 50);
+  }
+
   private refreshIcons(): void {
     if (typeof lucide !== 'undefined') lucide.createIcons();
   }

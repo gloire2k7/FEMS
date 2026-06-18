@@ -8,9 +8,9 @@ class User extends Model
     {
         $query = "SELECT u.*, r.name as role_name FROM {$this->table} u
                   LEFT JOIN roles r ON r.id = u.role_id
-                  WHERE u.email = :email LIMIT 1";
+                  WHERE LOWER(u.email) = LOWER(:email) LIMIT 1";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':email', $email);
+        $stmt->bindValue(':email', trim($email));
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -182,6 +182,17 @@ class User extends Model
         $stmt = $this->db->prepare("UPDATE {$this->table} SET status = :status WHERE id = :id");
         $stmt->bindParam(':status', $status);
         $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
+
+    public function setPassword($id, $plainPassword)
+    {
+        $hash = password_hash($plainPassword, PASSWORD_DEFAULT);
+        $stmt = $this->db->prepare(
+            "UPDATE {$this->table} SET password = :password, must_change_password = 0 WHERE id = :id"
+        );
+        $stmt->bindValue(':password', $hash);
+        $stmt->bindValue(':id', (int) $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
 }

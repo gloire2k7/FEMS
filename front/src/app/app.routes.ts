@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { SignupComponent } from './pages/signup/signup';
 import { SigninComponent } from './pages/signin/signin';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password';
+import { ResetPasswordComponent } from './pages/reset-password/reset-password';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ExtinguishersComponent } from './pages/extinguishers/extinguishers.component';
 import { ServiceRequestsComponent } from './pages/service-requests/service-requests.component';
@@ -55,6 +57,8 @@ export const routes: Routes = [
   { path: '', component: SignupComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'signin', component: SigninComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'assistant', component: AiAssistantPageComponent },
   { path: 'dashboard', component: DashboardComponent },
 

@@ -1,5 +1,5 @@
-import { Component, AfterViewInit, inject } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
+import { Component, AfterViewInit, OnInit, inject } from '@angular/core';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../auth.service';
@@ -13,14 +13,22 @@ declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | 
   templateUrl: './signin.html',
   styleUrls: ['./signin.css']
 })
-export class SigninComponent implements AfterViewInit {
+export class SigninComponent implements OnInit, AfterViewInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   email = '';
   password = '';
   isLoading = false;
   error = '';
+  successMessage = '';
+
+  ngOnInit() {
+    if (this.route.snapshot.queryParamMap.get('reset') === 'success') {
+      this.successMessage = 'Your password was reset. Sign in with your new password.';
+    }
+  }
 
   ngAfterViewInit() {
     this.initIcons();

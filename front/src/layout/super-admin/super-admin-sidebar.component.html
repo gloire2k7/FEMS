@@ -1,19 +1,20 @@
 <aside
   class="fems-sidebar bg-gradient-to-b from-[#1a0f2e] via-[#0B1437] to-[#020617] p-4 md:p-6 flex flex-col h-screen shrink-0 overflow-y-auto border-r border-white/5 transition-all duration-300 z-40 fixed lg:static inset-y-0 left-0 -translate-x-full lg:translate-x-0"
   [class.translate-x-0]="sidebar.mobileOpen()"
+  [class.w-64]="!sidebar.collapsed() || sidebar.mobileOpen()"
   [class.lg:w-64]="!sidebar.collapsed()"
   [class.lg:w-[4.5rem]]="sidebar.collapsed()"
-  [class.w-64]="sidebar.mobileOpen() || !sidebar.collapsed()"
   [class.is-collapsed]="sidebar.collapsed()">
+
   <div class="flex items-center gap-2 mb-8 pl-1">
     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-amber-400 flex items-center justify-center shadow-lg shadow-violet-500/20 shrink-0">
       <i data-lucide="crown" class="w-5 h-5 text-white"></i>
     </div>
-    <div *ngIf="!sidebar.collapsed()" class="min-w-0 flex-1 sidebar-text">
+    <div *ngIf="!sidebar.collapsed()" class="min-w-0 flex-1">
       <span class="text-2xl font-bold text-white tracking-wide">FEMS</span>
       <p class="text-xs text-violet-300/80 font-medium">Super Admin</p>
     </div>
-    <button type="button" (click)="sidebar.toggle()" title="Collapse sidebar"
+    <button type="button" (click)="toggleSidebar()" title="Collapse sidebar"
       class="hidden lg:flex p-2 rounded-lg text-slate-400 hover:bg-white/10 hover:text-white transition-colors shrink-0">
       <i [attr.data-lucide]="sidebar.collapsed() ? 'panel-left-open' : 'panel-left-close'" class="w-4 h-4"></i>
     </button>
@@ -25,80 +26,97 @@
 
   <nav class="space-y-1 text-base flex-1">
     <a routerLink="/super-admin-dashboard" routerLinkActive="bg-white/10 text-white" [routerLinkActiveOptions]="{ exact: true }"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+      (click)="sidebar.closeMobile()"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+      [class.justify-center]="sidebar.collapsed()" [class.px-3]="sidebar.collapsed()">
       <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">Dashboard</span>
+      <span *ngIf="!sidebar.collapsed()" class="font-medium">Dashboard</span>
     </a>
 
-    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">People</p>
+    <p *ngIf="!sidebar.collapsed()" class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">People</p>
 
     <a routerLink="/super-admin-admins" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
-      <span class="flex items-center gap-3">
-        <i data-lucide="shield" class="w-5 h-5 shrink-0"></i>
-        <span class="font-medium">Admins</span>
-      </span>
-      <span *ngIf="adminCount > 0" class="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-violet-500/80 text-white text-xs font-bold flex items-center justify-center">
+      (click)="sidebar.closeMobile()"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+      [class.justify-center]="sidebar.collapsed()" [class.px-3]="sidebar.collapsed()">
+      <i data-lucide="shield" class="w-5 h-5 shrink-0"></i>
+      <span *ngIf="!sidebar.collapsed()" class="font-medium flex-1">Admins</span>
+      <span *ngIf="!sidebar.collapsed() && adminCount > 0"
+        class="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-violet-500/80 text-white text-xs font-bold flex items-center justify-center">
         {{ adminCount }}
       </span>
     </a>
     <a routerLink="/super-admin-clients" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
-      <span class="flex items-center gap-3">
-        <i data-lucide="building-2" class="w-5 h-5 shrink-0"></i>
-        <span class="font-medium">Clients</span>
-      </span>
-      <span *ngIf="pendingClients > 0" class="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center">
+      (click)="sidebar.closeMobile()"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+      [class.justify-center]="sidebar.collapsed()" [class.px-3]="sidebar.collapsed()">
+      <i data-lucide="building-2" class="w-5 h-5 shrink-0"></i>
+      <span *ngIf="!sidebar.collapsed()" class="font-medium flex-1">Clients</span>
+      <span *ngIf="!sidebar.collapsed() && pendingClients > 0"
+        class="min-w-[1.25rem] h-5 px-1.5 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center">
         {{ pendingClients }}
       </span>
     </a>
     <a routerLink="/super-admin-add-admin" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+      (click)="sidebar.closeMobile()"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+      [class.justify-center]="sidebar.collapsed()" [class.px-3]="sidebar.collapsed()">
       <i data-lucide="user-plus" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">Add admin</span>
+      <span *ngIf="!sidebar.collapsed()" class="font-medium">Add admin</span>
     </a>
 
-    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">Operations</p>
+    <p *ngIf="!sidebar.collapsed()" class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">Operations</p>
 
     <a routerLink="/super-admin-inventory" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+      (click)="sidebar.closeMobile()"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+      [class.justify-center]="sidebar.collapsed()" [class.px-3]="sidebar.collapsed()">
       <i data-lucide="package" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">Inventory</span>
+      <span *ngIf="!sidebar.collapsed()" class="font-medium">Inventory</span>
     </a>
 
-    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">Insights</p>
+    <p *ngIf="!sidebar.collapsed()" class="text-sm font-semibold text-slate-500 uppercase tracking-wider px-4 pt-8 pb-3">Insights</p>
 
     <a routerLink="/super-admin-reports" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+      (click)="sidebar.closeMobile()"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+      [class.justify-center]="sidebar.collapsed()" [class.px-3]="sidebar.collapsed()">
       <i data-lucide="file-bar-chart" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">Reports</span>
+      <span *ngIf="!sidebar.collapsed()" class="font-medium">Reports</span>
     </a>
     <a routerLink="/super-admin-logs" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+      (click)="sidebar.closeMobile()"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+      [class.justify-center]="sidebar.collapsed()" [class.px-3]="sidebar.collapsed()">
       <i data-lucide="scroll-text" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">Activity logs</span>
+      <span *ngIf="!sidebar.collapsed()" class="font-medium">Activity logs</span>
     </a>
     <a routerLink="/super-admin-notifications" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+      (click)="sidebar.closeMobile()"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+      [class.justify-center]="sidebar.collapsed()" [class.px-3]="sidebar.collapsed()">
       <i data-lucide="bell" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">Notifications</span>
+      <span *ngIf="!sidebar.collapsed()" class="font-medium">Notifications</span>
     </a>
     <a routerLink="/assistant" routerLinkActive="bg-white/10 text-white"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors">
+      (click)="sidebar.closeMobile()"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+      [class.justify-center]="sidebar.collapsed()" [class.px-3]="sidebar.collapsed()">
       <i data-lucide="sparkles" class="w-5 h-5 shrink-0"></i>
-      <span class="font-medium">AI Assistant</span>
+      <span *ngIf="!sidebar.collapsed()" class="font-medium">AI Assistant</span>
     </a>
   </nav>
 
   <div class="mt-auto pt-6">
-    <div class="bg-white/5 rounded-xl p-4 flex items-center gap-3 border border-white/5">
+    <div class="bg-white/5 rounded-xl p-4 flex items-center gap-3 border border-white/5"
+      [class.justify-center]="sidebar.collapsed()" [class.p-3]="sidebar.collapsed()">
       <img [src]="'https://ui-avatars.com/api/?name=' + userName + '&background=7c3aed&color=fff'" alt=""
         class="w-10 h-10 rounded-full shrink-0 ring-2 ring-violet-500/30">
-      <div class="min-w-0 flex-1">
+      <div *ngIf="!sidebar.collapsed()" class="min-w-0 flex-1">
         <p class="text-sm text-slate-400">Signed in as</p>
         <p class="text-base font-semibold text-white truncate">{{ userName }}</p>
       </div>
-      <button type="button" (click)="onLogout()" title="Sign out"
+      <button *ngIf="!sidebar.collapsed()" type="button" (click)="onLogout()" title="Sign out"
         class="p-2 rounded-lg hover:bg-white/10 text-slate-400 hover:text-red-400 transition-colors">
         <i data-lucide="log-out" class="w-5 h-5"></i>
       </button>

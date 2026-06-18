@@ -496,7 +496,8 @@ PROMPT;
                 return null;
         }
 
-        $filePath = ReportPDFHelper::generate($title, $headers, $data);
+        $dateRange = ($start && $end) ? "{$start} to {$end}" : null;
+        $filePath = ReportPDFHelper::generate($title, $headers, $data, $dateRange);
         if (!$filePath) return null;
 
         $reportName = $title . ($start && $end ? " ({$start} to {$end})" : ' - ' . date('Y-m-d'));

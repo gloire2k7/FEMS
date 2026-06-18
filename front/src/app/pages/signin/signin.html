@@ -18,6 +18,9 @@
       <!-- FORM -->
       <form (submit)="onSubmit()" class="space-y-6">
         <!-- Error Message -->
+        <div *ngIf="successMessage" class="text-emerald-600 text-[12px] font-semibold text-center mb-4">
+          {{ successMessage }}
+        </div>
         <div *ngIf="error" class="text-red-500 text-[12px] font-semibold text-center mb-4">
           {{ error }}
         </div>
@@ -53,7 +56,7 @@
               class="w-3.5 h-3.5 rounded border-[#E0E5F2] text-[#0B1437] focus:ring-[#0B1437] transition-all cursor-pointer">
             <label for="remember" class="text-[12px] font-medium text-[#47548C] cursor-pointer">Remember me</label>
           </div>
-          <a href="#"
+          <a routerLink="/forgot-password"
             class="text-[12px] font-bold text-[#1B2559] hover:text-blue-600 transition-colors tracking-tight">Forgot
             password?</a>
         </div>

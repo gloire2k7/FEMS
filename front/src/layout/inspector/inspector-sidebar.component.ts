@@ -40,4 +40,9 @@ export class InspectorSidebarComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     setTimeout(() => lucide?.createIcons?.(), 50);
   }
+
+  toggleSidebar() {
+    this.sidebar.toggle();
+    setTimeout(() => lucide?.createIcons?.(), 50);
+  }
 }

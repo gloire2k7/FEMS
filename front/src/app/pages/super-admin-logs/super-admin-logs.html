@@ -25,6 +25,7 @@
   <div class="grid lg:grid-cols-2 gap-6">
     <section class="client-card p-6">
       <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Entity activity</h2>
+      <div *ngIf="heatmap.length === 0" class="text-sm text-slate-500 py-4">No activity recorded yet.</div>
       <div class="space-y-4">
         <div *ngFor="let item of heatmap">
           <div class="flex justify-between text-sm mb-1.5">
@@ -39,32 +40,17 @@
     </section>
 
     <section class="client-card p-6">
-      <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Filter logs</h2>
+      <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Filter by category</h2>
       <div class="client-search mb-4">
         <i data-lucide="search" class="client-search-icon"></i>
-        <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, email, or log ID…" class="client-input w-full">
+        <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
+          placeholder="Search by name, email, or log ID…" class="client-input w-full">
       </div>
       <div class="flex flex-wrap gap-2">
-        <button type="button" (click)="actionFilter = 'all'"
+        <button *ngFor="let f of entityFilters" type="button" (click)="setEntityFilter(f.key)"
           class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-          [class.bg-[#0B1437]]="actionFilter === 'all'" [class.text-white]="actionFilter === 'all'"
-          [class.border-slate-200]="actionFilter !== 'all'">All</button>
-        <button type="button" (click)="actionFilter = 'login'"
-          class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-          [class.bg-[#0B1437]]="actionFilter === 'login'" [class.text-white]="actionFilter === 'login'"
-          [class.border-slate-200]="actionFilter !== 'login'">Login</button>
-        <button type="button" (click)="actionFilter = 'create'"
-          class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-          [class.bg-[#0B1437]]="actionFilter === 'create'" [class.text-white]="actionFilter === 'create'"
-          [class.border-slate-200]="actionFilter !== 'create'">Create</button>
-        <button type="button" (click)="actionFilter = 'update'"
-          class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-          [class.bg-[#0B1437]]="actionFilter === 'update'" [class.text-white]="actionFilter === 'update'"
-          [class.border-slate-200]="actionFilter !== 'update'">Update</button>
-        <button type="button" (click)="actionFilter = 'delete'"
-          class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-          [class.bg-[#0B1437]]="actionFilter === 'delete'" [class.text-white]="actionFilter === 'delete'"
-          [class.border-slate-200]="actionFilter !== 'delete'">Delete</button>
+          [class.bg-[#0B1437]]="entityFilter === f.key" [class.text-white]="entityFilter === f.key"
+          [class.border-slate-200]="entityFilter !== f.key">{{ f.label }}</button>
       </div>
     </section>
   </div>
@@ -73,19 +59,25 @@
     <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
       <div>
         <h2 class="text-lg font-semibold text-[#0B1437]">Recent activity</h2>
-        <p class="text-sm text-slate-500 mt-0.5">Showing {{ filteredLogs.length }} log entries</p>
+        <p class="text-sm text-slate-500 mt-0.5">Showing {{ logs.length }} of {{ total }} log entries</p>
       </div>
-      <button type="button" class="client-btn-secondary px-4 py-2.5 text-sm inline-flex items-center gap-2">
-        <i data-lucide="download" class="w-4 h-4"></i> Export CSV
+      <button type="button" (click)="exportCsv()" [disabled]="exporting || total === 0"
+        class="client-btn-secondary px-4 py-2.5 text-sm inline-flex items-center gap-2 disabled:opacity-50">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        {{ exporting ? 'Exporting…' : 'Export CSV' }}
       </button>
     </div>
 
-    <div *ngIf="filteredLogs.length === 0" class="client-empty py-12">
+    <div *ngIf="loading" class="client-empty py-12">
+      <p class="text-slate-500">Loading activity logs…</p>
+    </div>
+
+    <div *ngIf="!loading && logs.length === 0" class="client-empty py-12">
       <p class="text-slate-500">No logs match your filters.</p>
     </div>
 
-    <div *ngIf="filteredLogs.length" class="divide-y divide-slate-50">
-      <div *ngFor="let log of filteredLogs" class="px-6 py-4 flex flex-wrap items-center gap-4 hover:bg-slate-50/50">
+    <div *ngIf="!loading && logs.length" class="divide-y divide-slate-50">
+      <div *ngFor="let log of logs" class="px-6 py-4 flex flex-wrap items-center gap-4 hover:bg-slate-50/50">
         <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0 text-sm font-bold text-slate-600">
           {{ log.name.charAt(0) }}
         </div>
@@ -95,15 +87,22 @@
             <span class="text-xs font-semibold px-2 py-0.5 rounded" [ngClass]="log.roleClass">{{ log.role }}</span>
             <span class="text-xs font-semibold px-2 py-0.5 rounded" [ngClass]="log.actionClass">{{ log.action }}</span>
           </div>
-          <p class="text-sm text-slate-500 mt-0.5">{{ log.entity }} · {{ log.email }}</p>
+          <p class="text-sm text-slate-500 mt-0.5">
+            {{ log.entity }}<span *ngIf="log.entity_label"> · {{ log.entity_label }}</span>
+            <span *ngIf="log.email"> · {{ log.email }}</span>
+          </p>
+          <p *ngIf="log.details" class="text-xs text-slate-400 mt-0.5">{{ log.details }}</p>
         </div>
         <div class="text-right shrink-0">
           <p class="text-sm font-medium text-[#0B1437]">{{ log.date }}</p>
           <p class="text-xs text-slate-400">{{ log.time }}</p>
-          <p class="text-xs text-slate-400 font-mono mt-0.5">{{ log.id }}</p>
+          <p class="text-xs text-slate-400 font-mono mt-0.5">{{ log.log_id }}</p>
         </div>
       </div>
     </div>
+
+    <app-pagination *ngIf="!loading && lastPage > 1" [page]="page" [lastPage]="lastPage" [total]="total"
+      (pageChange)="load($event)" />
   </section>
 
 </div>

@@ -54,6 +54,7 @@ export class AdminInventoryComponent implements OnInit, AfterViewInit {
   priceSaving = false;
   priceMessage = '';
   priceError = '';
+  pricingExpanded = false;
 
   private unitsRequestId = 0;
 
@@ -185,6 +186,13 @@ export class AdminInventoryComponent implements OnInit, AfterViewInit {
         this.priceError = err.error?.message || 'Failed to save prices.';
       },
     });
+  }
+
+  togglePricing() {
+    this.pricingExpanded = !this.pricingExpanded;
+    if (this.pricingExpanded) {
+      this.initIcons();
+    }
   }
 
   openEdit(unit: any) {

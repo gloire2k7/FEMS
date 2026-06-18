@@ -9,6 +9,8 @@ $router->get('/api/test', function () {
 // Auth
 $router->post('/api/login', ['AuthController', 'login']);
 $router->post('/api/logout', ['AuthController', 'logout']);
+$router->post('/api/forgot-password', ['AuthController', 'forgotPassword']);
+$router->post('/api/reset-password', ['AuthController', 'resetPassword']);
 $router->get('/api/me', ['AuthController', 'me']);
 
 // Dashboard analytics
@@ -137,6 +139,10 @@ $router->post('/api/reports', ['ReportController', 'generate']);
 $router->get('/api/reports/export-zip', ['ReportController', 'exportZip']);
 
 $router->get('/api/compliance/alerts', ['ComplianceController', 'index']);
+
+// Activity logs (Super Admin)
+$router->get('/api/activity-logs', ['AuditLogController', 'index']);
+$router->get('/api/activity-logs/export', ['AuditLogController', 'export']);
 
 // Notifications
 $router->get('/api/notifications', ['NotificationController', 'index']);

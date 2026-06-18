@@ -60,6 +60,14 @@ export class AdminSidebarComponent implements OnInit, AfterViewInit {
     return keys.some(k => this.auth.hasPermission(k));
   }
 
+  toggleSidebar() {
+    this.sidebar.toggle();
+    if (this.sidebar.collapsed()) {
+      this.inspectionsOpen = false;
+    }
+    setTimeout(() => lucide?.createIcons?.(), 50);
+  }
+
   toggleInspections() {
     this.inspectionsOpen = !this.inspectionsOpen;
     setTimeout(() => lucide?.createIcons?.(), 50);

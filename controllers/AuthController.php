@@ -96,4 +96,82 @@ class AuthController extends Controller
         session_destroy();
         $this->jsonResponse(["message" => "Logout successful"]);
     }
+
+    public function forgotPassword()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(["message" => "Method not allowed"], 405);
+        }
+
+        require_once __DIR__ . '/../helpers/mail_helper.php';
+
+        $data = $this->getJsonInput();
+        if (!$this->validateRequiredParams(['email'], $data)) {
+            $this->jsonResponse(["message" => "Email is required"], 400);
+        }
+
+        $email = trim($data['email']);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->jsonResponse(["message" => "Invalid email format"], 400);
+        }
+
+        $userModel = new User();
+        $user = $userModel->findByEmail($email);
+
+        if ($user && $user['status'] === 'active') {
+            $tokenModel = new PasswordResetToken();
+            $otp = $tokenModel->createOtpForUser((int) $user['id']);
+            MailHelper::sendPasswordResetOtp($user['email'], $user['name'], $otp);
+        }
+
+        $this->jsonResponse([
+            'message' => 'If an account exists with that email, we sent a verification code.',
+        ]);
+    }
+
+    public function resetPassword()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonResponse(["message" => "Method not allowed"], 405);
+        }
+
+        $data = $this->getJsonInput();
+        if (!$this->validateRequiredParams(['email', 'otp', 'password', 'password_confirmation'], $data)) {
+            $this->jsonResponse(["message" => "Email, verification code, and new password are required"], 400);
+        }
+
+        $email = trim($data['email']);
+        $otp = preg_replace('/\D/', '', trim($data['otp'] ?? ''));
+        $password = $data['password'];
+        $confirm = $data['password_confirmation'];
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->jsonResponse(["message" => "Invalid email format"], 400);
+        }
+        if (strlen($otp) !== 6) {
+            $this->jsonResponse(["message" => "Enter the 6-digit verification code"], 400);
+        }
+        if (strlen($password) < 8) {
+            $this->jsonResponse(["message" => "Password must be at least 8 characters"], 400);
+        }
+        if ($password !== $confirm) {
+            $this->jsonResponse(["message" => "Passwords do not match"], 400);
+        }
+
+        $tokenModel = new PasswordResetToken();
+        $record = $tokenModel->findValidByEmailAndOtp($email, $otp);
+        if (!$record) {
+            $this->jsonResponse(["message" => "Invalid or expired verification code. Request a new one."], 400);
+        }
+
+        $userModel = new User();
+        if (!$userModel->setPassword((int) $record['user_id'], $password)) {
+            $this->jsonResponse(["message" => "Could not update password"], 500);
+        }
+
+        $tokenModel->markUsed((int) $record['id']);
+        $tokenModel->invalidateForUser((int) $record['user_id']);
+
+        $this->jsonResponse(['message' => 'Your password has been reset. You can now sign in.']);
+    }
 }

@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../helpers/mail_helper.php';
 require_once __DIR__ . '/../helpers/notification_helper.php';
+require_once __DIR__ . '/../helpers/audit_helper.php';
 
 class OrderController extends Controller
 {
@@ -114,6 +115,8 @@ class OrderController extends Controller
             NotificationHelper::notifyByPermission('manage_orders', 'info', 'New order submitted',
                 "Order #{$orderId}: {$quantity}× {$data['type']} {$capacity} from client.",
                 '/admin-orders', 'order', (int) $orderId, "order_new:{$orderId}");
+            AuditHelper::log('create', 'order', (int) $orderId, "Order #{$orderId}",
+                "{$quantity}× {$data['type']} {$capacity} kg");
             $this->jsonResponse([
                 'message' => 'Order submitted successfully. Awaiting admin review.',
                 'order_id' => $orderId,
@@ -225,6 +228,9 @@ class OrderController extends Controller
 
         $zipUrl = $this->createLabelZip($id, $pdfFiles);
 
+        AuditHelper::log('grant', 'order', (int) $id, "Order #{$id}",
+            "Granted {$grantQty} unit(s), delivery {$deliveryDate}");
+
         $this->jsonResponse([
             'message' => $remainderQty > 0
                 ? "Partially granted {$grantQty} of {$order['quantity']} units. Remainder order #{$remainderOrderId} created."
@@ -254,6 +260,7 @@ class OrderController extends Controller
             MailHelper::sendOrderStatusUpdate($order['client_email'], $id, 'cancelled', $reason);
             NotificationHelper::notifyCompanyUsers((int) $order['client_id'], 'critical', 'Order denied',
                 "Order #{$id} was denied. Reason: {$reason}", '/my-orders', 'order', (int) $id, "order_denied:{$id}");
+            AuditHelper::log('deny', 'order', (int) $id, "Order #{$id}", $reason);
             $this->jsonResponse(['message' => 'Order denied.']);
         }
         $this->jsonResponse(["message" => "Unknown action"], 400);
@@ -280,6 +287,7 @@ class OrderController extends Controller
             MailHelper::sendOrderStatusUpdate($order['client_email'], $id, 'delivered');
             NotificationHelper::notifyByPermission('manage_orders', 'info', 'Order delivery confirmed',
                 "Client confirmed delivery for order #{$id}.", '/admin-orders', 'order', (int) $id, "order_delivered:{$id}");
+            AuditHelper::log('deliver', 'order', (int) $id, "Order #{$id}", 'Client confirmed delivery');
             $this->jsonResponse(['message' => 'Delivery confirmed. Thank you!']);
         }
 
@@ -291,6 +299,7 @@ class OrderController extends Controller
         MailHelper::sendOrderStatusUpdate($order['client_email'], $id, 'delivered');
         NotificationHelper::notifyCompanyUsers((int) $order['client_id'], 'info', 'Order delivered',
             "Order #{$id} has been marked as delivered.", '/my-orders', 'order', (int) $id, "order_delivered_client:{$id}");
+        AuditHelper::log('deliver', 'order', (int) $id, "Order #{$id}", 'Marked as delivered by admin');
         $this->jsonResponse(['message' => 'Order marked as delivered.']);
     }
 
