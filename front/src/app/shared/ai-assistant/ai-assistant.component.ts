@@ -60,10 +60,7 @@ export class AiAssistantComponent implements AfterViewInit {
 
   close() {
     if (this.fullPage) {
-      const role = this.auth.getUser()?.role ?? '';
-      if (role === 'Super Admin') this.router.navigate(['/super-admin-dashboard']);
-      else if (role === 'Admin') this.router.navigate(['/admin-dashboard']);
-      else this.router.navigate(['/dashboard']);
+      this.router.navigate(['/dashboard']);
       return;
     }
     this.open = false;

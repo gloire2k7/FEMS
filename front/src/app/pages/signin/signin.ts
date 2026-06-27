@@ -43,13 +43,9 @@ export class SigninComponent implements OnInit, AfterViewInit {
         this.isLoading = false;
         this.authService.setUser(response.user);
 
-        // Redirect based on role
-        if (response.user.role === 'Super Admin') {
-          this.router.navigate(['/super-admin-dashboard']);
-        } else if (response.user.role === 'Admin') {
-          this.router.navigate(['/admin-dashboard']);
-        } else if (response.user.role === 'Inspector') {
-          this.router.navigate(['/inspector-dashboard']);
+        // Unified portal: everyone lands on the same permission-driven dashboard.
+        if (response.user.must_change_password) {
+          this.router.navigate(['/settings']);
         } else {
           this.router.navigate(['/dashboard']);
         }

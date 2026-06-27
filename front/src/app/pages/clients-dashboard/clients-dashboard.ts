@@ -124,6 +124,24 @@ export class ClientsDashboard implements OnInit, AfterViewInit {
     });
   }
 
+  resendCredentials(client: any) {
+    if (this.processing.has(client.id)) return;
+    if (!confirm(`Generate a new password for ${client.company_name || client.name} and email it to ${client.email}? Their current password will stop working.`)) {
+      return;
+    }
+    this.processing.add(client.id);
+    this.auth.resendClientCredentials(client.id).subscribe({
+      next: (res) => {
+        this.processing.delete(client.id);
+        alert(res?.message || 'New credentials sent by email.');
+      },
+      error: (err) => {
+        this.processing.delete(client.id);
+        alert(err?.error?.message || 'Could not resend credentials.');
+      },
+    });
+  }
+
   initials(name: string): string {
     return (name || 'C').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
   }

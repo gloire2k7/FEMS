@@ -95,6 +95,17 @@ export class AuthService {
     return this.http.get<any[]>(`${this.apiUrl}/permissions`, { withCredentials: true });
   }
 
+  getPermissionCatalog(): Observable<{
+    groups: { name: string; permissions: { key: string; label: string; description: string }[] }[];
+    role_defaults: Record<string, string[]>;
+  }> {
+    return this.http.get<any>(`${this.apiUrl}/permissions/catalog`, { withCredentials: true });
+  }
+
+  getUserDirectory(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/users/directory`, { withCredentials: true });
+  }
+
   getUserById(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/users/${id}`, { withCredentials: true });
   }
@@ -113,6 +124,10 @@ export class AuthService {
 
   rejectClient(id: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/users/${id}/reject`, {}, { withCredentials: true });
+  }
+
+  resendClientCredentials(id: number): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${this.apiUrl}/users/${id}/resend-credentials`, {}, { withCredentials: true });
   }
 
   changePassword(current: string, newPassword: string): Observable<any> {
@@ -162,10 +177,27 @@ export class AuthService {
   hasPermission(key: string): boolean {
     const user = this.getUser();
     if (!user) return false;
-    if (user.role === 'Super Admin') return true;
-    const alwaysGranted = ['manage_notifications', 'manage_settings', 'manage_ai_assistant'];
+    // Permission-driven for everyone — including Super Admin — so revoking a
+    // permission immediately removes the corresponding tab/feature.
+    // Baseline access everyone keeps so they can always reach their own basics.
+    const alwaysGranted = ['dashboard.view', 'notifications.view', 'settings.view'];
     if (alwaysGranted.includes(key)) return true;
     return (user.permissions || []).includes(key);
+  }
+
+  hasAnyPermission(keys: string[]): boolean {
+    return keys.some((k) => this.hasPermission(k));
+  }
+
+  /** Reports pages are audience-scoped; resolve to the right one by permission. */
+  reportsRoute(): string {
+    if (this.hasPermission('inspections.complete') && !this.hasPermission('orders.view') && !this.hasPermission('clients.view')) {
+      return '/inspector-reports';
+    }
+    if (this.hasAnyPermission(['orders.view', 'clients.view', 'inventory.view', 'admins.view'])) {
+      return '/super-admin-reports';
+    }
+    return '/reports';
   }
 
   deleteUser(id: number): Observable<any> {

@@ -63,7 +63,14 @@
             {{ isProcessing(c.id) ? 'Rejecting…' : 'Reject' }}
           </button>
         </ng-container>
-        <span *ngIf="tab === 'active'" class="text-sm font-semibold text-emerald-700 px-3 py-1.5 bg-emerald-50 rounded-full">Active</span>
+        <ng-container *ngIf="tab === 'active'">
+          <button type="button" (click)="resendCredentials(c)" [disabled]="isProcessing(c.id)"
+            class="client-btn-secondary px-4 py-2.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+            title="Generate a new password and email it to the client">
+            {{ isProcessing(c.id) ? 'Sending…' : 'Resend credentials' }}
+          </button>
+          <span class="text-sm font-semibold text-emerald-700 px-3 py-1.5 bg-emerald-50 rounded-full">Active</span>
+        </ng-container>
       </div>
     </article>
   </div>

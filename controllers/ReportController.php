@@ -36,7 +36,7 @@ class ReportController extends Controller
             return;
         }
 
-        AuthMiddleware::hasRole(['Super Admin', 'Admin']);
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'reports.view');
 
         $db = Database::getConnection();
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -78,7 +78,7 @@ class ReportController extends Controller
             }
             $userId = (int) $_SESSION['user_id'];
         } else {
-            AuthMiddleware::hasRole(['Super Admin', 'Admin']);
+            AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'reports.generate');
         }
 
         require_once __DIR__ . '/../helpers/report_pdf_helper.php';
@@ -226,7 +226,7 @@ class ReportController extends Controller
 
     public function exportZip()
     {
-        AuthMiddleware::hasRole(['Super Admin']);
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'reports.export');
 
         $uploadDir = __DIR__ . '/../uploads/reports/';
         $zipName = 'fems_reports_' . date('Ymd_His') . '.zip';

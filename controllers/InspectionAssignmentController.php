@@ -39,13 +39,13 @@ class InspectionAssignmentController extends Controller
             );
         }
 
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('inspections.assign');
         $this->jsonResponse($this->assignmentModel->findAllPaginated($page, $limit));
     }
 
     public function store()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('inspections.assign');
         $data = $this->getJsonInput();
 
         if (!$this->validateRequiredParams(['extinguisher_id'], $data)) {
@@ -196,7 +196,7 @@ class InspectionAssignmentController extends Controller
                     "insp_done:{$assignment['service_request_id']}"
                 );
             }
-            NotificationHelper::notifyByPermission('manage_inspections', 'info', 'Inspection submitted',
+            NotificationHelper::notifyByPermission('inspections.view', 'info', 'Inspection submitted',
                 "Inspector submitted results for {$assignment['serial_number']}.",
                 '/admin-assigned-inspections',
                 'inspection',

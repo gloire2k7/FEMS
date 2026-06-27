@@ -65,28 +65,28 @@
 
     <section class="client-card p-6">
       <h2 class="text-lg font-semibold text-[#0B1437] mb-1">Permissions</h2>
-      <p class="text-sm text-slate-500 mb-4">Select what this admin can manage on the platform.</p>
-      <div class="grid sm:grid-cols-2 gap-3">
-        <label *ngFor="let p of permissionOptions"
-          class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
-          <input type="checkbox" class="mt-1" [checked]="hasPermission(p.key)" (change)="togglePermission(p.key)">
-          <div>
-            <span class="text-sm font-semibold text-[#0B1437]">{{ p.label }}</span>
-            <p class="text-xs text-slate-500 mt-0.5">{{ p.description }}</p>
-          </div>
-        </label>
-      </div>
+      <p class="text-sm text-slate-500 mb-4">Pre-filled with the standard Admin template — tick or untick anything. You can fine-tune later in Access control.</p>
 
-      <div class="mt-4 pt-4 border-t border-slate-100">
-        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">System — always granted</p>
-        <div class="grid sm:grid-cols-3 gap-3">
-          <div *ngFor="let s of ['Notifications','Settings','AI Assistant']"
-            class="flex items-center gap-3 p-4 bg-emerald-50 rounded-xl opacity-75">
-            <input type="checkbox" checked disabled class="mt-0">
-            <span class="text-sm font-semibold text-emerald-700">{{ s }}</span>
+      <div class="space-y-4">
+        <div *ngFor="let g of groups" class="border border-slate-100 rounded-xl overflow-hidden">
+          <label class="flex items-center gap-3 px-4 py-2.5 bg-slate-50 cursor-pointer">
+            <input type="checkbox" [checked]="groupAll(g)" (change)="toggleGroup(g)">
+            <span class="text-sm font-bold text-[#0B1437]">{{ g.name }}</span>
+          </label>
+          <div class="grid sm:grid-cols-2 gap-x-3">
+            <label *ngFor="let p of g.permissions"
+              class="flex items-start gap-3 px-4 py-2.5 cursor-pointer hover:bg-slate-50 transition-colors">
+              <input type="checkbox" class="mt-1" [checked]="hasPermission(p.key)" (change)="togglePermission(p.key)">
+              <div>
+                <span class="text-sm font-medium text-[#0B1437]">{{ p.label }}</span>
+                <p class="text-xs text-slate-400 mt-0.5">{{ p.description }}</p>
+              </div>
+            </label>
           </div>
         </div>
       </div>
+
+      <p class="mt-4 text-xs text-slate-400">Dashboard, notifications, settings and AI assistant access are always granted.</p>
     </section>
 
     <div class="flex flex-wrap gap-3">

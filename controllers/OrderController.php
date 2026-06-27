@@ -27,7 +27,7 @@ class OrderController extends Controller
 
         if (in_array($roleName, ['Super Admin', 'Admin'], true)) {
             if ($roleName === 'Admin') {
-                AuthMiddleware::hasPermission('manage_orders');
+                AuthMiddleware::hasPermission('orders.view');
             }
             $this->jsonResponse($this->orderModel->findPaginated($page, $limit));
         }
@@ -112,7 +112,7 @@ class OrderController extends Controller
 
         $orderId = $this->orderModel->create($orderData);
         if ($orderId) {
-            NotificationHelper::notifyByPermission('manage_orders', 'info', 'New order submitted',
+            NotificationHelper::notifyByPermission('orders.view', 'info', 'New order submitted',
                 "Order #{$orderId}: {$quantity}× {$data['type']} {$capacity} from client.",
                 '/admin-orders', 'order', (int) $orderId, "order_new:{$orderId}");
             AuditHelper::log('create', 'order', (int) $orderId, "Order #{$orderId}",
@@ -129,7 +129,7 @@ class OrderController extends Controller
 
     public function grant($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_orders');
+        AuthMiddleware::hasPermission('orders.grant');
 
         $order = $this->orderModel->findById($id);
         if (!$order || $order['status'] !== 'pending') {
@@ -244,7 +244,7 @@ class OrderController extends Controller
 
     public function confirm($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_orders');
+        AuthMiddleware::hasPermission('orders.grant');
         $order = $this->orderModel->findById($id);
         if (!$order) {
             $this->jsonResponse(["message" => "Order not found"], 404);
@@ -285,13 +285,13 @@ class OrderController extends Controller
             }
             $this->orderModel->updateStatus($id, 'delivered', ['client_confirmed' => true]);
             MailHelper::sendOrderStatusUpdate($order['client_email'], $id, 'delivered');
-            NotificationHelper::notifyByPermission('manage_orders', 'info', 'Order delivery confirmed',
+            NotificationHelper::notifyByPermission('orders.view', 'info', 'Order delivery confirmed',
                 "Client confirmed delivery for order #{$id}.", '/admin-orders', 'order', (int) $id, "order_delivered:{$id}");
             AuditHelper::log('deliver', 'order', (int) $id, "Order #{$id}", 'Client confirmed delivery');
             $this->jsonResponse(['message' => 'Delivery confirmed. Thank you!']);
         }
 
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_orders');
+        AuthMiddleware::hasPermission('orders.deliver');
         if ($order['status'] !== 'granted') {
             $this->jsonResponse(["message" => "Order must be in granted status"], 400);
         }

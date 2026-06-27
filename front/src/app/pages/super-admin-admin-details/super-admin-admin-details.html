@@ -64,70 +64,23 @@
       </div>
     </section>
 
-    <!-- Permissions — view mode -->
-    <section class="client-card p-6" *ngIf="!editingPermissions">
+    <!-- Permissions summary -> Access control -->
+    <section class="client-card p-6">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-[#0B1437]">Permissions</h2>
-        <button type="button" (click)="startEditPermissions()"
-          class="client-btn-secondary px-4 py-2 text-sm flex items-center gap-2">
-          <i data-lucide="pencil" class="w-4 h-4"></i> Edit
-        </button>
+        <a [routerLink]="['/access-control']" [queryParams]="{ user: admin.id }"
+          class="client-btn-secondary px-4 py-2 text-sm inline-flex items-center gap-2 no-underline">
+          <i data-lucide="key-round" class="w-4 h-4"></i> Manage permissions
+        </a>
       </div>
-      <div *ngIf="admin.permissions?.length; else noPerms" class="flex flex-wrap gap-2">
-        <span *ngFor="let p of admin.permissions"
-          class="text-sm font-medium px-3 py-1.5 bg-violet-50 text-violet-700 rounded-lg">{{ permissionLabel(p) }}</span>
-      </div>
+      <p *ngIf="admin.permissions?.length; else noPerms" class="text-sm text-slate-500">
+        This administrator has <span class="font-semibold text-[#0B1437]">{{ admin.permissions.length }}</span> permission(s) granted.
+        Open <span class="font-medium text-[#0B1437]">Access control</span> to grant or revoke any of them in detail.
+      </p>
       <ng-template #noPerms>
-        <p class="text-sm text-slate-400">No permissions assigned.</p>
+        <p class="text-sm text-slate-400">No permissions assigned. Use Access control to grant access.</p>
       </ng-template>
     </section>
-
-    <!-- Permissions — edit mode -->
-    <section class="client-card p-6" *ngIf="editingPermissions">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-[#0B1437]">Edit permissions</h2>
-        <button type="button" (click)="cancelEditPermissions()" class="client-btn-secondary px-4 py-2 text-sm">Cancel</button>
-      </div>
-      <p class="text-sm text-slate-500 mb-5">Check permissions to grant access, uncheck to revoke. System items are always available to every admin.</p>
-
-      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Operations</p>
-      <div class="grid sm:grid-cols-2 gap-3 mb-4">
-        <label *ngFor="let p of permissionsByGroup('Operations')"
-          class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
-          <input type="checkbox" [checked]="hasPermissionSelected(p.key)" (change)="togglePermission(p.key)">
-          <span class="text-sm font-semibold text-[#0B1437]">{{ p.label }}</span>
-        </label>
-      </div>
-
-      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Compliance</p>
-      <div class="grid sm:grid-cols-2 gap-3 mb-4">
-        <label *ngFor="let p of permissionsByGroup('Compliance')"
-          class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
-          <input type="checkbox" [checked]="hasPermissionSelected(p.key)" (change)="togglePermission(p.key)">
-          <span class="text-sm font-semibold text-[#0B1437]">{{ p.label }}</span>
-        </label>
-      </div>
-
-      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">System (always enabled)</p>
-      <div class="grid sm:grid-cols-3 gap-3 mb-6">
-        <div *ngFor="let p of systemPermissions"
-          class="flex items-center gap-3 p-4 bg-emerald-50 rounded-xl">
-          <input type="checkbox" checked disabled>
-          <span class="text-sm font-semibold text-emerald-700">{{ p.label }}</span>
-        </div>
-      </div>
-
-      <div *ngIf="saveError" class="mb-4 p-3 rounded-xl bg-red-50 text-red-700 text-sm">{{ saveError }}</div>
-
-      <button type="button" (click)="savePermissions()" [disabled]="savingPermissions"
-        class="client-btn-primary px-6 py-3">
-        {{ savingPermissions ? 'Saving…' : 'Save permissions' }}
-      </button>
-    </section>
-
-    <div *ngIf="saveMessage" class="client-card p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 text-sm">
-      {{ saveMessage }}
-    </div>
 
     <!-- Action buttons -->
     <div class="flex flex-wrap gap-3">

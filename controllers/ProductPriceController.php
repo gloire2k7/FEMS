@@ -46,7 +46,7 @@ class ProductPriceController extends Controller
 
     public function update()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
+        AuthMiddleware::hasPermission('pricing.update');
         $data = $this->getJsonInput();
         $items = $data['prices'] ?? $data;
 

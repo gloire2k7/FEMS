@@ -18,7 +18,7 @@ class ClientController extends Controller
 
     public function store()
     {
-        AuthMiddleware::hasRole(['Super Admin', 'Admin']);
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'clients.view');
         $data = $this->getJsonInput();
 
         if (!$this->validateRequiredParams(['company_name'], $data)) {
@@ -44,7 +44,7 @@ class ClientController extends Controller
 
     public function update($id)
     {
-        AuthMiddleware::hasRole(['Super Admin', 'Admin']);
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'clients.view');
         $data = $this->getJsonInput();
 
         if ($this->clientModel->update($id, $data)) {

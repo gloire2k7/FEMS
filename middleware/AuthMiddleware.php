@@ -27,13 +27,15 @@ class AuthMiddleware
         }
     }
 
-    /** Super Admin bypasses all permission checks. */
+    /**
+     * Permission-driven for EVERYONE, including Super Admin. A Super Admin starts
+     * with every permission granted, but can revoke their own — and that takes
+     * effect here. (The only self-protected permission is `permissions.manage`,
+     * enforced in UserController so an admin can never lock themselves out.)
+     */
     public static function hasPermission($permissionKey)
     {
         self::check();
-        if (($_SESSION['role_name'] ?? '') === 'Super Admin') {
-            return;
-        }
         $perms = $_SESSION['permissions'] ?? [];
         if (!in_array($permissionKey, $perms, true)) {
             http_response_code(403);

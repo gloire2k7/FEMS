@@ -15,6 +15,19 @@ class User extends Model
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    /** Flat directory of every user for the access-control picker. */
+    public function findDirectory()
+    {
+        $query = "SELECT u.id, u.name, u.email, u.status,
+                         r.name AS role_name, c.company_name,
+                         (SELECT COUNT(*) FROM user_permissions up WHERE up.user_id = u.id) AS permission_count
+                  FROM {$this->table} u
+                  LEFT JOIN roles r ON r.id = u.role_id
+                  LEFT JOIN clients c ON c.id = u.company_id
+                  ORDER BY FIELD(r.name, 'Super Admin', 'Admin', 'Inspector', 'Company User'), u.name";
+        return $this->db->query($query)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function findById($id)
     {
         $query = "SELECT u.*, r.name as role_name FROM {$this->table} u

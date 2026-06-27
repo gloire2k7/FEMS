@@ -28,7 +28,7 @@ class ExtinguisherController extends Controller
             $this->jsonResponse($this->extModel->findPaginated($page, $limit, 'all', $sort, $type, (int) $companyId));
         }
 
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
+        AuthMiddleware::hasPermission('inventory.view');
         $statusMap = ['in_stock' => true, 'allocated' => true, 'all' => true];
         $status = isset($statusMap[$_GET['status'] ?? '']) ? $_GET['status'] : 'in_stock';
         $this->jsonResponse($this->extModel->findPaginated($page, $limit, $status, $sort, $type));
@@ -36,7 +36,7 @@ class ExtinguisherController extends Controller
 
     public function stockSummary()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
+        AuthMiddleware::hasPermission('inventory.view');
         $recentPage = max(1, (int) ($_GET['recent_page'] ?? 1));
         $this->jsonResponse([
             'summary' => $this->extModel->getStockSummary(),
@@ -46,13 +46,13 @@ class ExtinguisherController extends Controller
 
     public function store()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
+        AuthMiddleware::hasPermission('inventory.create');
         return $this->createSingle($this->getJsonInput());
     }
 
     public function bulkStore()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
+        AuthMiddleware::hasPermission('inventory.create');
         $data = $this->getJsonInput();
 
         if (!isset($data['count']) || !is_numeric($data['count'])) {
@@ -124,7 +124,7 @@ class ExtinguisherController extends Controller
 
     public function update($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
+        AuthMiddleware::hasPermission('inventory.update');
         $data = $this->getJsonInput();
         $ext = $this->extModel->findById($id);
         if (!$ext) {
@@ -139,7 +139,7 @@ class ExtinguisherController extends Controller
 
     public function destroy($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inventory');
+        AuthMiddleware::hasPermission('inventory.delete');
         $ext = $this->extModel->findById($id);
         if (!$ext) {
             $this->jsonResponse(["message" => "Not found"], 404);

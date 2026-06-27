@@ -14,7 +14,7 @@ class ServiceController extends Controller
     // Client Request Refill
     public function requestRefill($id)
     {
-        AuthMiddleware::hasRole(['Company User']);
+        AuthMiddleware::hasRoleOrPermission(['Company User'], 'service.request');
         $user = $_SESSION['user_id'];
         $company_id = $_SESSION['company_id'];
 
@@ -36,7 +36,7 @@ class ServiceController extends Controller
     // Client Request Maintenance
     public function requestMaintenance($id)
     {
-        AuthMiddleware::hasRole(['Company User']);
+        AuthMiddleware::hasRoleOrPermission(['Company User'], 'service.request');
         $company_id = $_SESSION['company_id'];
 
         $ext = $this->extModel->findById($id);
@@ -57,7 +57,7 @@ class ServiceController extends Controller
     // Admin Confirm Request (requires_refill -> unfilled or requires_maintenance -> under_maintenance)
     public function confirmRequest($id)
     {
-        AuthMiddleware::hasRole(['Super Admin', 'Admin']);
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'refills.process');
 
         $ext = $this->extModel->findById($id);
         if (!$ext) {
@@ -84,7 +84,7 @@ class ServiceController extends Controller
     // Admin Complete Service (Return to filled + Record)
     public function completeService($id)
     {
-        AuthMiddleware::hasRole(['Super Admin', 'Admin']);
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'refills.process');
         $data = $this->getJsonInput();
         $admin_id = $_SESSION['user_id'];
 

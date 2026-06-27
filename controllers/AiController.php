@@ -55,17 +55,17 @@ class AiController extends Controller
             )->fetchColumn();
 
         } elseif ($role === 'Admin') {
-            if (in_array('manage_orders', $permissions, true)) {
+            if (in_array('orders.view', $permissions, true)) {
                 $ctx['pending_orders'] = (int) $db->query(
                     "SELECT COUNT(*) FROM orders WHERE status='pending'"
                 )->fetchColumn();
             }
-            if (in_array('manage_clients', $permissions, true)) {
+            if (in_array('clients.view', $permissions, true)) {
                 $ctx['pending_clients'] = (int) $db->query(
                     "SELECT COUNT(*) FROM users u JOIN roles r ON r.id=u.role_id WHERE r.name='Company User' AND u.status='pending'"
                 )->fetchColumn();
             }
-            if (in_array('manage_inventory', $permissions, true)) {
+            if (in_array('inventory.view', $permissions, true)) {
                 $ctx['in_stock'] = (int) $db->query(
                     "SELECT COUNT(*) FROM fire_extinguishers WHERE client_id IS NULL AND status='filled'"
                 )->fetchColumn();
@@ -230,7 +230,7 @@ HOW FEMS WORKS (use this knowledge to answer "how does X work" type questions):
 - Inventory: warehouse units are registered individually using the Add Extinguisher form (auto-generates a QR code and printable label). Units start as "In Stock" (no client) and become "Allocated" when assigned to a client via an approved order.
 - Inspections are scheduled per unit. Compliance tracks which units are overdue for inspection. Refill and maintenance requests are separate.
 - Reports: users can ask me to generate a PDF report (I handle that separately). The Reports page shows all previously generated reports.
-- Super Admin creates admin accounts and assigns granular permissions (manage_inventory, manage_orders, manage_clients, manage_inspections, etc.). Admins only see sidebar items they have permission for.
+- Access is fully permission-driven. The Super Admin assigns granular, grouped permissions (e.g. inventory.view, orders.grant, clients.approve, inspections.assign) to any user regardless of their base role. Everyone shares one portal and only sees the sidebar items and actions they have permission for.
 
 RESPONSE RULES:
 - Respond naturally to anything the user says — greetings, questions, complaints, vague requests, anything.
@@ -274,10 +274,10 @@ PROMPT;
         }
         if ($role === 'Admin') {
             $routes = ['/admin-dashboard' => 'Admin dashboard'];
-            if (in_array('manage_orders', $permissions, true))      $routes['/admin-orders']    = 'Client orders (review, approve, deny)';
-            if (in_array('manage_inventory', $permissions, true))   $routes['/admin-inventory'] = 'Warehouse inventory';
-            if (in_array('manage_clients', $permissions, true))     $routes['/clients']          = 'Client accounts';
-            if (in_array('manage_inspections', $permissions, true)) {
+            if (in_array('orders.view', $permissions, true))      $routes['/admin-orders']    = 'Client orders (review, approve, deny)';
+            if (in_array('inventory.view', $permissions, true))   $routes['/admin-inventory'] = 'Warehouse inventory';
+            if (in_array('clients.view', $permissions, true))     $routes['/clients']          = 'Client accounts';
+            if (in_array('inspections.view', $permissions, true)) {
                 $routes['/admin-compliance'] = 'Compliance and inspection tracking';
                 $routes['/admin-refills']    = 'Refill and maintenance requests';
             }
@@ -306,11 +306,11 @@ PROMPT;
         if ($role === 'Admin') {
             $lines = [];
             $map = [
-                'manage_inventory'   => 'warehouse inventory data',
-                'manage_orders'      => 'order data',
-                'manage_clients'     => 'client account data',
-                'manage_inspections' => 'inspection and compliance data',
-                'manage_locations'   => 'location data',
+                'inventory.view'   => 'warehouse inventory data',
+                'orders.view'      => 'order data',
+                'clients.view'     => 'client account data',
+                'inspections.view' => 'inspection and compliance data',
+                'locations.view'   => 'location data',
             ];
             foreach ($map as $perm => $label) {
                 if (in_array($perm, $permissions, true)) {
@@ -359,9 +359,9 @@ PROMPT;
             }
         } elseif ($role === 'Admin') {
             $required = match ($type) {
-                'inventory', 'expired' => 'manage_inventory',
-                'compliance'           => 'manage_inspections',
-                'orders'               => 'manage_orders',
+                'inventory', 'expired' => 'inventory.view',
+                'compliance'           => 'inspections.view',
+                'orders'               => 'orders.view',
                 default                => null,
             };
             if ($required && !in_array($required, $permissions, true)) {

@@ -2,23 +2,18 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { SidebarComponent } from '../layout/sidebar/sidebar';
-import { Topbar } from '../layout/topbar/topbar';
 import { AiAssistantComponent } from './shared/ai-assistant/ai-assistant.component';
 import { AuthService } from './auth.service';
-import { SidebarStateService } from './services/sidebar-state.service';
 
 declare const lucide: { createIcons: (opts?: { nameAttr?: string }) => void } | undefined;
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, SidebarComponent, Topbar, AiAssistantComponent],
+  imports: [CommonModule, RouterOutlet, AiAssistantComponent],
   templateUrl: './app.component.html'
 })
 export class AppComponent {
-  protected sidebar = inject(SidebarStateService);
-
   constructor(private router: Router, private auth: AuthService) {
     this.router.events.pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd)).subscribe(() => {
       this.runCreateIcons();
@@ -28,16 +23,8 @@ export class AppComponent {
   showAiAssistant(): boolean {
     const path = this.router.url.split('?')[0];
     if (path === '/assistant') return false;
-    if (path.startsWith('/inspector-')) return false;
-    return path !== '/' && path !== '/signin' && !!this.auth.getUser();
-  }
-
-  showLayout(): boolean {
-    const path = this.router.url.split('?')[0];
-    if (path.startsWith('/admin-') || path.startsWith('/super-admin-') || path.startsWith('/inspector-') || path === '/clients') return false;
-    if (path === '/' || path === '/signin' || path === '/signup' || path === '/assistant') return false;
-    if (path === '/forgot-password' || path === '/reset-password' || path === '/verify-email') return false;
-    return true;
+    if (!this.auth.getUser()) return false;
+    return this.auth.hasPermission('ai_assistant.use');
   }
 
   private runCreateIcons(): void {

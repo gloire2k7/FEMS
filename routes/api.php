@@ -25,7 +25,9 @@ $router->get('/api/users/admins', ['UserController', 'admins']);
 $router->get('/api/users/inspectors', ['UserController', 'inspectors']);
 $router->get('/api/users/clients', ['UserController', 'clients']);
 $router->get('/api/users/pending-clients', ['UserController', 'pendingClients']);
+$router->get('/api/users/directory', ['UserController', 'directory']);
 $router->get('/api/permissions', ['UserController', 'permissions']);
+$router->get('/api/permissions/catalog', ['UserController', 'permissionCatalog']);
 $router->get('/api/roles', ['UserController', 'roles']);
 $router->post('/api/users', ['UserController', 'store']);
 $router->get('/api/users/{id}', ['UserController', 'show']);
@@ -33,6 +35,7 @@ $router->put('/api/users/{id}', ['UserController', 'update']);
 $router->put('/api/users/{id}/status', ['UserController', 'setStatus']);
 $router->put('/api/users/{id}/approve', ['UserController', 'approveClient']);
 $router->put('/api/users/{id}/reject', ['UserController', 'rejectClient']);
+$router->put('/api/users/{id}/resend-credentials', ['UserController', 'resendClientCredentials']);
 $router->delete('/api/users/{id}', ['UserController', 'destroy']);
 $router->post('/api/users/change-password', ['UserController', 'changePassword']);
 

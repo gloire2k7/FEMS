@@ -11,7 +11,7 @@ class AuditLogController extends Controller
 
     public function index()
     {
-        AuthMiddleware::hasRole(['Super Admin']);
+        AuthMiddleware::hasPermission('activity_logs.view');
 
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
@@ -28,7 +28,7 @@ class AuditLogController extends Controller
 
     public function export()
     {
-        AuthMiddleware::hasRole(['Super Admin']);
+        AuthMiddleware::hasPermission('activity_logs.export');
 
         $entity = !empty($_GET['entity']) ? $_GET['entity'] : 'all';
         $search = !empty($_GET['search']) ? trim($_GET['search']) : null;

@@ -19,13 +19,13 @@ class MandatoryInspectionController extends Controller
 
     public function indexTypes()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('mandatory.manage');
         $this->jsonResponse($this->typeModel->findAll());
     }
 
     public function storeType()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('mandatory.manage');
         $data = $this->getJsonInput();
         if (!$this->validateRequiredParams(['name', 'interval_months'], $data)) {
             $this->jsonResponse(['message' => 'Name and interval are required.'], 400);
@@ -39,7 +39,7 @@ class MandatoryInspectionController extends Controller
 
     public function updateType($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('mandatory.manage');
         $data = $this->getJsonInput();
         if (!$this->typeModel->update($id, $data)) {
             $this->jsonResponse(['message' => 'Update failed.'], 400);
@@ -49,7 +49,7 @@ class MandatoryInspectionController extends Controller
 
     public function destroyType($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('mandatory.manage');
         if (!$this->typeModel->delete($id)) {
             $this->jsonResponse(['message' => 'Delete failed.'], 400);
         }
@@ -58,13 +58,13 @@ class MandatoryInspectionController extends Controller
 
     public function indexAssignments()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('mandatory.manage');
         $this->jsonResponse($this->assignmentModel->findAllWithDetails());
     }
 
     public function storeAssignment()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('mandatory.manage');
         $data = $this->getJsonInput();
         if (!$this->validateRequiredParams(['mandatory_type_id', 'client_id', 'inspector_id'], $data)) {
             $this->jsonResponse(['message' => 'Type, client, and inspector are required.'], 400);
@@ -124,7 +124,7 @@ class MandatoryInspectionController extends Controller
 
     public function destroyAssignment($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('mandatory.manage');
         if (!$this->assignmentModel->delete($id)) {
             $this->jsonResponse(['message' => 'Delete failed.'], 400);
         }

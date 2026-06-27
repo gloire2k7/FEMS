@@ -114,7 +114,7 @@ class ServiceRequestController extends Controller
 
         $batch = $this->batchModel->findById($batchId);
         $unitLabel = count($extIds) === 1 ? '1 unit' : count($extIds) . ' units';
-        $perm = $type === 'inspection' ? 'manage_inspections' : 'manage_refills';
+        $perm = $type === 'inspection' ? 'inspections.view' : 'refills.view';
         $link = $type === 'inspection' ? '/admin-assigned-inspections' : '/admin-refills';
         NotificationHelper::notifyByPermission(
             $perm,
@@ -177,7 +177,7 @@ class ServiceRequestController extends Controller
 
     public function refills()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_refills');
+        AuthMiddleware::hasPermission('refills.view');
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $status = !empty($_GET['status']) ? $_GET['status'] : null;
@@ -188,7 +188,7 @@ class ServiceRequestController extends Controller
 
     public function pendingInspections()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('inspections.view');
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $this->jsonResponse($this->batchModel->findPaginatedForAdmin(['inspection'], $page, $limit, 'pending'));
@@ -196,7 +196,7 @@ class ServiceRequestController extends Controller
 
     public function assignedInspections()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('inspections.view');
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $status = !empty($_GET['status']) ? $_GET['status'] : 'scheduled';
@@ -208,7 +208,7 @@ class ServiceRequestController extends Controller
 
     public function schedule($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_refills');
+        AuthMiddleware::hasPermission('refills.process');
         $data = $this->getJsonInput();
         if (!$this->validateRequiredParams(['confirmed_date'], $data)) {
             $this->jsonResponse(['message' => 'Confirmed date is required.'], 400);
@@ -248,7 +248,7 @@ class ServiceRequestController extends Controller
 
     public function markDone($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_refills');
+        AuthMiddleware::hasPermission('refills.process');
         $batch = $this->batchModel->findById($id);
         if (!$batch || !in_array($batch['service_type'], ['refill', 'maintenance'], true)) {
             $this->jsonResponse(['message' => 'Request not found.'], 404);
@@ -271,7 +271,7 @@ class ServiceRequestController extends Controller
 
     public function assignInspection($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('inspections.assign');
         $data = $this->getJsonInput();
         if (!$this->validateRequiredParams(['inspector_id', 'confirmed_date'], $data)) {
             $this->jsonResponse(['message' => 'Inspector and confirmed date are required.'], 400);
@@ -327,13 +327,13 @@ class ServiceRequestController extends Controller
 
     public function getFees()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_refills');
+        AuthMiddleware::hasPermission('refills.view');
         $this->jsonResponse($this->feeModel->getAll());
     }
 
     public function updateFees()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_refills');
+        AuthMiddleware::hasPermission('refills.process');
         $data = $this->getJsonInput();
         $this->feeModel->updateFees($data['refill_fee'] ?? 0, $data['maintenance_fee'] ?? 0);
         $this->jsonResponse(['message' => 'Fees updated.', 'fees' => $this->feeModel->getAll()]);

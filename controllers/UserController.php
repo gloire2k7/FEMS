@@ -15,7 +15,7 @@ class UserController extends Controller
 
     public function index()
     {
-        AuthMiddleware::hasRole(['Super Admin', 'Admin']);
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'admins.view');
         $users = $this->userModel->findAll();
         foreach ($users as &$user) {
             unset($user['password']);
@@ -25,7 +25,7 @@ class UserController extends Controller
 
     public function admins()
     {
-        AuthMiddleware::hasRole(['Super Admin']);
+        AuthMiddleware::hasPermission('admins.view');
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $status = $_GET['status'] ?? null;
@@ -43,7 +43,7 @@ class UserController extends Controller
 
     public function inspectors()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspectors');
+        AuthMiddleware::hasPermission('inspectors.view');
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $status = $_GET['status'] ?? null;
@@ -55,7 +55,7 @@ class UserController extends Controller
 
     public function pendingClients()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_clients');
+        AuthMiddleware::hasPermission('clients.view');
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $this->jsonResponse($this->userModel->findPendingClients($page, $limit));
@@ -63,7 +63,7 @@ class UserController extends Controller
 
     public function clients()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'manage_clients');
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'clients.view');
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
         $status = $_GET['status'] ?? null;
@@ -72,9 +72,27 @@ class UserController extends Controller
 
     public function permissions()
     {
-        AuthMiddleware::hasRole(['Super Admin']);
+        AuthMiddleware::hasPermission('permissions.manage');
         $permModel = new Permission();
         $this->jsonResponse($permModel->findAllKeys());
+    }
+
+    /** Grouped permission catalog + role default bundles for the access-control UI. */
+    public function permissionCatalog()
+    {
+        AuthMiddleware::hasPermission('permissions.manage');
+        $permModel = new Permission();
+        $this->jsonResponse([
+            'groups' => $permModel->groupedCatalog(),
+            'role_defaults' => $permModel->roleDefaults(),
+        ]);
+    }
+
+    /** Flat list of every user (any role) for the access-control picker. */
+    public function directory()
+    {
+        AuthMiddleware::hasPermission('permissions.manage');
+        $this->jsonResponse($this->userModel->findDirectory());
     }
 
     public function roles()
@@ -131,13 +149,13 @@ class UserController extends Controller
             $data['company_id'] = $clientId;
             $data['status'] = 'pending';
         } elseif ($role['name'] === 'Admin') {
-            AuthMiddleware::hasRole(['Super Admin']);
+            AuthMiddleware::hasPermission('admins.create');
             $plainPassword = bin2hex(random_bytes(6));
             $data['password'] = $plainPassword;
             $data['status'] = 'active';
             $data['must_change_password'] = 1;
         } elseif ($role['name'] === 'Inspector') {
-            AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspectors');
+            AuthMiddleware::hasPermission('inspectors.create');
             $plainPassword = bin2hex(random_bytes(6));
             $data['password'] = $plainPassword;
             $data['status'] = 'active';
@@ -153,7 +171,10 @@ class UserController extends Controller
 
         if ($role['name'] === 'Admin') {
             $permKeys = $data['permissions'] ?? [];
-            (new Permission())->setUserPermissions($id, $permKeys);
+            $permModel = new Permission();
+            $permModel->setUserPermissions($id, $permKeys);
+            // Always grant the baseline so an admin can sign in and see their dashboard.
+            $permModel->grantKeys($id, ['dashboard.view', 'notifications.view', 'settings.view', 'ai_assistant.use']);
             MailHelper::sendAdminCredentials($data['email'], $data['name'], $plainPassword, $permKeys);
             AuditHelper::log('create', 'user', (int) $id, $data['name'], "Admin account created ({$data['email']})");
             $this->jsonResponse([
@@ -164,6 +185,7 @@ class UserController extends Controller
         }
 
         if ($role['name'] === 'Inspector') {
+            (new Permission())->applyRoleDefaults((int) $id, 'Inspector');
             MailHelper::sendInspectorCredentials($data['email'], $data['name'], $plainPassword);
             AuditHelper::log('create', 'user', (int) $id, $data['name'], "Inspector account created ({$data['email']})");
             $this->jsonResponse([
@@ -174,7 +196,7 @@ class UserController extends Controller
         }
 
         if ($role['name'] === 'Company User') {
-            NotificationHelper::notifyByPermission('manage_clients', 'info', 'New client registration',
+            NotificationHelper::notifyByPermission('clients.view', 'info', 'New client registration',
                 "{$data['company_name']} ({$data['email']}) is awaiting approval.",
                 '/clients?tab=pending', 'user', (int) $id, "client_pending:{$id}");
             AuditHelper::log('create', 'client', (int) $id, $data['company_name'], "Registration pending ({$data['email']})");
@@ -202,12 +224,13 @@ class UserController extends Controller
 
     public function update($id)
     {
-        AuthMiddleware::hasRole(['Super Admin']);
+        AuthMiddleware::hasPermission('permissions.manage');
         $data = $this->getJsonInput();
 
+        // Super Admin can manage permissions for ANY user (admins, inspectors, clients).
         $user = $this->userModel->findById($id);
-        if (!$user || $user['role_name'] !== 'Admin') {
-            $this->jsonResponse(["message" => "Admin not found"], 404);
+        if (!$user) {
+            $this->jsonResponse(["message" => "User not found"], 404);
         }
 
         $permModel = new Permission();
@@ -218,6 +241,15 @@ class UserController extends Controller
 
         if (isset($data['permissions']) && is_array($data['permissions'])) {
             $newPermissions = array_values(array_unique(array_filter($data['permissions'], 'is_string')));
+
+            // Self-protection: a user managing their own access can never remove
+            // their own permission-management ability, or they'd be locked out.
+            $editingSelf = (int) ($_SESSION['user_id'] ?? 0) === (int) $id;
+            if ($editingSelf && in_array('permissions.manage', $oldPermissions, true)
+                && !in_array('permissions.manage', $newPermissions, true)) {
+                $newPermissions[] = 'permissions.manage';
+            }
+
             $permModel->setUserPermissions($id, $newPermissions);
             $added = array_values(array_diff($newPermissions, $oldPermissions));
             $removed = array_values(array_diff($oldPermissions, $newPermissions));
@@ -267,9 +299,9 @@ class UserController extends Controller
             $this->jsonResponse(["message" => "User not found"], 404);
         }
         if ($user['role_name'] === 'Admin') {
-            AuthMiddleware::hasRole(['Super Admin']);
+            AuthMiddleware::hasPermission('admins.deactivate');
         } elseif ($user['role_name'] === 'Inspector') {
-            AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspectors');
+            AuthMiddleware::hasPermission('inspectors.deactivate');
         } else {
             $this->jsonResponse(["message" => "Forbidden"], 403);
         }
@@ -279,7 +311,7 @@ class UserController extends Controller
 
     public function approveClient($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'manage_clients');
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'clients.approve');
         $user = $this->userModel->findById($id);
         if (!$user || $user['role_name'] !== 'Company User') {
             $this->jsonResponse(["message" => "Client not found"], 404);
@@ -305,9 +337,31 @@ class UserController extends Controller
         $this->jsonResponse(['message' => 'Client approved. Credentials sent by email.']);
     }
 
+    public function resendClientCredentials($id)
+    {
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'clients.credentials.resend');
+        $user = $this->userModel->findById($id);
+        if (!$user || $user['role_name'] !== 'Company User') {
+            $this->jsonResponse(["message" => "Client not found"], 404);
+        }
+        if ($user['status'] !== 'active') {
+            $this->jsonResponse(["message" => "Only approved clients can have credentials resent."], 409);
+        }
+
+        $plainPassword = bin2hex(random_bytes(6));
+        $this->userModel->setPassword($id, $plainPassword, true);
+
+        MailHelper::sendClientCredentials($user['email'], $user['name'], $plainPassword);
+        NotificationHelper::notify((int) $id, 'info', 'New sign-in details',
+            'Your FEMS sign-in details have been re-sent to your email.',
+            '/dashboard', 'user', (int) $id, "client_credentials_resent:{$id}:" . time());
+        AuditHelper::log('update', 'client', (int) $id, $user['name'], 'Client credentials regenerated and re-emailed');
+        $this->jsonResponse(['message' => 'New credentials sent by email.']);
+    }
+
     public function rejectClient($id)
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'manage_clients');
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'clients.reject');
         $user = $this->userModel->findById($id);
         if (!$user || $user['role_name'] !== 'Company User') {
             $this->jsonResponse(["message" => "Client not found"], 404);
@@ -340,7 +394,7 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        AuthMiddleware::hasRole(['Super Admin']);
+        AuthMiddleware::hasPermission('admins.delete');
         $user = $this->userModel->findById($id);
         if ($this->userModel->delete($id)) {
             AuditHelper::log('delete', 'user', (int) $id, $user['name'] ?? "User #{$id}", 'User account deleted');

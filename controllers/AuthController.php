@@ -29,10 +29,11 @@ class AuthController extends Controller
 
             session_regenerate_id(true);
 
+            // Permission-driven for everyone, including Super Admin. A Super Admin
+            // is seeded with every permission at setup but can revoke their own,
+            // so we always read the stored set rather than overriding it here.
             $permModel = new Permission();
-            $permissions = ($user['role_name'] === 'Super Admin')
-                ? array_column($permModel->findAllKeys(), 'key')
-                : $permModel->getUserPermissions($user['id']);
+            $permissions = $permModel->getUserPermissions($user['id']);
 
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role_id'] = $user['role_id'];
@@ -166,6 +167,9 @@ class AuthController extends Controller
             $this->jsonResponse(["message" => "Failed to create account"], 500);
         }
 
+        // Grant the default client permission bundle (Super Admin can tweak later).
+        (new Permission())->applyRoleDefaults((int) $userId, 'Company User');
+
         $tokenModel = new EmailVerificationToken();
         $otp = $tokenModel->createForUser((int) $userId);
         MailHelper::sendClientVerificationOtp($email, $data['name'], $otp);
@@ -222,7 +226,7 @@ class AuthController extends Controller
         $tokenModel->invalidateForUser((int) $user['id']);
 
         $company = $user['company_name'] ?? $user['name'];
-        NotificationHelper::notifyByPermission('manage_clients', 'info', 'New client registration',
+        NotificationHelper::notifyByPermission('clients.view', 'info', 'New client registration',
             "{$user['name']} ({$email}) verified their email and is awaiting approval.",
             '/clients?tab=pending', 'user', (int) $user['id'], "client_pending:{$user['id']}");
         AuditHelper::log('create', 'client', (int) $user['id'], $company, "Email verified, awaiting approval ({$email})", (int) $user['id']);

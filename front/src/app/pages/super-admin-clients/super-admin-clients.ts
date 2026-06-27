@@ -127,6 +127,24 @@ export class SuperAdminClients implements OnInit, AfterViewInit {
     });
   }
 
+  resendCredentials(c: any) {
+    if (this.processing.has(c.id)) return;
+    if (!confirm(`Generate a new password for ${c.company_name || c.name} and email it to ${c.email}? Their current password will stop working.`)) {
+      return;
+    }
+    this.processing.add(c.id);
+    this.auth.resendClientCredentials(c.id).subscribe({
+      next: (res) => {
+        this.processing.delete(c.id);
+        alert(res?.message || 'New credentials sent by email.');
+      },
+      error: (err) => {
+        this.processing.delete(c.id);
+        alert(err?.error?.message || 'Could not resend credentials.');
+      },
+    });
+  }
+
   initials(name: string) {
     return (name || 'C').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
   }

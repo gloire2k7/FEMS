@@ -4,7 +4,7 @@ class ComplianceController extends Controller
 {
     public function index()
     {
-        AuthMiddleware::hasRoleOrPermission(['Super Admin'], 'manage_inspections');
+        AuthMiddleware::hasPermission('compliance.view');
         $db = Database::getConnection();
         $today = date('Y-m-d');
         $alerts = [];

@@ -1,18 +1,2 @@
-@if (showLayout()) {
-  <div class="flex h-screen bg-[#F6F8FC] overflow-hidden">
-    @if (sidebar.mobileOpen()) {
-      <div class="fixed inset-0 bg-black/50 z-30 lg:hidden" (click)="sidebar.closeMobile()"></div>
-    }
-    <app-sidebar></app-sidebar>
-
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-      <app-topbar></app-topbar>
-      <main class="flex-1 overflow-y-auto px-4 py-5 md:px-6">
-        <router-outlet></router-outlet>
-      </main>
-    </div>
-  </div>
-} @else {
-  <router-outlet></router-outlet>
-}
+<router-outlet></router-outlet>
 <app-ai-assistant *ngIf="showAiAssistant()" />

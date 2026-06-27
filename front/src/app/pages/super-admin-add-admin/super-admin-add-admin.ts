@@ -6,6 +6,9 @@ import { AuthService } from '../../auth.service';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
+interface PermDef { key: string; label: string; description: string; }
+interface PermGroup { name: string; permissions: PermDef[]; }
+
 @Component({
   selector: 'app-super-admin-add-admin',
   standalone: true,
@@ -20,27 +23,41 @@ export class SuperAdminAddAdmin implements AfterViewInit {
 
   name = '';
   email = '';
-  permissionOptions: any[] = [];
-  selectedPermissions: string[] = ['manage_orders', 'manage_inventory', 'manage_clients'];
-  private readonly systemPermissions = ['manage_notifications', 'manage_settings', 'manage_ai_assistant'];
+  /** Permission groups shown in the picker (the always-granted "General" group is hidden). */
+  groups: PermGroup[] = [];
+  selected = new Set<string>();
   isLoading = false;
   error = '';
   successData: any = null;
 
   ngAfterViewInit() {
     this.initIcons();
-    this.authService.getPermissions().subscribe(p => {
-      this.permissionOptions = p.filter((x: any) => !this.systemPermissions.includes(x.key));
+    this.authService.getPermissionCatalog().subscribe((cat) => {
+      this.groups = (cat.groups || []).filter((g) => g.name !== 'General');
+      const adminDefaults = cat.role_defaults?.['Admin'] || [];
+      const general = new Set((cat.groups || []).find((g) => g.name === 'General')?.permissions.map((p) => p.key) || []);
+      this.selected = new Set(adminDefaults.filter((k) => !general.has(k)));
+      setTimeout(() => this.initIcons(), 50);
     });
   }
 
   togglePermission(key: string) {
-    const i = this.selectedPermissions.indexOf(key);
-    if (i >= 0) this.selectedPermissions.splice(i, 1);
-    else this.selectedPermissions.push(key);
+    if (this.selected.has(key)) this.selected.delete(key);
+    else this.selected.add(key);
   }
 
-  hasPermission(key: string) { return this.selectedPermissions.includes(key); }
+  hasPermission(key: string) { return this.selected.has(key); }
+
+  groupAll(g: PermGroup): boolean {
+    return g.permissions.length > 0 && g.permissions.every((p) => this.selected.has(p.key));
+  }
+  toggleGroup(g: PermGroup) {
+    const all = this.groupAll(g);
+    for (const p of g.permissions) {
+      if (all) this.selected.delete(p.key);
+      else this.selected.add(p.key);
+    }
+  }
 
   onCreateAdmin() {
     this.isLoading = true;
@@ -50,7 +67,7 @@ export class SuperAdminAddAdmin implements AfterViewInit {
     this.authService.createAdmin({
       name: this.name,
       email: this.email,
-      permissions: this.selectedPermissions
+      permissions: Array.from(this.selected),
     }).subscribe({
       next: (res) => {
         this.isLoading = false;
