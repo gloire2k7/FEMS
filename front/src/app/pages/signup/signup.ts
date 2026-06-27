@@ -19,7 +19,6 @@ export class SignupComponent implements AfterViewInit {
 
   name = '';
   email = '';
-  password = '';
   company_name = '';
   phone = '';
   address = '';
@@ -38,23 +37,20 @@ export class SignupComponent implements AfterViewInit {
     const signupData = {
       name: this.name,
       email: this.email,
-      password: this.password,
       company_name: this.company_name,
       phone: this.phone,
       address: this.address,
-      role_id: 3 // Client
     };
 
-    this.authService.signup(signupData).subscribe({
+    this.authService.registerClient(signupData).subscribe({
       next: () => {
         this.isLoading = false;
         this.error = '';
-        alert('Registration submitted! An admin will review your account. You will receive an email once approved.');
-        this.router.navigate(['/signin']);
+        this.router.navigate(['/verify-email'], { queryParams: { email: this.email } });
       },
       error: (err) => {
         this.isLoading = false;
-        this.error = err.error?.message || 'Signup failed. Please try again.';
+        this.error = err.error?.message || 'Registration failed. Please try again.';
       }
     });
   }

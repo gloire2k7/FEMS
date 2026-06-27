@@ -284,13 +284,25 @@ class UserController extends Controller
         if (!$user || $user['role_name'] !== 'Company User') {
             $this->jsonResponse(["message" => "Client not found"], 404);
         }
+        if (isset($user['email_verified']) && (int) $user['email_verified'] === 0) {
+            $this->jsonResponse(["message" => "This client has not verified their email yet."], 409);
+        }
+        // Idempotent: a client that is already active has already received credentials.
+        // Re-approving would regenerate the password and invalidate the one already emailed.
+        if ($user['status'] === 'active') {
+            $this->jsonResponse(['message' => 'This client is already approved.'], 200);
+        }
+
+        $plainPassword = bin2hex(random_bytes(6));
+        $this->userModel->setPassword($id, $plainPassword, true);
         $this->userModel->setStatus($id, 'active');
-        MailHelper::sendClientApproval($user['email'], $user['name'], true);
+
+        MailHelper::sendClientCredentials($user['email'], $user['name'], $plainPassword);
         NotificationHelper::notify((int) $id, 'info', 'Account approved',
-            'Your FEMS account has been approved. You can now sign in and use the portal.',
+            'Your FEMS account has been approved. Your sign-in details have been emailed to you.',
             '/dashboard', 'user', (int) $id, "client_approved:{$id}");
-        AuditHelper::log('approve', 'client', (int) $id, $user['name'], 'Client account approved');
-        $this->jsonResponse(['message' => 'Client approved']);
+        AuditHelper::log('approve', 'client', (int) $id, $user['name'], 'Client account approved, credentials emailed');
+        $this->jsonResponse(['message' => 'Client approved. Credentials sent by email.']);
     }
 
     public function rejectClient($id)

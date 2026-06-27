@@ -75,7 +75,7 @@ class User extends Model
     {
         $offset = ($page - 1) * $limit;
         $countStmt = $this->db->query(
-            "SELECT COUNT(*) FROM users u JOIN roles r ON r.id = u.role_id WHERE r.name = 'Company User' AND u.status = 'pending'"
+            "SELECT COUNT(*) FROM users u JOIN roles r ON r.id = u.role_id WHERE r.name = 'Company User' AND u.status = 'pending' AND u.email_verified = 1"
         );
         $total = (int) $countStmt->fetchColumn();
 
@@ -84,7 +84,7 @@ class User extends Model
                   FROM users u
                   JOIN roles r ON r.id = u.role_id
                   LEFT JOIN clients c ON c.id = u.company_id
-                  WHERE r.name = 'Company User' AND u.status = 'pending'
+                  WHERE r.name = 'Company User' AND u.status = 'pending' AND u.email_verified = 1
                   ORDER BY u.created_at DESC LIMIT :limit OFFSET :offset";
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
@@ -139,14 +139,15 @@ class User extends Model
 
     public function create($data)
     {
-        $query = "INSERT INTO {$this->table} (name, email, password, role_id, company_id, status, must_change_password)
-                  VALUES (:name, :email, :password, :role_id, :company_id, :status, :must_change_password)";
+        $query = "INSERT INTO {$this->table} (name, email, password, role_id, company_id, status, must_change_password, email_verified)
+                  VALUES (:name, :email, :password, :role_id, :company_id, :status, :must_change_password, :email_verified)";
         $stmt = $this->db->prepare($query);
 
         $hashed = password_hash($data['password'], PASSWORD_DEFAULT);
         $status = $data['status'] ?? 'active';
         $company_id = $data['company_id'] ?? null;
         $mustChange = isset($data['must_change_password']) ? (int) $data['must_change_password'] : 0;
+        $emailVerified = isset($data['email_verified']) ? (int) $data['email_verified'] : 1;
 
         $stmt->bindParam(':name', $data['name']);
         $stmt->bindParam(':email', $data['email']);
@@ -155,8 +156,16 @@ class User extends Model
         $stmt->bindParam(':company_id', $company_id);
         $stmt->bindParam(':status', $status);
         $stmt->bindParam(':must_change_password', $mustChange, PDO::PARAM_INT);
+        $stmt->bindParam(':email_verified', $emailVerified, PDO::PARAM_INT);
 
         return $stmt->execute() ? $this->db->lastInsertId() : false;
+    }
+
+    public function markEmailVerified($id)
+    {
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET email_verified = 1 WHERE id = :id");
+        $stmt->bindValue(':id', (int) $id, PDO::PARAM_INT);
+        return $stmt->execute();
     }
 
     public function update($id, $data)
@@ -185,13 +194,14 @@ class User extends Model
         return $stmt->execute();
     }
 
-    public function setPassword($id, $plainPassword)
+    public function setPassword($id, $plainPassword, $mustChange = false)
     {
         $hash = password_hash($plainPassword, PASSWORD_DEFAULT);
         $stmt = $this->db->prepare(
-            "UPDATE {$this->table} SET password = :password, must_change_password = 0 WHERE id = :id"
+            "UPDATE {$this->table} SET password = :password, must_change_password = :must_change WHERE id = :id"
         );
         $stmt->bindValue(':password', $hash);
+        $stmt->bindValue(':must_change', $mustChange ? 1 : 0, PDO::PARAM_INT);
         $stmt->bindValue(':id', (int) $id, PDO::PARAM_INT);
         return $stmt->execute();
     }

@@ -54,8 +54,14 @@
       </div>
       <div class="flex items-center gap-2 shrink-0">
         <ng-container *ngIf="tab === 'pending'">
-          <button type="button" (click)="approve(c)" class="client-btn-primary px-5 py-2.5 text-sm">Approve</button>
-          <button type="button" (click)="reject(c)" class="client-btn-secondary px-5 py-2.5 text-sm text-red-600 border-red-100 hover:bg-red-50">Reject</button>
+          <button type="button" (click)="approve(c)" [disabled]="isProcessing(c.id)"
+            class="client-btn-primary px-5 py-2.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed">
+            {{ isProcessing(c.id) ? 'Approving…' : 'Approve' }}
+          </button>
+          <button type="button" (click)="reject(c)" [disabled]="isProcessing(c.id)"
+            class="client-btn-secondary px-5 py-2.5 text-sm text-red-600 border-red-100 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed">
+            {{ isProcessing(c.id) ? 'Rejecting…' : 'Reject' }}
+          </button>
         </ng-container>
         <span *ngIf="tab === 'active'" class="text-sm font-semibold text-emerald-700 px-3 py-1.5 bg-emerald-50 rounded-full">Active</span>
       </div>

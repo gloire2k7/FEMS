@@ -33,8 +33,22 @@ export class AuthService {
     });
   }
 
-  signup(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/users`, { ...userData, role_id: 3 });
+  registerClient(data: {
+    name: string;
+    email: string;
+    company_name: string;
+    phone: string;
+    address: string;
+  }): Observable<{ message: string; email: string }> {
+    return this.http.post<{ message: string; email: string }>(`${this.apiUrl}/register`, data);
+  }
+
+  verifyRegistrationOtp(email: string, otp: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/register/verify`, { email, otp });
+  }
+
+  resendRegistrationOtp(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/register/resend`, { email });
   }
 
   createAdmin(adminData: any): Observable<any> {

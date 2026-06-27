@@ -3,6 +3,7 @@ import { SignupComponent } from './pages/signup/signup';
 import { SigninComponent } from './pages/signin/signin';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password';
+import { VerifyEmailComponent } from './pages/verify-email/verify-email';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ExtinguishersComponent } from './pages/extinguishers/extinguishers.component';
 import { ServiceRequestsComponent } from './pages/service-requests/service-requests.component';
@@ -59,6 +60,7 @@ export const routes: Routes = [
   { path: 'signin', component: SigninComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'verify-email', component: VerifyEmailComponent },
   { path: 'assistant', component: AiAssistantPageComponent },
   { path: 'dashboard', component: DashboardComponent },
 

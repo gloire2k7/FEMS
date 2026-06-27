@@ -36,7 +36,7 @@ export class AppComponent {
     const path = this.router.url.split('?')[0];
     if (path.startsWith('/admin-') || path.startsWith('/super-admin-') || path.startsWith('/inspector-') || path === '/clients') return false;
     if (path === '/' || path === '/signin' || path === '/signup' || path === '/assistant') return false;
-    if (path === '/forgot-password' || path === '/reset-password') return false;
+    if (path === '/forgot-password' || path === '/reset-password' || path === '/verify-email') return false;
     return true;
   }
 

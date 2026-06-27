@@ -94,12 +94,34 @@ export class ClientsDashboard implements OnInit, AfterViewInit {
     );
   }
 
+  processing = new Set<number>();
+
+  isProcessing(id: number) {
+    return this.processing.has(id);
+  }
+
   approve(client: any) {
-    this.auth.approveClient(client.id).subscribe(() => this.load(this.page));
+    if (this.processing.has(client.id)) return;
+    this.processing.add(client.id);
+    this.auth.approveClient(client.id).subscribe({
+      next: () => {
+        this.processing.delete(client.id);
+        this.load(this.page);
+      },
+      error: () => this.processing.delete(client.id),
+    });
   }
 
   reject(client: any) {
-    this.auth.rejectClient(client.id).subscribe(() => this.load(this.page));
+    if (this.processing.has(client.id)) return;
+    this.processing.add(client.id);
+    this.auth.rejectClient(client.id).subscribe({
+      next: () => {
+        this.processing.delete(client.id);
+        this.load(this.page);
+      },
+      error: () => this.processing.delete(client.id),
+    });
   }
 
   initials(name: string): string {

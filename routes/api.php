@@ -11,6 +11,9 @@ $router->post('/api/login', ['AuthController', 'login']);
 $router->post('/api/logout', ['AuthController', 'logout']);
 $router->post('/api/forgot-password', ['AuthController', 'forgotPassword']);
 $router->post('/api/reset-password', ['AuthController', 'resetPassword']);
+$router->post('/api/register', ['AuthController', 'registerClient']);
+$router->post('/api/register/verify', ['AuthController', 'verifyRegistrationOtp']);
+$router->post('/api/register/resend', ['AuthController', 'resendRegistrationOtp']);
 $router->get('/api/me', ['AuthController', 'me']);
 
 // Dashboard analytics

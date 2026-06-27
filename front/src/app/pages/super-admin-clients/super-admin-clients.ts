@@ -97,12 +97,34 @@ export class SuperAdminClients implements OnInit, AfterViewInit {
     });
   }
 
+  processing = new Set<number>();
+
+  isProcessing(id: number) {
+    return this.processing.has(id);
+  }
+
   approve(c: any) {
-    this.auth.approveClient(c.id).subscribe(() => this.load(this.page));
+    if (this.processing.has(c.id)) return;
+    this.processing.add(c.id);
+    this.auth.approveClient(c.id).subscribe({
+      next: () => {
+        this.processing.delete(c.id);
+        this.load(this.page);
+      },
+      error: () => this.processing.delete(c.id),
+    });
   }
 
   reject(c: any) {
-    this.auth.rejectClient(c.id).subscribe(() => this.load(this.page));
+    if (this.processing.has(c.id)) return;
+    this.processing.add(c.id);
+    this.auth.rejectClient(c.id).subscribe({
+      next: () => {
+        this.processing.delete(c.id);
+        this.load(this.page);
+      },
+      error: () => this.processing.delete(c.id),
+    });
   }
 
   initials(name: string) {

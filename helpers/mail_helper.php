@@ -393,6 +393,63 @@ HTML;
         return self::sendEmail($email, $subject, $body);
     }
 
+    /**
+     * Email verification OTP for client self-registration (expires in 10 minutes).
+     */
+    public static function sendClientVerificationOtp(string $email, string $name, string $otp): bool
+    {
+        $subject = 'Verify your email — FEMS registration';
+        $nameEsc = htmlspecialchars($name);
+        $otpEsc = htmlspecialchars($otp);
+
+        $inner = self::p("Hello <strong>{$nameEsc}</strong>,")
+            . self::p('Thanks for registering with FEMS. Enter the verification code below to confirm your email address and continue your registration.')
+            . self::box(
+                '<p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.08em;">Your verification code</p>'
+                . '<p style="margin:0;font-size:32px;font-weight:800;color:#0B1437;letter-spacing:.35em;font-family:Consolas,monospace;text-align:center;">'
+                . $otpEsc . '</p>',
+                '#F8FAFC',
+                '#E2E8F0'
+            )
+            . self::box(
+                '<p style="margin:0;color:#64748B;font-size:13px;line-height:1.6;">This code expires in <strong>10 minutes</strong>. After your email is verified, an administrator will review and approve your account. You will then receive your sign-in credentials by email.</p>'
+            );
+
+        $body = self::emailShell('Verify your email', $inner);
+        return self::sendEmail($email, $subject, $body);
+    }
+
+    /**
+     * Approved client credentials: auto-generated password + first-login change reminder.
+     */
+    public static function sendClientCredentials(string $email, string $name, string $password): bool
+    {
+        $subject = 'Your FEMS account is approved — sign-in details';
+        $signinUrl = self::APP_URL . '/signin';
+        $emailEsc = htmlspecialchars($email);
+        $nameEsc = htmlspecialchars($name);
+        $passEsc = htmlspecialchars($password);
+
+        $inner = self::p("Hello <strong>{$nameEsc}</strong>,")
+            . self::p('Your FEMS client account has been <strong style="color:#15803D;">approved</strong>. Use the credentials below to sign in. <strong style="color:#DC2626;">You will be asked to set your own password on first login.</strong>')
+            . self::box(
+                '<p style="margin:0 0 12px;font-size:12px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.06em;">Your credentials</p>'
+                . '<table cellpadding="0" cellspacing="0" style="width:100%;"><tr>'
+                . '<td style="padding:6px 0;color:#64748B;font-size:14px;width:90px;">Email</td>'
+                . '<td style="padding:6px 0;color:#0B1437;font-size:14px;font-weight:600;">' . $emailEsc . '</td></tr><tr>'
+                . '<td style="padding:6px 0;color:#64748B;font-size:14px;">Password</td>'
+                . '<td style="padding:6px 0;color:#0B1437;font-size:14px;font-weight:600;font-family:Consolas,monospace;">' . $passEsc . '</td></tr></table>'
+            )
+            . self::box(
+                '<p style="margin:0;color:#92400E;font-size:13px;line-height:1.5;"><strong>Security reminder:</strong> For your protection, set a new password as soon as you sign in. Do not share these credentials.</p>',
+                '#FFFBEB',
+                '#FDE68A'
+            );
+
+        $body = self::emailShell('Your account is approved', $inner, 'Sign in & set password', $signinUrl);
+        return self::sendEmail($email, $subject, $body);
+    }
+
     public static function sendOrderStatusUpdate(
         string $email,
         $orderId,
