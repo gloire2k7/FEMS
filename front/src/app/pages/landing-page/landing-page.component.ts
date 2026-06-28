@@ -10,4 +10,9 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./landing-page.component.css']
 })
 export class LandingPageComponent {
+  activeFaq: number | null = null;
+
+  toggleFaq(id: number): void {
+    this.activeFaq = this.activeFaq === id ? null : id;
+  }
 }

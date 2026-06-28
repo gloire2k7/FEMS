@@ -1,161 +1,171 @@
-<div class="min-h-screen bg-slate-50 font-['Poppins'] overflow-x-hidden">
+<div class="min-h-screen bg-[#0B1437] font-['Poppins'] overflow-x-hidden text-slate-300">
   
   <!-- Navigation -->
-  <nav class="absolute top-0 w-full z-50 px-8 py-6 flex justify-between items-center">
-    <div class="flex items-center gap-2">
-      <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-slate-900/20">
-        F
-      </div>
-      <span class="text-xl font-bold text-slate-900 tracking-tight">FEMS</span>
+  <nav class="absolute top-0 w-full z-50 px-8 py-6 flex justify-between items-center backdrop-blur-sm border-b border-white/5">
+    <div class="flex items-center gap-3">
+      <img src="assets/logo.png" alt="FEMS Logo" class="w-12 h-12 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" />
+      <span class="text-2xl font-bold tracking-widest text-white drop-shadow-sm uppercase">FEMS</span>
     </div>
     
-    <div class="hidden md:flex items-center gap-8 bg-white/70 backdrop-blur-md px-8 py-3 rounded-full border border-white/20 shadow-sm">
-      <a href="#" class="text-sm font-semibold text-slate-900">Home</a>
-      <a href="#about" class="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">About Us</a>
-      <a href="#services" class="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">Services</a>
-      <a href="#contact" class="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">Contact Us</a>
+    <div class="hidden md:flex items-center gap-10 bg-white/5 backdrop-blur-xl px-8 py-3.5 rounded-full border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+      <a href="#" class="text-sm font-bold text-white hover:text-white transition-colors">Home</a>
+      <a href="#about" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">About Us</a>
+      <a href="#services" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Services</a>
+      <a href="#testimonials" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Reviews</a>
+      <a href="#faq" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">FAQ</a>
     </div>
 
-    <div class="flex items-center gap-4">
-      <a routerLink="/signin" class="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors hidden sm:block">Log In</a>
-      <a routerLink="/signup" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-slate-900/20 hover:bg-black transition-all transform hover:-translate-y-0.5 active:scale-95">Get Started</a>
+    <div class="flex items-center gap-6">
+      <a routerLink="/signin" class="text-sm font-bold text-white hover:text-[#e11d48] transition-colors hidden sm:block">Login Portal</a>
+      <a routerLink="/signup" class="bg-gradient-to-r from-[#991b1b] to-[#e11d48] text-white px-7 py-3 rounded-full text-sm font-black uppercase tracking-widest shadow-[0_10px_20px_rgba(225,29,72,0.3)] hover:shadow-[0_10px_30px_rgba(225,29,72,0.5)] transition-all transform hover:-translate-y-1 active:scale-95 border border-white/10">Initialize</a>
     </div>
   </nav>
 
   <!-- Hero Section -->
-  <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-8 overflow-hidden">
-    <!-- Abstract Backgrounds -->
-    <div class="absolute top-0 right-0 w-full h-[800px] bg-gradient-to-b from-slate-100 to-transparent z-0"></div>
-    <div class="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-[#991b1b]/5 rounded-full blur-[120px] pointer-events-none"></div>
+  <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-8 overflow-hidden min-h-screen flex items-center">
+    <!-- Deep space background elements -->
+    <div class="absolute inset-0 z-0">
+      <div class="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-[#991b1b] rounded-full mix-blend-screen filter blur-[150px] opacity-60 animate-pulse"></div>
+      <div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#4f46e5] rounded-full mix-blend-screen filter blur-[130px] opacity-50"></div>
+    </div>
     
-    <div class="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+    <div class="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-16 items-center w-full">
       
       <!-- Left: Copy -->
       <div class="max-w-2xl">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm mb-6">
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span class="text-xs font-semibold text-slate-700 uppercase tracking-wider">Leading Fire Safety System</span>
+        <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.2)] mb-8 backdrop-blur-md">
+          <span class="w-2.5 h-2.5 rounded-full bg-orange-500 shadow-[0_0_10px_#f97316] animate-pulse"></span>
+          <span class="text-xs font-bold text-white uppercase tracking-widest">Next-Gen Safety Protocol</span>
         </div>
         
-        <h1 class="text-5xl lg:text-7xl font-bold text-slate-900 leading-[1.1] tracking-tight mb-6">
-          Where <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#991b1b] to-orange-500">Expertise</span><br/>
-          Creates Excellence
+        <h1 class="text-5xl lg:text-7xl font-black text-white leading-[1.1] tracking-tighter mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+          The Future of <br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-[#e11d48] to-[#991b1b] drop-shadow-[0_0_15px_rgba(225,29,72,0.6)]">Fire Safety</span>
         </h1>
         
-        <p class="text-lg text-slate-500 mb-10 max-w-xl leading-relaxed">
-          Streamline your fire extinguisher inventory, automate inspection schedules, and ensure 100% compliance with our state-of-the-art management platform.
+        <p class="text-lg text-slate-300 mb-10 max-w-xl leading-relaxed font-medium">
+          Command your entire fire extinguisher infrastructure from a single, breathtaking dashboard. Predictive maintenance, absolute compliance, zero compromises.
         </p>
         
-        <div class="flex items-center gap-6">
-          <a routerLink="/signup" class="bg-slate-900 text-white px-8 py-4 rounded-2xl text-sm font-bold shadow-xl shadow-slate-900/20 hover:bg-black transition-all transform hover:-translate-y-1 inline-flex items-center gap-2">
-            Let's Get Started <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-8">
+          <a routerLink="/signup" class="bg-gradient-to-r from-[#4f46e5] to-sky-500 text-white px-8 py-4 rounded-2xl text-sm font-black uppercase tracking-widest shadow-[0_10px_30px_rgba(79,70,229,0.4)] hover:shadow-[0_15px_40px_rgba(79,70,229,0.6)] transition-all transform hover:-translate-y-1 inline-flex items-center gap-3 border border-white/10">
+            Launch Platform <i data-lucide="rocket" class="w-5 h-5"></i>
           </a>
           
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-4 bg-white/5 px-5 py-3 rounded-2xl border border-white/10 backdrop-blur-md">
             <div class="flex -space-x-3">
-              <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-xs font-bold text-slate-600">JS</div>
-              <div class="w-10 h-10 rounded-full bg-[#991b1b]/10 border-2 border-white flex items-center justify-center text-xs font-bold text-[#991b1b]">AM</div>
-              <div class="w-10 h-10 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-xs font-bold text-white">+</div>
+              <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-[#0B1437] flex items-center justify-center text-xs font-bold text-white shadow-lg">NX</div>
+              <div class="w-10 h-10 rounded-full bg-[#991b1b] border-2 border-[#0B1437] flex items-center justify-center text-xs font-bold text-white shadow-lg">OS</div>
+              <div class="w-10 h-10 rounded-full bg-sky-500 border-2 border-[#0B1437] flex items-center justify-center text-xs font-bold text-white shadow-lg">+</div>
             </div>
             <div class="text-sm">
-              <p class="font-bold text-slate-900">4.9/5</p>
-              <p class="text-slate-500 text-xs">Positive Reviews</p>
+              <p class="font-bold text-white">4.9/5</p>
+              <p class="text-slate-400 text-xs uppercase tracking-wider font-semibold">Enterprise Rated</p>
             </div>
           </div>
         </div>
       </div>
       
-      <!-- Right: Visuals (Mock UI) -->
-      <div class="relative w-full h-[500px] lg:h-[600px] rounded-[40px] bg-slate-900 p-8 shadow-2xl overflow-hidden group">
-        <!-- Inside Mesh -->
-        <div class="absolute inset-0 opacity-40">
-          <div class="absolute top-[-20%] left-[-20%] w-[70%] h-[70%] bg-[#be123c] rounded-full blur-[100px]"></div>
-          <div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-orange-600 rounded-full blur-[80px]"></div>
-        </div>
-        
-        <!-- Mock UI Card 1 -->
-        <div class="relative z-10 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-2xl w-[80%] max-w-[320px] transform rotate-[-5deg] group-hover:rotate-[-2deg] transition-all duration-700">
-          <div class="flex justify-between items-center mb-6">
-            <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
-              <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
-            </div>
-            <span class="text-white/70 text-sm font-semibold">100% Secure</span>
-          </div>
-          <h3 class="text-white text-2xl font-bold mb-2">Compliance</h3>
-          <p class="text-white/70 text-sm">Automated tracking for all safety mandates.</p>
-        </div>
+      <!-- Right: Premium Generated Image -->
+      <div class="relative w-full h-[500px] lg:h-[700px] rounded-[40px] flex items-center justify-center group perspective-1000">
+        <div class="absolute inset-0 bg-gradient-to-tr from-[#991b1b]/20 to-sky-500/20 rounded-[40px] filter blur-3xl transform group-hover:scale-105 transition-transform duration-700"></div>
+        <img src="assets/hero.png" alt="Futuristic Dashboard" class="relative z-10 w-full max-w-lg lg:max-w-xl h-auto rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(153,27,27,0.4)] border border-white/10 transform rotate-[-2deg] group-hover:rotate-[0deg] group-hover:scale-105 transition-all duration-700" />
+      </div>
+      
+    </div>
+  </section>
 
-        <!-- Mock UI Card 2 -->
-        <div class="absolute top-1/2 right-4 z-20 bg-white rounded-3xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.2)] w-[75%] max-w-[300px] transform rotate-[3deg] group-hover:rotate-[1deg] group-hover:-translate-y-4 transition-all duration-700">
-          <div class="flex justify-between items-center mb-4">
-            <h4 class="text-slate-900 font-bold">Total Inventory</h4>
-            <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded-lg">+12%</span>
-          </div>
-          <p class="text-4xl font-bold text-slate-900 mb-4">1,492</p>
-          <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-            <div class="w-[75%] h-full bg-[#991b1b] rounded-full"></div>
+  <!-- About Us -->
+  <section id="about" class="py-24 relative overflow-hidden border-t border-white/5">
+    <div class="absolute top-1/2 left-0 w-[500px] h-[500px] bg-[#4f46e5]/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-8 relative z-10">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="order-2 lg:order-1 relative">
+          <div class="aspect-square bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl flex flex-col justify-center relative overflow-hidden">
+             <!-- abstract geometry inside -->
+             <div class="absolute top-10 right-10 w-32 h-32 bg-[#e11d48]/20 rounded-full blur-2xl"></div>
+             <div class="absolute bottom-10 left-10 w-40 h-40 bg-sky-500/20 rounded-full blur-3xl"></div>
+             <img src="assets/logo.png" class="w-32 h-32 mx-auto mb-8 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]" />
+             <h3 class="text-3xl font-black text-white text-center mb-4">Born from the Void.</h3>
+             <p class="text-center text-slate-400 font-medium leading-relaxed px-4">We looked at traditional fire safety management and saw archaic binders and outdated spreadsheets. We engineered FEMS to be the apex of safety technology.</p>
           </div>
         </div>
-        
-        <!-- Floating Stat -->
-        <div class="absolute bottom-8 left-8 z-20 bg-emerald-400 rounded-2xl p-4 shadow-xl transform group-hover:scale-105 transition-all duration-500">
-          <p class="text-emerald-950 font-bold text-2xl mb-1">25+</p>
-          <p class="text-emerald-900 text-xs font-semibold">Years Experience</p>
+        <div class="order-1 lg:order-2">
+          <span class="text-[#e11d48] font-black tracking-[0.3em] text-xs uppercase mb-4 block drop-shadow-[0_0_8px_rgba(225,29,72,0.5)]">About The Core</span>
+          <h2 class="text-4xl lg:text-5xl font-black text-white tracking-tight mb-8 leading-tight">We Build Technology <br/>That Saves Lives.</h2>
+          <p class="text-slate-300 leading-relaxed mb-6 font-medium text-lg">
+            FEMS (Fire Extinguisher Management System) is an elite, military-grade compliance architecture designed for the most demanding corporate environments. 
+          </p>
+          <p class="text-slate-400 leading-relaxed mb-8">
+            Our platform merges real-time GPS tracking, automated lifecycle management, and frictionless procurement into a single, breathtaking interface. This isn't just management; this is mastery over your safety infrastructure.
+          </p>
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <p class="text-3xl font-black text-white mb-1">100<span class="text-sky-400">%</span></p>
+              <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">Uptime</p>
+            </div>
+            <div>
+              <p class="text-3xl font-black text-white mb-1">Zero</p>
+              <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">Compliance Failures</p>
+            </div>
+          </div>
         </div>
       </div>
-      
     </div>
   </section>
 
   <!-- Features Grid -->
-  <section id="services" class="py-24 bg-white relative">
-    <div class="max-w-7xl mx-auto px-8">
+  <section id="services" class="py-24 relative overflow-hidden bg-black/20 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-8 relative z-10">
       
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <span class="text-[#991b1b] font-bold tracking-widest text-xs uppercase mb-2 block">Our Services</span>
-        <h2 class="text-4xl font-bold text-slate-900 tracking-tight">Safety Services To Secure Your Operations</h2>
+      <div class="text-center max-w-2xl mx-auto mb-20">
+        <span class="text-sky-400 font-black tracking-[0.3em] text-xs uppercase mb-4 block drop-shadow-[0_0_8px_rgba(56,189,248,0.5)]">Platform Modules</span>
+        <h2 class="text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">Stellar Capabilities. <br/>Absolute Control.</h2>
       </div>
 
       <div class="grid md:grid-cols-3 gap-8">
         <!-- Feature 1 -->
-        <div class="group bg-slate-50 rounded-[32px] p-8 border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-2 transition-all duration-500 cursor-pointer">
-          <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-            <i data-lucide="layers" class="w-6 h-6 text-slate-900"></i>
+        <div class="group bg-white/5 rounded-[32px] p-10 border border-white/10 hover:bg-white/10 backdrop-blur-lg hover:shadow-[0_20px_40px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.2)] hover:-translate-y-2 transition-all duration-500 cursor-pointer relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+          <div class="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+            <i data-lucide="layers" class="w-6 h-6 text-white"></i>
           </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-3">Inventory Tracking</h3>
-          <p class="text-slate-500 text-sm leading-relaxed mb-6">
-            Real-time insights into your fire extinguisher stock, locations, and status. Never lose track of a unit again.
+          <h3 class="text-2xl font-bold text-white mb-4">Deep Inventory Matrix</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-8">
+            Real-time insights mapped across all physical coordinates. Never lose track of a unit in the void again.
           </p>
-          <a class="text-slate-900 font-bold text-sm inline-flex items-center gap-1 group-hover:text-[#991b1b] transition-colors">
-            Learn More <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          <a class="text-white font-black text-xs uppercase tracking-widest inline-flex items-center gap-2 group-hover:text-orange-400 transition-colors">
+            Explore <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </a>
         </div>
 
         <!-- Feature 2 -->
-        <div class="group bg-slate-900 rounded-[32px] p-8 hover:shadow-2xl hover:shadow-slate-900/30 hover:-translate-y-2 transition-all duration-500 cursor-pointer transform md:-translate-y-6">
-          <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+        <div class="group bg-gradient-to-b from-[#1e1b4b] to-[#0f172a] rounded-[32px] p-10 border border-indigo-500/30 hover:border-indigo-400/50 hover:shadow-[0_20px_50px_rgba(79,70,229,0.2)] hover:-translate-y-2 transition-all duration-500 cursor-pointer transform md:-translate-y-8 relative overflow-hidden shadow-2xl">
+          <div class="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+          <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-sky-500 rounded-2xl shadow-lg flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
             <i data-lucide="shield" class="w-6 h-6 text-white"></i>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">Compliance & Audits</h3>
-          <p class="text-slate-300 text-sm leading-relaxed mb-6">
-            Automated notifications for mandatory inspections and refills, keeping your business 100% compliant with fire safety laws.
+          <h3 class="text-2xl font-bold text-white mb-4">A.I. Compliance Audits</h3>
+          <p class="text-slate-300 text-sm leading-relaxed mb-8">
+            Automated notifications for mandatory protocols. We keep your enterprise 100% compliant with global safety directives.
           </p>
-          <a class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:text-slate-300 transition-colors">
-            Learn More <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          <a class="text-white font-black text-xs uppercase tracking-widest inline-flex items-center gap-2 group-hover:text-sky-300 transition-colors">
+            Explore <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </a>
         </div>
 
         <!-- Feature 3 -->
-        <div class="group bg-slate-50 rounded-[32px] p-8 border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-2 transition-all duration-500 cursor-pointer">
-          <div class="w-14 h-14 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-            <i data-lucide="shopping-bag" class="w-6 h-6 text-slate-900"></i>
+        <div class="group bg-white/5 rounded-[32px] p-10 border border-white/10 hover:bg-white/10 backdrop-blur-lg hover:shadow-[0_20px_40px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.2)] hover:-translate-y-2 transition-all duration-500 cursor-pointer relative overflow-hidden">
+          <div class="absolute top-1/2 right-0 w-32 h-32 bg-[#e11d48]/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+          <div class="w-14 h-14 bg-gradient-to-br from-[#e11d48] to-[#991b1b] rounded-2xl shadow-lg flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+            <i data-lucide="shopping-bag" class="w-6 h-6 text-white"></i>
           </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-3">Order Management</h3>
-          <p class="text-slate-500 text-sm leading-relaxed mb-6">
-            Easily request new units or maintenance services. Track your orders from pending to delivered with live updates.
+          <h3 class="text-2xl font-bold text-white mb-4">Hyper-Speed Logistics</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-8">
+            Frictionless procurement. Track your orders from pending to delivered with live geospatial updates.
           </p>
-          <a class="text-slate-900 font-bold text-sm inline-flex items-center gap-1 group-hover:text-[#991b1b] transition-colors">
-            Learn More <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          <a class="text-white font-black text-xs uppercase tracking-widest inline-flex items-center gap-2 group-hover:text-[#e11d48] transition-colors">
+            Explore <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </a>
         </div>
       </div>
@@ -163,43 +173,191 @@
     </div>
   </section>
 
-  <!-- Stats Strip -->
-  <section class="py-16 border-t border-slate-100 bg-white">
-    <div class="max-w-7xl mx-auto px-8">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100">
-        
-        <div class="text-center px-4">
-          <p class="text-4xl lg:text-5xl font-bold text-slate-900 mb-2">25<span class="text-[#991b1b]">+</span></p>
-          <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Years Experience</p>
+  <!-- Testimonials -->
+  <section id="testimonials" class="py-24 relative overflow-hidden border-t border-white/5">
+    <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-8 relative z-10">
+      
+      <div class="text-center max-w-2xl mx-auto mb-20">
+        <span class="text-orange-400 font-black tracking-[0.3em] text-xs uppercase mb-4 block drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]">Transmission Logs</span>
+        <h2 class="text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">What Commanders Say.</h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Review 1 -->
+        <div class="bg-white/5 border border-white/10 rounded-[30px] p-8 backdrop-blur-xl shadow-xl hover:bg-white/10 transition-colors">
+          <div class="flex gap-1 mb-6 text-orange-400">
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+          </div>
+          <p class="text-slate-300 italic mb-8 font-medium">"This platform is literally out of this world. We manage over 2,000 units across 50 sectors, and FEMS makes it look like child's play."</p>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-sky-400 to-indigo-500 p-[2px]">
+              <div class="w-full h-full bg-[#0B1437] rounded-full flex items-center justify-center font-bold text-white text-sm">EL</div>
+            </div>
+            <div>
+              <p class="font-bold text-white text-sm">Elena Rostova</p>
+              <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Chief Safety Officer</p>
+            </div>
+          </div>
         </div>
-        
-        <div class="text-center px-4">
-          <p class="text-4xl lg:text-5xl font-bold text-slate-900 mb-2">150K<span class="text-[#991b1b]">+</span></p>
-          <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Units Managed</p>
+
+        <!-- Review 2 -->
+        <div class="bg-white/5 border border-white/10 rounded-[30px] p-8 backdrop-blur-xl shadow-xl hover:bg-white/10 transition-colors transform md:-translate-y-4">
+          <div class="flex gap-1 mb-6 text-orange-400">
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+          </div>
+          <p class="text-slate-300 italic mb-8 font-medium">"The UI is breathtaking. It feels like I'm commanding a starship, but I'm actually just checking fire extinguisher pressure levels."</p>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-[#e11d48] to-orange-400 p-[2px]">
+              <div class="w-full h-full bg-[#0B1437] rounded-full flex items-center justify-center font-bold text-white text-sm">JD</div>
+            </div>
+            <div>
+              <p class="font-bold text-white text-sm">James Donovan</p>
+              <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Operations Director</p>
+            </div>
+          </div>
         </div>
-        
-        <div class="text-center px-4">
-          <p class="text-4xl lg:text-5xl font-bold text-slate-900 mb-2">98<span class="text-[#991b1b]">%</span></p>
-          <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Client Retention</p>
+
+        <!-- Review 3 -->
+        <div class="bg-white/5 border border-white/10 rounded-[30px] p-8 backdrop-blur-xl shadow-xl hover:bg-white/10 transition-colors">
+          <div class="flex gap-1 mb-6 text-orange-400">
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+          </div>
+          <p class="text-slate-300 italic mb-8 font-medium">"Absolutely zero compliance failures since we switched. The automated AI alerts are incredibly reliable."</p>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-400 to-teal-500 p-[2px]">
+              <div class="w-full h-full bg-[#0B1437] rounded-full flex items-center justify-center font-bold text-white text-sm">SC</div>
+            </div>
+            <div>
+              <p class="font-bold text-white text-sm">Sarah Chen</p>
+              <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Facilities Manager</p>
+            </div>
+          </div>
         </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-24 relative overflow-hidden bg-black/30 border-t border-white/5">
+    <div class="max-w-4xl mx-auto px-8 relative z-10">
+      
+      <div class="text-center mb-16">
+        <span class="text-indigo-400 font-black tracking-[0.3em] text-xs uppercase mb-4 block drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]">Data Archives</span>
+        <h2 class="text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="space-y-4">
         
-        <div class="text-center px-4">
-          <p class="text-4xl lg:text-5xl font-bold text-slate-900 mb-2">100<span class="text-[#991b1b]">%</span></p>
-          <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Safety Compliance</p>
+        <!-- FAQ 1 -->
+        <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-md">
+          <button (click)="toggleFaq(1)" class="w-full text-left px-8 py-6 flex justify-between items-center focus:outline-none hover:bg-white/5 transition-colors">
+            <span class="font-bold text-white text-lg">Can I manage multiple coordinate locations?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-300" [class.rotate-180]="activeFaq === 1"></i>
+          </button>
+          <div class="px-8 pb-6 text-slate-400 font-medium leading-relaxed" *ngIf="activeFaq === 1">
+            Yes. FEMS is built to handle enterprise-level scale. You can create infinite physical locations, attach GPS coordinates, and map your inventory across the entire globe from one dashboard.
+          </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-md">
+          <button (click)="toggleFaq(2)" class="w-full text-left px-8 py-6 flex justify-between items-center focus:outline-none hover:bg-white/5 transition-colors">
+            <span class="font-bold text-white text-lg">Are the compliance alerts automated?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-300" [class.rotate-180]="activeFaq === 2"></i>
+          </button>
+          <div class="px-8 pb-6 text-slate-400 font-medium leading-relaxed" *ngIf="activeFaq === 2">
+            Absolutely. Our system continuously scans expiration dates, maintenance logs, and inspection histories to proactively alert you weeks before a unit falls out of compliance.
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-md">
+          <button (click)="toggleFaq(3)" class="w-full text-left px-8 py-6 flex justify-between items-center focus:outline-none hover:bg-white/5 transition-colors">
+            <span class="font-bold text-white text-lg">How do I deploy the AI assistant?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-300" [class.rotate-180]="activeFaq === 3"></i>
+          </button>
+          <div class="px-8 pb-6 text-slate-400 font-medium leading-relaxed" *ngIf="activeFaq === 3">
+            The integrated AI core is available 24/7 in your dashboard. It can instantly retrieve data on specific units, summarize compliance reports, or guide you through the procurement process.
+          </div>
         </div>
 
       </div>
+
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-slate-950 py-12 border-t border-slate-900">
-    <div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-6 text-slate-400 text-sm">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white font-bold">F</div>
-        <span class="font-bold text-white tracking-tight">FEMS</span>
+  <footer class="bg-[#050A1F] pt-20 pb-10 border-t border-white/10 relative overflow-hidden">
+    <div class="absolute bottom-[-50%] left-1/2 w-[800px] h-[400px] bg-sky-600/10 rounded-full blur-[150px] transform -translate-x-1/2 pointer-events-none"></div>
+    
+    <div class="max-w-7xl mx-auto px-8 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+        
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-3 mb-6">
+            <img src="assets/logo.png" alt="FEMS Logo" class="w-10 h-10 opacity-90" />
+            <span class="font-bold text-white tracking-widest uppercase text-xl">FEMS</span>
+          </div>
+          <p class="text-slate-400 text-sm max-w-sm leading-relaxed mb-8">
+            The apex of fire safety management technology. Command your infrastructure with unparalleled precision and style.
+          </p>
+          <div class="flex gap-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+              <i data-lucide="twitter" class="w-4 h-4"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+              <i data-lucide="github" class="w-4 h-4"></i>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+              <i data-lucide="linkedin" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-white font-bold mb-6 tracking-wider uppercase text-sm">Platform</h4>
+          <ul class="space-y-4 text-sm text-slate-400 font-medium">
+            <li><a href="#" class="hover:text-white transition-colors">Inventory Core</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">A.I. Audits</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Geospatial Mapping</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Procurement</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-white font-bold mb-6 tracking-wider uppercase text-sm">System Update</h4>
+          <p class="text-sm text-slate-400 mb-4 font-medium">Subscribe to the network for core updates.</p>
+          <div class="flex gap-2">
+            <input type="email" placeholder="transmission@space.com" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white w-full outline-none focus:border-sky-500/50" />
+            <button class="bg-sky-500 hover:bg-sky-400 text-white px-4 py-2.5 rounded-xl font-bold transition-colors">
+              <i data-lucide="send" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
       </div>
-      <p>&copy; 2026 FEMS Management. All rights reserved.</p>
+
+      <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-xs font-semibold uppercase tracking-widest">
+        <p>&copy; 2026 FEMS Orbital Command. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-slate-300 transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-slate-300 transition-colors">Terms of Service</a>
+        </div>
+      </div>
     </div>
   </footer>
 
