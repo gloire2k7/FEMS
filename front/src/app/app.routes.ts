@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { SignupComponent } from './pages/signup/signup';
 import { SigninComponent } from './pages/signin/signin';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password';
@@ -54,7 +55,7 @@ import { authGuard, permissionGuard } from './core/access.guards';
 
 export const routes: Routes = [
   // Public / auth pages (no shell)
-  { path: '', component: SignupComponent },
+  { path: '', component: LandingPageComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'signin', component: SigninComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
