@@ -1,0 +1,113 @@
+<div class="client-page max-w-6xl pb-8">
+
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
+    <div class="client-hero-inner flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="client-hero-eyebrow">Compliance</p>
+        <h1 class="client-hero-title">Safety alerts</h1>
+        <p class="client-hero-sub">Live warnings from expired units, mandatory deadlines, and pending inspections.</p>
+      </div>
+      <button type="button" (click)="load()" [disabled]="loading" class="client-hero-btn shrink-0 disabled:opacity-50">
+        <i data-lucide="refresh-cw" class="w-5 h-5" [class.animate-spin]="loading"></i>
+        Refresh
+      </button>
+    </div>
+  </section>
+
+  <p *ngIf="loadError" class="mb-4 px-4 py-3 rounded-xl text-sm bg-red-50 text-red-700">{{ loadError }}</p>
+
+  <div *ngIf="loading" class="py-16 text-center text-slate-400">
+    <i data-lucide="loader-circle" class="w-8 h-8 mx-auto animate-spin mb-3"></i>
+    Loading compliance data…
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <section *ngIf="urgentCount > 0"
+      class="flex items-start gap-4 px-5 py-4 rounded-2xl bg-red-50 border border-red-100 mb-5">
+      <span class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+        <i data-lucide="alert-octagon" class="w-5 h-5 text-red-600"></i>
+      </span>
+      <div>
+        <p class="font-semibold text-red-900">{{ urgentCount }} critical alert{{ urgentCount > 1 ? 's' : '' }} need immediate action</p>
+        <p class="text-sm text-red-700 mt-0.5">{{ urgentCount + highCount }} items need attention across your fleet.</p>
+      </div>
+    </section>
+
+    <section class="client-stat-grid client-stat-grid--3 mb-5">
+      <button type="button" (click)="setUrgencyFilter('all')"
+        class="client-stat client-stat--primary client-stat-link text-left"
+        [class.client-stat-link--active]="urgencyFilter === 'all'">
+        <p class="client-stat-label">All alerts</p>
+        <p class="client-stat-value">{{ alerts.length }}</p>
+      </button>
+      <button type="button" (click)="setUrgencyFilter('URGENT')"
+        class="client-stat client-stat--featured client-stat-link text-left"
+        [class.client-stat-link--active]="urgencyFilter === 'URGENT'">
+        <p class="client-stat-label">Critical</p>
+        <p class="client-stat-value">{{ urgentCount }}</p>
+      </button>
+      <button type="button" (click)="setUrgencyFilter('HIGH')"
+        class="client-stat client-stat--warning client-stat-link text-left"
+        [class.client-stat-link--active]="urgencyFilter === 'HIGH'">
+        <p class="client-stat-label">High priority</p>
+        <p class="client-stat-value">{{ highCount }}</p>
+      </button>
+    </section>
+
+    <div class="client-search mb-5">
+      <i data-lucide="search" class="client-search-icon"></i>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Search by unit, client, or description…"
+        class="client-input w-full">
+    </div>
+
+    <section class="space-y-4">
+      <article *ngFor="let alert of filteredAlerts"
+        class="bg-white rounded-2xl border border-slate-100 border-l-4 shadow-sm p-6 hover:shadow-md transition-shadow"
+        [ngClass]="urgencyClass(alert.urgency)">
+        <div class="flex flex-wrap items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0">
+              <i data-lucide="flame" class="w-5 h-5 text-slate-400"></i>
+            </span>
+            <div>
+              <h3 class="font-semibold text-[#0B1437]">{{ alert.extinguisherId }}</h3>
+              <p class="text-sm text-slate-500">{{ alert.type }} · {{ alert.capacity }}</p>
+            </div>
+          </div>
+          <span class="text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide" [ngClass]="urgencyBadge(alert.urgency)">
+            {{ alert.urgency }}
+          </span>
+        </div>
+
+        <p class="text-sm text-slate-600 flex items-start gap-2 mb-3">
+          <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 shrink-0 mt-0.5"></i>
+          {{ alert.location }}
+        </p>
+
+        <p class="text-base text-slate-700 leading-relaxed">{{ alert.description }}</p>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-4 border-t border-slate-100 text-sm">
+          <span class="text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="clock" class="w-4 h-4"></i>
+            {{ alert.timestamp | date:'mediumDate' }}
+          </span>
+          <div class="flex items-center gap-3">
+            <span class="font-medium" [class.text-red-600]="alert.urgency === 'URGENT'" [class.text-amber-600]="alert.urgency === 'HIGH'">
+              {{ alert.urgencyDetail }}
+            </span>
+            <a *ngIf="alert.link" [routerLink]="alert.link" class="text-blue-600 font-semibold hover:underline text-xs">View →</a>
+          </div>
+        </div>
+      </article>
+
+      <div *ngIf="filteredAlerts.length === 0" class="bg-white rounded-2xl border border-slate-100 p-16 text-center">
+        <span class="inline-flex w-14 h-14 rounded-2xl bg-emerald-50 items-center justify-center mb-4">
+          <i data-lucide="shield-check" class="w-7 h-7 text-emerald-500"></i>
+        </span>
+        <p class="font-medium text-[#0B1437]">No alerts found</p>
+        <p class="text-sm text-slate-500 mt-1">All clear for this filter.</p>
+      </div>
+    </section>
+  </ng-container>
+</div>
+

@@ -1,0 +1,68 @@
+<div class="px-8 pb-8 pt-4 bg-[#F8FAFC] min-h-screen font-sans text-[#0B1437]">
+    <div class="max-w-4xl mx-auto py-8">
+        <div class="flex items-center justify-between mb-10">
+            <div>
+                <h1 class="text-3xl font-black tracking-tight mb-2">Alerts & Notifications</h1>
+                <p class="text-sm font-bold text-slate-500">Stay updated on your fire safety status</p>
+            </div>
+            <button (click)="markAllAsRead()"
+                class="px-5 py-2.5 bg-white border border-slate-200 text-[#0B1437] rounded-xl text-xs font-black shadow-sm hover:bg-slate-50 transition-all">
+                Mark all as read
+            </button>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <div *ngFor="let n of notifications"
+                class="bg-white rounded-3xl border shadow-sm p-6 flex items-start gap-6 transition-all hover:shadow-md cursor-pointer"
+                [ngClass]="n.read ? 'opacity-80 border-slate-100' : 'border-indigo-100 ring-2 ring-indigo-500/5'">
+
+                <!-- Icon -->
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border"
+                    [ngClass]="n.iconClass + ' border-' + n.type + '-100'">
+                    <svg *ngIf="n.type === 'warning'" class="w-7 h-7" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                    <svg *ngIf="n.type === 'critical'" class="w-7 h-7" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="m9.17 14.83 5.66-5.66" />
+                        <path d="m14.83 14.83-5.66-5.66" />
+                    </svg>
+                    <svg *ngIf="n.type === 'info'" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                    <svg *ngIf="n.type === 'system'" class="w-7 h-7" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <line x1="19" y1="8" x2="19" y2="14" />
+                        <line x1="22" y1="11" x2="16" y2="11" />
+                    </svg>
+                </div>
+
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-3 mb-1">
+                        <h3 class="text-base font-black tracking-tight"
+                            [ngClass]="n.read ? 'text-slate-600' : 'text-[#0B1437]'">{{n.title}}</h3>
+                        <span *ngIf="!n.read" class="w-2h-2 bg-indigo-600 rounded-full h-2 w-2"></span>
+                    </div>
+                    <p
+                        class="text-sm font-bold text-slate-500 leading-relaxed mb-3 truncate hover:whitespace-normal transition-all duration-300">
+                        {{n.message}}</p>
+                    <div class="flex items-center gap-4">
+                        <span class="text-[11px] font-black uppercase text-slate-300 tracking-[0.1em]">{{n.time}}</span>
+                        <span class="text-slate-200">•</span>
+                        <button
+                            class="text-[11px] font-black uppercase text-indigo-600/60 hover:text-indigo-600 transition-colors tracking-[0.1em]">View
+                            Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

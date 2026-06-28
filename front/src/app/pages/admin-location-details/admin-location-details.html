@@ -1,0 +1,98 @@
+<div class="client-page pb-8">
+
+  <nav class="flex items-center gap-2 text-sm text-slate-500">
+    <a routerLink="/admin-locations" class="hover:text-[#0B1437] transition-colors">Locations</a>
+    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+    <span class="text-[#0B1437] font-medium">{{ siteName }}</span>
+  </nav>
+
+  <section class="client-hero">
+    <div class="client-hero-inner flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
+      <div>
+        <p class="client-hero-eyebrow">Location</p>
+        <h1 class="client-hero-title">{{ siteName }}</h1>
+        <p class="client-hero-sub">{{ totalCount }} extinguisher{{ totalCount === 1 ? '' : 's' }} registered at this site.</p>
+      </div>
+      <a routerLink="/admin-add-extinguisher" class="client-hero-btn shrink-0">
+        <i data-lucide="plus" class="w-5 h-5"></i>
+        Add unit
+      </a>
+    </div>
+  </section>
+
+  <section class="client-card p-4 space-y-4">
+    <div class="client-search">
+      <i data-lucide="search" class="client-search-icon"></i>
+      <input type="text" [(ngModel)]="searchExtinguisherQuery" (ngModelChange)="applyFilter()"
+        placeholder="Search serial or type…" class="client-input w-full">
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button type="button" (click)="stockFilter = 'all'; applyFilter()"
+        class="px-4 py-2 rounded-xl text-sm font-semibold border transition-colors"
+        [class.bg-[#0B1437]]="stockFilter === 'all'" [class.text-white]="stockFilter === 'all'"
+        [class.border-slate-200]="stockFilter !== 'all'" [class.text-slate-600]="stockFilter !== 'all'">All</button>
+      <button type="button" (click)="stockFilter = 'inStock'; applyFilter()"
+        class="px-4 py-2 rounded-xl text-sm font-semibold border transition-colors"
+        [class.bg-emerald-600]="stockFilter === 'inStock'" [class.text-white]="stockFilter === 'inStock'"
+        [class.border-slate-200]="stockFilter !== 'inStock'" [class.text-slate-600]="stockFilter !== 'inStock'">In stock</button>
+      <button type="button" (click)="stockFilter = 'withClient'; applyFilter()"
+        class="px-4 py-2 rounded-xl text-sm font-semibold border transition-colors"
+        [class.bg-blue-600]="stockFilter === 'withClient'" [class.text-white]="stockFilter === 'withClient'"
+        [class.border-slate-200]="stockFilter !== 'withClient'" [class.text-slate-600]="stockFilter !== 'withClient'">Assigned</button>
+    </div>
+  </section>
+
+  <section class="client-card overflow-hidden">
+    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h2 class="text-base font-semibold text-[#0B1437]">Units</h2>
+      <span class="text-sm text-slate-500">{{ filteredExtinguishers.length }} total</span>
+    </div>
+
+    <div *ngIf="isLoading" class="py-16 text-center text-slate-400">
+      <div class="w-8 h-8 border-4 border-[#0B1437] border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+      Loading…
+    </div>
+
+    <div *ngIf="!isLoading && paginatedExtinguishers.length === 0" class="client-empty py-14">
+      <div class="client-empty-icon">
+        <i data-lucide="package-search" class="w-8 h-8"></i>
+      </div>
+      <p class="text-lg font-semibold text-[#0B1437]">No units found</p>
+      <p class="text-base text-slate-500 mt-2">Adjust filters or add a new unit.</p>
+      <a routerLink="/admin-add-extinguisher" class="client-btn-primary inline-flex mt-6 px-5 py-2.5 text-sm">Add unit</a>
+    </div>
+
+    <div *ngIf="!isLoading && paginatedExtinguishers.length > 0" class="divide-y divide-slate-100">
+      <a *ngFor="let ext of paginatedExtinguishers" [routerLink]="['/admin-view-extinguisher', ext.serial_number]"
+        class="flex items-center gap-4 px-5 py-4 hover:bg-slate-50/80 transition-colors no-underline text-inherit">
+        <span class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0">
+          <i data-lucide="flame" class="w-5 h-5 text-slate-400"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-[#0B1437]">{{ ext.serial_number }}</p>
+          <p class="text-sm text-slate-500">{{ ext.type }} · {{ ext.capacity }} kg</p>
+        </div>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full border shrink-0 hidden sm:inline"
+          [ngClass]="getExtinguisherStatusClass(ext.status)">{{ ext.status }}</span>
+        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-300 shrink-0"></i>
+      </a>
+    </div>
+
+    <div *ngIf="!isLoading && paginatedExtinguishers.length > 0"
+      class="px-5 py-3 border-t border-slate-100 flex items-center justify-between text-sm text-slate-500">
+      <span>{{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredExtinguishers.length) }} of {{ filteredExtinguishers.length }}</span>
+      <div class="flex items-center gap-1">
+        <button type="button" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
+          class="w-9 h-9 rounded-lg border border-slate-200 disabled:opacity-40 flex items-center justify-center">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+        <span class="px-2 font-medium text-[#0B1437]">{{ currentPage }}/{{ totalPages }}</span>
+        <button type="button" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
+          class="w-9 h-9 rounded-lg border border-slate-200 disabled:opacity-40 flex items-center justify-center">
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>

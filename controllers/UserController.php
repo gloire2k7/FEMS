@@ -1,0 +1,405 @@
+<?php
+
+require_once __DIR__ . '/../helpers/mail_helper.php';
+require_once __DIR__ . '/../helpers/notification_helper.php';
+require_once __DIR__ . '/../helpers/audit_helper.php';
+
+class UserController extends Controller
+{
+    private $userModel;
+
+    public function __construct()
+    {
+        $this->userModel = new User();
+    }
+
+    public function index()
+    {
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'admins.view');
+        $users = $this->userModel->findAll();
+        foreach ($users as &$user) {
+            unset($user['password']);
+        }
+        $this->jsonResponse($users);
+    }
+
+    public function admins()
+    {
+        AuthMiddleware::hasPermission('admins.view');
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
+        $status = $_GET['status'] ?? null;
+        if ($status && !in_array($status, ['active', 'inactive'], true)) {
+            $status = null;
+        }
+        $result = $this->userModel->findAdminsPaginated($page, $limit, $status);
+
+        $permModel = new Permission();
+        foreach ($result['data'] as &$admin) {
+            $admin['permissions'] = $permModel->getUserPermissions($admin['id']);
+        }
+        $this->jsonResponse($result);
+    }
+
+    public function inspectors()
+    {
+        AuthMiddleware::hasPermission('inspectors.view');
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
+        $status = $_GET['status'] ?? null;
+        if ($status && !in_array($status, ['active', 'inactive'], true)) {
+            $status = null;
+        }
+        $this->jsonResponse($this->userModel->findInspectorsPaginated($page, $limit, $status));
+    }
+
+    public function pendingClients()
+    {
+        AuthMiddleware::hasPermission('clients.view');
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
+        $this->jsonResponse($this->userModel->findPendingClients($page, $limit));
+    }
+
+    public function clients()
+    {
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'clients.view');
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = min(5, max(1, (int) ($_GET['limit'] ?? 5)));
+        $status = $_GET['status'] ?? null;
+        $this->jsonResponse($this->userModel->findClientsPaginated($page, $limit, $status));
+    }
+
+    public function permissions()
+    {
+        AuthMiddleware::hasPermission('permissions.manage');
+        $permModel = new Permission();
+        $this->jsonResponse($permModel->findAllKeys());
+    }
+
+    /** Grouped permission catalog + role default bundles for the access-control UI. */
+    public function permissionCatalog()
+    {
+        AuthMiddleware::hasPermission('permissions.manage');
+        $permModel = new Permission();
+        $this->jsonResponse([
+            'groups' => $permModel->groupedCatalog(),
+            'role_defaults' => $permModel->roleDefaults(),
+        ]);
+    }
+
+    /** Flat list of every user (any role) for the access-control picker. */
+    public function directory()
+    {
+        AuthMiddleware::hasPermission('permissions.manage');
+        $this->jsonResponse($this->userModel->findDirectory());
+    }
+
+    public function roles()
+    {
+        AuthMiddleware::check();
+        $db = Database::getConnection();
+        $roles = $db->query("SELECT id, name FROM roles ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
+        $this->jsonResponse($roles);
+    }
+
+    public function store()
+    {
+        $data = $this->getJsonInput();
+
+        if (!$this->validateRequiredParams(['name', 'email', 'role_id'], $data)) {
+            $this->jsonResponse(["message" => "Missing required fields: name, email, role_id"], 400);
+        }
+
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $this->jsonResponse(["message" => "Invalid email format"], 400);
+        }
+
+        if ($this->userModel->findByEmail($data['email'])) {
+            $this->jsonResponse(["message" => "Email already exists"], 409);
+        }
+
+        $db = Database::getConnection();
+        $stmt = $db->prepare("SELECT name FROM roles WHERE id = :id");
+        $stmt->bindParam(':id', $data['role_id']);
+        $stmt->execute();
+        $role = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$role) {
+            $this->jsonResponse(["message" => "Invalid role ID"], 400);
+        }
+
+        $plainPassword = null;
+
+        if ($role['name'] === 'Company User') {
+            if (!$this->validateRequiredParams(['password', 'company_name', 'phone', 'address'], $data)) {
+                $this->jsonResponse(["message" => "Missing required fields for registration"], 400);
+            }
+
+            $clientModel = new Client();
+            $clientId = $clientModel->create([
+                'company_name' => $data['company_name'],
+                'contact_person' => $data['name'],
+                'phone' => $data['phone'],
+                'email' => $data['email'],
+                'address' => $data['address'],
+            ]);
+            if (!$clientId) {
+                $this->jsonResponse(["message" => "Failed to create company profile"], 500);
+            }
+            $data['company_id'] = $clientId;
+            $data['status'] = 'pending';
+        } elseif ($role['name'] === 'Admin') {
+            AuthMiddleware::hasPermission('admins.create');
+            $plainPassword = bin2hex(random_bytes(6));
+            $data['password'] = $plainPassword;
+            $data['status'] = 'active';
+            $data['must_change_password'] = 1;
+        } elseif ($role['name'] === 'Inspector') {
+            AuthMiddleware::hasPermission('inspectors.create');
+            $plainPassword = bin2hex(random_bytes(6));
+            $data['password'] = $plainPassword;
+            $data['status'] = 'active';
+            $data['must_change_password'] = 1;
+        } elseif ($role['name'] === 'Super Admin') {
+            $this->jsonResponse(["message" => "Cannot create Super Admin via this endpoint."], 403);
+        }
+
+        $id = $this->userModel->create($data);
+        if (!$id) {
+            $this->jsonResponse(["message" => "Failed to create user"], 500);
+        }
+
+        if ($role['name'] === 'Admin') {
+            $permKeys = $data['permissions'] ?? [];
+            $permModel = new Permission();
+            $permModel->setUserPermissions($id, $permKeys);
+            // Always grant the baseline so an admin can sign in and see their dashboard.
+            $permModel->grantKeys($id, ['dashboard.view', 'notifications.view', 'settings.view', 'ai_assistant.use']);
+            MailHelper::sendAdminCredentials($data['email'], $data['name'], $plainPassword, $permKeys);
+            AuditHelper::log('create', 'user', (int) $id, $data['name'], "Admin account created ({$data['email']})");
+            $this->jsonResponse([
+                'message' => 'Admin created. Credentials sent by email.',
+                'id' => $id,
+                'generated_password' => $plainPassword,
+            ], 201);
+        }
+
+        if ($role['name'] === 'Inspector') {
+            (new Permission())->applyRoleDefaults((int) $id, 'Inspector');
+            MailHelper::sendInspectorCredentials($data['email'], $data['name'], $plainPassword);
+            AuditHelper::log('create', 'user', (int) $id, $data['name'], "Inspector account created ({$data['email']})");
+            $this->jsonResponse([
+                'message' => 'Inspector created. Credentials sent by email.',
+                'id' => $id,
+                'generated_password' => $plainPassword,
+            ], 201);
+        }
+
+        if ($role['name'] === 'Company User') {
+            NotificationHelper::notifyByPermission('clients.view', 'info', 'New client registration',
+                "{$data['company_name']} ({$data['email']}) is awaiting approval.",
+                '/clients?tab=pending', 'user', (int) $id, "client_pending:{$id}");
+            AuditHelper::log('create', 'client', (int) $id, $data['company_name'], "Registration pending ({$data['email']})");
+            $this->jsonResponse([
+                'message' => 'Registration submitted. Await admin approval before signing in.',
+                'id' => $id,
+                'status' => 'pending',
+            ], 201);
+        }
+
+        $this->jsonResponse(['message' => 'User created successfully', 'id' => $id], 201);
+    }
+
+    public function show($id)
+    {
+        AuthMiddleware::check();
+        $user = $this->userModel->findById($id);
+        if (!$user) {
+            $this->jsonResponse(["message" => "User not found"], 404);
+        }
+        unset($user['password']);
+        $user['permissions'] = (new Permission())->getUserPermissions($id);
+        $this->jsonResponse($user);
+    }
+
+    public function update($id)
+    {
+        AuthMiddleware::hasPermission('permissions.manage');
+        $data = $this->getJsonInput();
+
+        // Super Admin can manage permissions for ANY user (admins, inspectors, clients).
+        $user = $this->userModel->findById($id);
+        if (!$user) {
+            $this->jsonResponse(["message" => "User not found"], 404);
+        }
+
+        $permModel = new Permission();
+        $oldPermissions = $permModel->getUserPermissions($id);
+        $added = [];
+        $removed = [];
+        $updated = false;
+
+        if (isset($data['permissions']) && is_array($data['permissions'])) {
+            $newPermissions = array_values(array_unique(array_filter($data['permissions'], 'is_string')));
+
+            // Self-protection: a user managing their own access can never remove
+            // their own permission-management ability, or they'd be locked out.
+            $editingSelf = (int) ($_SESSION['user_id'] ?? 0) === (int) $id;
+            if ($editingSelf && in_array('permissions.manage', $oldPermissions, true)
+                && !in_array('permissions.manage', $newPermissions, true)) {
+                $newPermissions[] = 'permissions.manage';
+            }
+
+            $permModel->setUserPermissions($id, $newPermissions);
+            $added = array_values(array_diff($newPermissions, $oldPermissions));
+            $removed = array_values(array_diff($oldPermissions, $newPermissions));
+            $updated = true;
+
+            if (!empty($added) || !empty($removed)) {
+                MailHelper::sendPermissionsUpdated(
+                    $user['email'],
+                    $user['name'],
+                    $added,
+                    $removed,
+                    $newPermissions
+                );
+            }
+
+            if ((int) ($_SESSION['user_id'] ?? 0) === (int) $id) {
+                AuthMiddleware::refreshPermissions($id);
+            }
+        }
+
+        $profileFields = array_intersect_key($data, array_flip(['name', 'role_id', 'company_id', 'status']));
+        if (!empty($profileFields) && $this->userModel->update($id, $profileFields)) {
+            $updated = true;
+        }
+
+        if (!$updated) {
+            $this->jsonResponse(["message" => "Nothing to update"], 400);
+        }
+
+        $this->jsonResponse([
+            'message' => 'User updated successfully',
+            'permissions' => $permModel->getUserPermissions($id),
+            'added' => $added,
+            'removed' => $removed,
+        ]);
+    }
+
+    public function setStatus($id)
+    {
+        $data = $this->getJsonInput();
+        $status = $data['status'] ?? '';
+        if (!in_array($status, ['active', 'inactive'], true)) {
+            $this->jsonResponse(["message" => "Invalid status"], 400);
+        }
+        $user = $this->userModel->findById($id);
+        if (!$user) {
+            $this->jsonResponse(["message" => "User not found"], 404);
+        }
+        if ($user['role_name'] === 'Admin') {
+            AuthMiddleware::hasPermission('admins.deactivate');
+        } elseif ($user['role_name'] === 'Inspector') {
+            AuthMiddleware::hasPermission('inspectors.deactivate');
+        } else {
+            $this->jsonResponse(["message" => "Forbidden"], 403);
+        }
+        $this->userModel->setStatus($id, $status);
+        $this->jsonResponse(['message' => ucfirst($user['role_name']) . " {$status}"]);
+    }
+
+    public function approveClient($id)
+    {
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'clients.approve');
+        $user = $this->userModel->findById($id);
+        if (!$user || $user['role_name'] !== 'Company User') {
+            $this->jsonResponse(["message" => "Client not found"], 404);
+        }
+        if (isset($user['email_verified']) && (int) $user['email_verified'] === 0) {
+            $this->jsonResponse(["message" => "This client has not verified their email yet."], 409);
+        }
+        // Idempotent: a client that is already active has already received credentials.
+        // Re-approving would regenerate the password and invalidate the one already emailed.
+        if ($user['status'] === 'active') {
+            $this->jsonResponse(['message' => 'This client is already approved.'], 200);
+        }
+
+        $plainPassword = bin2hex(random_bytes(6));
+        $this->userModel->setPassword($id, $plainPassword, true);
+        $this->userModel->setStatus($id, 'active');
+
+        MailHelper::sendClientCredentials($user['email'], $user['name'], $plainPassword);
+        NotificationHelper::notify((int) $id, 'info', 'Account approved',
+            'Your FEMS account has been approved. Your sign-in details have been emailed to you.',
+            '/dashboard', 'user', (int) $id, "client_approved:{$id}");
+        AuditHelper::log('approve', 'client', (int) $id, $user['name'], 'Client account approved, credentials emailed');
+        $this->jsonResponse(['message' => 'Client approved. Credentials sent by email.']);
+    }
+
+    public function resendClientCredentials($id)
+    {
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'clients.credentials.resend');
+        $user = $this->userModel->findById($id);
+        if (!$user || $user['role_name'] !== 'Company User') {
+            $this->jsonResponse(["message" => "Client not found"], 404);
+        }
+        if ($user['status'] !== 'active') {
+            $this->jsonResponse(["message" => "Only approved clients can have credentials resent."], 409);
+        }
+
+        $plainPassword = bin2hex(random_bytes(6));
+        $this->userModel->setPassword($id, $plainPassword, true);
+
+        MailHelper::sendClientCredentials($user['email'], $user['name'], $plainPassword);
+        NotificationHelper::notify((int) $id, 'info', 'New sign-in details',
+            'Your FEMS sign-in details have been re-sent to your email.',
+            '/dashboard', 'user', (int) $id, "client_credentials_resent:{$id}:" . time());
+        AuditHelper::log('update', 'client', (int) $id, $user['name'], 'Client credentials regenerated and re-emailed');
+        $this->jsonResponse(['message' => 'New credentials sent by email.']);
+    }
+
+    public function rejectClient($id)
+    {
+        AuthMiddleware::hasRoleOrPermission(['Super Admin', 'Admin'], 'clients.reject');
+        $user = $this->userModel->findById($id);
+        if (!$user || $user['role_name'] !== 'Company User') {
+            $this->jsonResponse(["message" => "Client not found"], 404);
+        }
+        $this->userModel->setStatus($id, 'inactive');
+        MailHelper::sendClientApproval($user['email'], $user['name'], false);
+        AuditHelper::log('reject', 'client', (int) $id, $user['name'], 'Client registration rejected');
+        $this->jsonResponse(['message' => 'Client rejected']);
+    }
+
+    public function changePassword()
+    {
+        AuthMiddleware::check();
+        $data = $this->getJsonInput();
+        if (!$this->validateRequiredParams(['current_password', 'new_password'], $data)) {
+            $this->jsonResponse(["message" => "Current and new passwords are required"], 400);
+        }
+
+        $userId = $_SESSION['user_id'];
+        $user = $this->userModel->findById($userId);
+        if (!password_verify($data['current_password'], $user['password'])) {
+            $this->jsonResponse(["message" => "Incorrect current password"], 401);
+        }
+
+        $db = Database::getConnection();
+        $hash = password_hash($data['new_password'], PASSWORD_DEFAULT);
+        $db->prepare("UPDATE users SET password = ?, must_change_password = 0 WHERE id = ?")->execute([$hash, $userId]);
+        $this->jsonResponse(['message' => 'Password updated successfully']);
+    }
+
+    public function destroy($id)
+    {
+        AuthMiddleware::hasPermission('admins.delete');
+        $user = $this->userModel->findById($id);
+        if ($this->userModel->delete($id)) {
+            AuditHelper::log('delete', 'user', (int) $id, $user['name'] ?? "User #{$id}", 'User account deleted');
+            $this->jsonResponse(["message" => "User deleted"]);
+        }
+        $this->jsonResponse(["message" => "Deletion failed"], 500);
+    }
+}

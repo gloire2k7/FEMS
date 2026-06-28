@@ -1,0 +1,76 @@
+<div class="client-page max-w-6xl pb-8">
+
+  <a routerLink="/super-admin-clients" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#0B1437] mb-4 no-underline">
+    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to clients
+  </a>
+
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-violet-900/20"
+    style="background: linear-gradient(135deg, #1a0f2e 0%, #0B1437 100%);">
+    <div class="client-hero-inner">
+      <p class="client-hero-eyebrow">Client profile</p>
+      <h1 class="client-hero-title">TechCorp Industries</h1>
+      <p class="client-hero-sub">Overview of locations, compliance, and recent activity.</p>
+    </div>
+  </section>
+
+  <div class="client-stat-grid client-stat-grid--4">
+    <div class="client-stat client-stat--primary">
+      <div class="relative z-10">
+        <p class="client-stat-label">Locations</p>
+        <p class="client-stat-value">4</p>
+      </div>
+    </div>
+    <div class="client-stat client-stat--success">
+      <div class="relative z-10">
+        <p class="client-stat-label">Total units</p>
+        <p class="client-stat-value">272</p>
+      </div>
+    </div>
+    <div class="client-stat client-stat--warning">
+      <div class="relative z-10">
+        <p class="client-stat-label">Needs attention</p>
+        <p class="client-stat-value">2</p>
+      </div>
+    </div>
+    <div class="client-stat">
+      <div class="relative z-10">
+        <p class="client-stat-label">Compliance</p>
+        <p class="client-stat-value">92%</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="client-card overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100">
+      <h2 class="text-lg font-semibold text-[#0B1437]">Locations</h2>
+      <p class="text-sm text-slate-500 mt-0.5">Sites managed under this client</p>
+    </div>
+    <div class="divide-y divide-slate-50">
+      <div *ngFor="let loc of locations" class="px-6 py-4 flex flex-wrap items-center justify-between gap-4 hover:bg-slate-50/50">
+        <div>
+          <h3 class="font-semibold text-[#0B1437]">{{ loc.name }}</h3>
+          <p class="text-sm text-slate-500">{{ loc.subtitle }} · {{ loc.units }} units</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full" [ngClass]="loc.riskColor">{{ loc.risk }} risk</span>
+          <span class="text-sm font-medium" [ngClass]="loc.statusColor">{{ loc.status }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="client-card p-6">
+    <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Recent activity</h2>
+    <div class="space-y-4">
+      <div *ngFor="let act of activities" class="flex gap-4">
+        <span class="w-2 h-2 rounded-full bg-violet-500 mt-2 shrink-0"></span>
+        <div>
+          <p class="text-xs text-slate-400">{{ act.time }}</p>
+          <p class="font-semibold text-[#0B1437]">{{ act.title }}</p>
+          <p class="text-sm text-slate-500">{{ act.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

@@ -1,0 +1,100 @@
+<div class="client-page max-w-3xl pb-8">
+
+  <a routerLink="/super-admin-admins" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#0B1437] mb-4 no-underline">
+    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to admins
+  </a>
+
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-violet-900/20"
+    style="background: linear-gradient(135deg, #1a0f2e 0%, #0B1437 100%);">
+    <div class="client-hero-inner">
+      <p class="client-hero-eyebrow">New account</p>
+      <h1 class="client-hero-title">Create admin</h1>
+      <p class="client-hero-sub">Grant platform access and set permissions for a new administrator.</p>
+    </div>
+  </section>
+
+  <div *ngIf="error" class="client-card p-4 border-red-100 bg-red-50 flex items-center gap-3 text-red-700 text-sm">
+    <i data-lucide="alert-circle" class="w-5 h-5 shrink-0"></i>
+    {{ error }}
+  </div>
+
+  <section *ngIf="successData" class="client-card p-6 border-emerald-100 bg-emerald-50/50">
+    <div class="flex items-start gap-4 mb-5">
+      <span class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+        <i data-lucide="check-circle" class="w-5 h-5"></i>
+      </span>
+      <div>
+        <h3 class="font-semibold text-[#0B1437]">Account created</h3>
+        <p class="text-sm text-slate-500 mt-0.5">Share these credentials with the new admin.</p>
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div class="bg-white rounded-xl p-4 border border-emerald-100">
+        <p class="text-xs font-semibold text-slate-400 uppercase mb-1">Email</p>
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-sm font-medium text-[#0B1437] truncate">{{ successData.email }}</span>
+          <button type="button" (click)="copyToClipboard(successData.email)" class="text-violet-600 hover:text-violet-800 p-1">
+            <i data-lucide="copy" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-emerald-100">
+        <p class="text-xs font-semibold text-slate-400 uppercase mb-1">Temporary password</p>
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-sm font-mono font-bold text-violet-600">{{ successData.password }}</span>
+          <button type="button" (click)="copyToClipboard(successData.password)" class="text-violet-600 hover:text-violet-800 p-1">
+            <i data-lucide="copy" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <form class="space-y-6" (ngSubmit)="onCreateAdmin()">
+    <section class="client-card p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-[#0B1437]">Personal information</h2>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">Full name</label>
+        <input type="text" name="name" [(ngModel)]="name" required placeholder="Jane Doe" class="client-input w-full">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">Email address</label>
+        <input type="email" name="email" [(ngModel)]="email" required placeholder="admin@company.com" class="client-input w-full">
+      </div>
+    </section>
+
+    <section class="client-card p-6">
+      <h2 class="text-lg font-semibold text-[#0B1437] mb-1">Permissions</h2>
+      <p class="text-sm text-slate-500 mb-4">Pre-filled with the standard Admin template — tick or untick anything. You can fine-tune later in Access control.</p>
+
+      <div class="space-y-4">
+        <div *ngFor="let g of groups" class="border border-slate-100 rounded-xl overflow-hidden">
+          <label class="flex items-center gap-3 px-4 py-2.5 bg-slate-50 cursor-pointer">
+            <input type="checkbox" [checked]="groupAll(g)" (change)="toggleGroup(g)">
+            <span class="text-sm font-bold text-[#0B1437]">{{ g.name }}</span>
+          </label>
+          <div class="grid sm:grid-cols-2 gap-x-3">
+            <label *ngFor="let p of g.permissions"
+              class="flex items-start gap-3 px-4 py-2.5 cursor-pointer hover:bg-slate-50 transition-colors">
+              <input type="checkbox" class="mt-1" [checked]="hasPermission(p.key)" (change)="togglePermission(p.key)">
+              <div>
+                <span class="text-sm font-medium text-[#0B1437]">{{ p.label }}</span>
+                <p class="text-xs text-slate-400 mt-0.5">{{ p.description }}</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <p class="mt-4 text-xs text-slate-400">Dashboard, notifications, settings and AI assistant access are always granted.</p>
+    </section>
+
+    <div class="flex flex-wrap gap-3">
+      <button type="submit" [disabled]="isLoading" class="client-btn-primary px-8 py-3">
+        {{ isLoading ? 'Creating…' : 'Create admin account' }}
+      </button>
+      <a routerLink="/super-admin-admins" class="client-btn-secondary px-8 py-3 no-underline inline-flex items-center">Cancel</a>
+    </div>
+  </form>
+
+</div>

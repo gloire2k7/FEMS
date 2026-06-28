@@ -1,0 +1,84 @@
+<div class="client-page pb-8">
+
+  <section class="client-hero">
+    <div class="client-hero-inner">
+      <p class="client-hero-eyebrow">Account</p>
+      <h1 class="client-hero-title">Settings</h1>
+      <p class="client-hero-sub">Manage your profile and sign-in security.</p>
+    </div>
+  </section>
+
+  <!-- Profile -->
+  <section class="client-card overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-4">
+      <img [src]="'https://ui-avatars.com/api/?name=' + (userName || 'Admin') + '&background=0B1437&color=fff'"
+        alt="" class="w-14 h-14 rounded-full border border-slate-100">
+      <div>
+        <h2 class="text-lg font-semibold text-[#0B1437]">{{ userName || 'Admin' }}</h2>
+        <p class="text-sm text-slate-500">{{ userEmail }}</p>
+        <span class="inline-block mt-1 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
+          {{ userRole }}
+        </span>
+      </div>
+    </div>
+    <div class="p-6 grid sm:grid-cols-2 gap-4 text-sm">
+      <div>
+        <p class="text-slate-400 mb-1">Full name</p>
+        <p class="font-medium text-[#0B1437]">{{ userName || '—' }}</p>
+      </div>
+      <div>
+        <p class="text-slate-400 mb-1">Email</p>
+        <p class="font-medium text-[#0B1437]">{{ userEmail || '—' }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick link to notifications -->
+  <a routerLink="/admin-notifications"
+    class="client-card client-card--lift block p-5 no-underline text-inherit">
+    <div class="flex items-center gap-4">
+      <span class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+        <i data-lucide="bell" class="w-5 h-5"></i>
+      </span>
+      <div class="flex-1 min-w-0">
+        <h3 class="font-semibold text-[#0B1437]">Notifications</h3>
+        <p class="text-sm text-slate-500 mt-0.5">View alerts for orders, clients, and stock</p>
+      </div>
+      <i data-lucide="chevron-right" class="w-5 h-5 text-slate-300 shrink-0"></i>
+    </div>
+  </a>
+
+  <!-- Password -->
+  <section class="client-card overflow-hidden max-w-xl">
+    <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
+      <span class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
+        <i data-lucide="lock" class="w-5 h-5"></i>
+      </span>
+      <div>
+        <h2 class="text-lg font-semibold text-[#0B1437]">Change password</h2>
+        <p class="text-sm text-slate-500">Use a strong password you do not use elsewhere</p>
+      </div>
+    </div>
+    <div class="p-6 space-y-4">
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">Current password</label>
+        <input type="password" [(ngModel)]="currentPassword" autocomplete="current-password" class="client-input w-full">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">New password</label>
+        <input type="password" [(ngModel)]="newPassword" autocomplete="new-password" class="client-input w-full">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">Confirm new password</label>
+        <input type="password" [(ngModel)]="confirmPassword" autocomplete="new-password" class="client-input w-full">
+      </div>
+      <p *ngIf="passwordMessage" class="text-sm" [class.text-emerald-600]="!passwordError" [class.text-red-600]="passwordError">
+        {{ passwordMessage }}
+      </p>
+      <button type="button" (click)="changePassword()" class="client-btn-primary w-full sm:w-auto px-8 py-3">
+        Update password
+      </button>
+    </div>
+  </section>
+
+</div>

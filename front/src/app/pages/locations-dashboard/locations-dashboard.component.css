@@ -1,0 +1,160 @@
+/* Location card hover effects */
+.location-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.location-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Progress bar animations */
+.progress-bar {
+  transition: width 0.8s ease-out;
+}
+
+/* Status badge animations */
+.status-badge {
+  transition: all 0.2s ease;
+}
+
+.status-badge:hover {
+  transform: scale(1.05);
+}
+
+/* Filter dropdown styling */
+.filter-dropdown {
+  transition: all 0.2s ease;
+}
+
+.filter-dropdown:focus {
+  box-shadow: 0 0 0 3px rgba(11, 20, 55, 0.1);
+}
+
+/* Search input styling */
+.search-input {
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  box-shadow: 0 0 0 3px rgba(11, 20, 55, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Summary card animations */
+.summary-card {
+  transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Pagination button styles */
+.pagination-btn {
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Location type icons */
+.type-icon {
+  transition: all 0.2s ease;
+}
+
+.type-icon:hover {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* Compliance percentage colors */
+.compliance-high {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.compliance-medium {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.compliance-low {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* Location card gradient overlay */
+.gradient-overlay {
+  background: linear-gradient(135deg, rgba(11, 20, 55, 0.05) 0%, transparent 100%);
+}
+
+/* Info row hover effects */
+.info-row {
+  transition: all 0.2s ease;
+}
+
+.info-row:hover {
+  background-color: rgba(11, 20, 55, 0.02);
+  border-radius: 4px;
+  padding-left: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .locations-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .locations-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .search-filter-container {
+    flex-direction: column;
+  }
+}
+
+/* Loading skeleton animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Status indicator pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-critical {
+  animation: pulse 2s infinite;
+}
+
+/* Card shadow variations */
+.shadow-elevated {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-floating {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}

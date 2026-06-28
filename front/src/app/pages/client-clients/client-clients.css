@@ -1,0 +1,19 @@
+:host {
+  display: block;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th:first-child,
+td:first-child {
+  padding-left: 1.5rem;
+}
+
+th:last-child,
+td:last-child {
+  padding-right: 1.5rem;
+}
+

@@ -1,0 +1,163 @@
+<div class="client-page">
+
+  <section class="client-hero">
+    <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <div>
+        <nav class="flex items-center gap-2 text-sm font-medium text-white/60 mb-3">
+          <a routerLink="/cart" class="hover:text-white transition-colors">Cart</a>
+          <span>/</span>
+          <span class="text-white/90">Checkout</span>
+        </nav>
+        <h1 class="client-hero-title">Checkout</h1>
+        <p class="client-hero-sub">Confirm delivery details and submit your order for approval.</p>
+      </div>
+      <button type="button" (click)="backToCart()" class="client-hero-btn shrink-0">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        Back to cart
+      </button>
+    </div>
+  </section>
+
+  <!-- Progress -->
+  <section class="client-card p-5">
+    <div class="flex items-center gap-3 max-w-md mx-auto">
+      <div class="flex flex-col items-center gap-1 flex-1">
+        <span class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center">
+          <i data-lucide="check" class="w-5 h-5"></i>
+        </span>
+        <span class="text-sm font-medium text-slate-500">Cart</span>
+      </div>
+      <div class="h-0.5 flex-1 bg-[#0B1437] rounded"></div>
+      <div class="flex flex-col items-center gap-1 flex-1">
+        <span class="w-10 h-10 rounded-full bg-[#0B1437] text-white flex items-center justify-center text-base font-bold">2</span>
+        <span class="text-sm font-semibold text-[#0B1437]">Details</span>
+      </div>
+      <div class="h-0.5 flex-1 bg-slate-200 rounded"></div>
+      <div class="flex flex-col items-center gap-1 flex-1">
+        <span class="w-10 h-10 rounded-full border-2 border-slate-200 text-slate-400 flex items-center justify-center text-base font-bold">3</span>
+        <span class="text-sm font-medium text-slate-400">Complete</span>
+      </div>
+    </div>
+  </section>
+
+  <div *ngIf="successMessage" class="client-card p-5 border-emerald-200 bg-emerald-50/60">
+    <p class="text-base font-semibold text-emerald-800 flex items-center gap-2">
+      <i data-lucide="check-circle" class="w-5 h-5"></i>
+      {{ successMessage }}
+    </p>
+  </div>
+
+  <div *ngIf="errorMessage" class="client-card p-5 border-red-200 bg-red-50/60">
+    <p class="text-base font-semibold text-red-700 flex items-center gap-2">
+      <i data-lucide="alert-circle" class="w-5 h-5"></i>
+      {{ errorMessage }}
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+    <div class="lg:col-span-2 space-y-6">
+
+      <section class="client-card p-6">
+        <h2 class="text-lg font-semibold text-[#0B1437] mb-1">Delivery details</h2>
+        <p class="text-base text-slate-500 mb-6">Where should we deliver your order?</p>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div class="sm:col-span-2">
+            <label class="client-label">Company name</label>
+            <input type="text" [(ngModel)]="deliveryForm.company_name" [readonly]="!!user?.company_name"
+              class="client-input" [class.bg-slate-50]="!!user?.company_name" />
+          </div>
+          <div>
+            <label class="client-label">Contact person *</label>
+            <input type="text" [(ngModel)]="deliveryForm.full_name" class="client-input" />
+          </div>
+          <div>
+            <label class="client-label">Phone *</label>
+            <input type="tel" [(ngModel)]="deliveryForm.phone" class="client-input" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="client-label">Email *</label>
+            <input type="email" [(ngModel)]="deliveryForm.email" [readonly]="!!user?.email"
+              class="client-input" [class.bg-slate-50]="!!user?.email" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="client-label">Delivery address *</label>
+            <textarea [(ngModel)]="deliveryForm.delivery_address" rows="3" class="client-input resize-none"></textarea>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="client-label">Delivery notes</label>
+            <input type="text" [(ngModel)]="deliveryForm.notes"
+              placeholder="e.g. Call on arrival, use rear entrance"
+              class="client-input" />
+          </div>
+        </div>
+      </section>
+
+      <section class="client-card p-6">
+        <h2 class="text-lg font-semibold text-[#0B1437] mb-1">Payment method</h2>
+        <p class="text-base text-slate-500 mb-6">How would you like to pay?</p>
+
+        <div class="grid sm:grid-cols-2 gap-3">
+          <button type="button" *ngFor="let opt of paymentOptions" (click)="paymentMethod = opt.id"
+            class="flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-colors"
+            [class.border-[#0B1437]]="paymentMethod === opt.id"
+            [class.bg-slate-50]="paymentMethod === opt.id"
+            [class.border-slate-200]="paymentMethod !== opt.id">
+            <i [attr.data-lucide]="opt.icon" class="w-5 h-5 text-[#0B1437]"></i>
+            <span class="text-base font-semibold text-[#0B1437]">{{ opt.label }}</span>
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <aside class="lg:col-span-1">
+      <section class="client-card p-6 lg:sticky lg:top-6">
+        <h2 class="text-lg font-semibold text-[#0B1437] mb-5">Order summary</h2>
+
+        <div class="space-y-4 max-h-48 overflow-y-auto">
+          <div *ngFor="let item of cartItems" class="flex justify-between gap-3 text-base">
+            <div class="min-w-0">
+              <p class="font-semibold text-[#0B1437] truncate">{{ item.type }} · {{ item.capacity }}</p>
+              <p class="text-slate-500">Qty {{ item.quantity }}</p>
+            </div>
+            <span class="font-semibold shrink-0 tabular-nums">{{ (item.price * item.quantity) | number:'1.0-0' }} RWF</span>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-100 mt-5 pt-5 space-y-3 text-base">
+          <div class="flex justify-between">
+            <span class="text-slate-500">Subtotal ({{ totalItems }} items)</span>
+            <span class="font-semibold tabular-nums">{{ subtotal | number:'1.0-0' }} RWF</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Delivery</span>
+            <span class="font-semibold text-emerald-600">Free</span>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-100 mt-5 pt-5 flex justify-between items-end">
+          <span class="text-base font-semibold text-[#0B1437]">Total</span>
+          <div class="text-right">
+            <p class="text-3xl font-bold tabular-nums text-[#0B1437]">{{ grandTotal | number:'1.0-0' }}</p>
+            <p class="text-base text-slate-500">RWF</p>
+          </div>
+        </div>
+
+        <p class="text-sm text-slate-500 mt-4 leading-relaxed">
+          Your order will be reviewed by our team before delivery is scheduled.
+        </p>
+
+        <button type="button" (click)="placeOrder()" [disabled]="isPlacingOrder || !!successMessage"
+          class="client-btn-primary w-full mt-6 py-3.5 disabled:opacity-60">
+          <span *ngIf="!isPlacingOrder">Place order</span>
+          <span *ngIf="isPlacingOrder">Submitting…</span>
+          <i *ngIf="!isPlacingOrder" data-lucide="send" class="w-5 h-5"></i>
+        </button>
+        <button type="button" (click)="backToCart()" class="client-btn-secondary w-full mt-3 py-3.5">
+          Back to cart
+        </button>
+      </section>
+    </aside>
+  </div>
+</div>

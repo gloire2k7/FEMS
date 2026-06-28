@@ -1,0 +1,5 @@
+<?php
+
+// Copy this file to config/app.php and paste your OpenAI API key.
+// Get one at https://platform.openai.com/api-keys
+define('OPENAI_API_KEY', 'YOUR_OPENAI_API_KEY');

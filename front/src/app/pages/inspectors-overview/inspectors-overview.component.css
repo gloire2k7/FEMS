@@ -1,0 +1,121 @@
+/* Inspector card hover effects */
+.inspector-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.inspector-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(11, 20, 55, 0.08);
+  border-color: #0B1437;
+}
+
+/* Sidebar entrance animation */
+.sidebar-enter {
+  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Status badge styles */
+.status-badge {
+  letter-spacing: 0.05em;
+  font-family: 'Inter', sans-serif;
+}
+
+.available {
+  background: #ECFDF5;
+  color: #059669;
+}
+
+.busy {
+  background: #FFF7ED;
+  color: #EA580C;
+}
+
+/* Avatar enhancement */
+.avatar img {
+  transform: scale(1.01);
+  transition: transform 0.3s ease;
+}
+
+.inspector-card:hover .avatar img {
+  transform: scale(1.1);
+}
+
+/* Custom stats boxes */
+.stats-box {
+  transition: all 0.2s ease;
+}
+
+.stats-box:hover {
+  background-color: white;
+  border-color: #0B1437;
+  transform: scale(1.02);
+}
+
+/* Search input focus */
+.search-input {
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: #0B1437;
+  box-shadow: 0 0 0 4px rgba(11, 20, 55, 0.05);
+}
+
+/* Scrollbar for detail sidebar */
+.inspector-details-sidebar {
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #E2E8F0 transparent;
+}
+
+.inspector-details-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.inspector-details-sidebar::-webkit-scrollbar-thumb {
+  background: #E2E8F0;
+  border-radius: 10px;
+}
+
+/* Summary card enhancements */
+.summary-card {
+  transition: all 0.2s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .inspector-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .inspector-details-sidebar {
+    width: 100%;
+    max-width: none;
+    position: relative;
+    margin-top: 2rem;
+  }
+}

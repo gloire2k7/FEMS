@@ -1,0 +1,135 @@
+<div class="client-page pb-6">
+
+  <section class="client-hero">
+    <div class="client-hero-inner">
+      <p class="client-hero-eyebrow">Order management</p>
+      <h1 class="client-hero-title">Client orders</h1>
+      <p class="client-hero-sub">Review, grant, or deny purchase requests from client companies.</p>
+    </div>
+  </section>
+
+  <section class="client-stat-grid client-stat-grid--4" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+    <button type="button" (click)="setStatusFilter('pending')"
+      class="client-stat client-stat--featured client-stat-link text-left"
+      [class.client-stat-link--active]="filterStatus === 'pending'">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Pending</p>
+          <p class="client-stat-value">{{ pendingCount }}</p>
+          <p class="client-stat-hint">Needs review</p>
+        </div>
+        <span class="client-stat-icon"><i data-lucide="clock" class="w-5 h-5"></i></span>
+      </div>
+    </button>
+    <button type="button" (click)="setStatusFilter('granted')"
+      class="client-stat client-stat--success client-stat-link text-left"
+      [class.client-stat-link--active]="filterStatus === 'granted'">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Approved</p>
+          <p class="client-stat-value">{{ grantedCount }}</p>
+          <p class="client-stat-hint">Granted orders</p>
+        </div>
+        <span class="client-stat-icon"><i data-lucide="check-circle" class="w-5 h-5"></i></span>
+      </div>
+    </button>
+    <button type="button" (click)="setStatusFilter('cancelled')"
+      class="client-stat client-stat--warning client-stat-link text-left"
+      [class.client-stat-link--active]="filterStatus === 'cancelled'">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Denied</p>
+          <p class="client-stat-value">{{ cancelledCount }}</p>
+          <p class="client-stat-hint">Cancelled orders</p>
+        </div>
+        <span class="client-stat-icon"><i data-lucide="x-circle" class="w-5 h-5"></i></span>
+      </div>
+    </button>
+  </section>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <button type="button" (click)="setStatusFilter('all')"
+      [class.bg-[#0B1437]]="filterStatus === 'all'" [class.text-white]="filterStatus === 'all'"
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 transition-colors">
+      All ({{ allOrders.length }})
+    </button>
+    <button type="button" (click)="setStatusFilter('pending')"
+      [class.bg-orange-500]="filterStatus === 'pending'" [class.text-white]="filterStatus === 'pending'"
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 transition-colors">
+      Pending
+    </button>
+    <button type="button" (click)="setStatusFilter('granted')"
+      [class.bg-emerald-600]="filterStatus === 'granted'" [class.text-white]="filterStatus === 'granted'"
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 transition-colors">
+      Approved
+    </button>
+    <button type="button" (click)="setStatusFilter('cancelled')"
+      [class.bg-red-600]="filterStatus === 'cancelled'" [class.text-white]="filterStatus === 'cancelled'"
+      class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 transition-colors">
+      Denied
+    </button>
+  </div>
+
+  <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div *ngIf="isLoading" class="py-16 flex items-center justify-center gap-3 text-slate-400">
+      <div class="w-6 h-6 border-4 border-[#0B1437] border-t-transparent rounded-full animate-spin"></div>
+      Loading orders…
+    </div>
+
+    <div *ngIf="!isLoading && filteredOrders.length === 0" class="px-6 py-16 text-center">
+      <span class="inline-flex w-14 h-14 rounded-2xl bg-slate-50 items-center justify-center mb-4">
+        <i data-lucide="inbox" class="w-7 h-7 text-slate-300"></i>
+      </span>
+      <p class="font-medium text-[#0B1437]">No orders found</p>
+      <p class="text-sm text-slate-500 mt-1">Try a different filter.</p>
+    </div>
+
+    <div *ngIf="!isLoading && filteredOrders.length > 0" class="divide-y divide-slate-50">
+      <div *ngFor="let order of paginatedOrders"
+        class="flex flex-wrap items-center gap-4 px-6 py-4 hover:bg-slate-50/50"
+        [class.bg-orange-50/30]="order.status === 'pending'">
+        <div class="w-16">
+          <p class="text-sm font-medium text-slate-400">#{{ order.id }}</p>
+        </div>
+        <div class="flex-1 min-w-[160px]">
+          <p class="font-semibold text-[#0B1437]">{{ order.client_name || 'Unknown' }}</p>
+          <p class="text-sm text-slate-500">{{ order.type }} · {{ order.capacity }} · Qty {{ order.quantity }}</p>
+        </div>
+        <div class="text-sm font-medium text-[#0B1437]" *ngIf="order.total_price">
+          {{ order.total_price | number }} RWF
+        </div>
+        <span class="client-badge text-sm font-semibold px-3 py-1 rounded-full border" [ngClass]="getStatusClass(order.status)">
+          {{ order.status | titlecase }}
+        </span>
+        <div class="flex items-center gap-2 ml-auto">
+          <a *ngIf="order.status === 'pending'" [routerLink]="['/admin-orders', order.id, 'review']"
+            class="px-3 py-1.5 rounded-lg bg-[#0B1437] text-white text-sm font-semibold hover:bg-blue-900 no-underline">
+            Review
+          </a>
+          <a *ngIf="order.status !== 'pending'" [routerLink]="['/admin-orders', order.id, 'review']"
+            class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-semibold hover:bg-slate-200 no-underline">
+            View
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && filteredOrders.length > 0" class="px-6 py-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/40">
+      <p class="text-sm text-slate-500">
+        {{ (currentPage-1)*pageSize + 1 }}–{{ Math.min(currentPage*pageSize, filteredOrders.length) }} of {{ filteredOrders.length }}
+      </p>
+      <div class="flex items-center gap-2">
+        <button type="button" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
+          class="w-9 h-9 rounded-lg bg-white border border-slate-200 disabled:opacity-40">
+          <i data-lucide="chevron-left" class="w-4 h-4 mx-auto"></i>
+        </button>
+        <span class="text-sm font-semibold text-[#0B1437]">{{ currentPage }} / {{ totalPages }}</span>
+        <button type="button" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
+          class="w-9 h-9 rounded-lg bg-white border border-slate-200 disabled:opacity-40">
+          <i data-lucide="chevron-right" class="w-4 h-4 mx-auto"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>

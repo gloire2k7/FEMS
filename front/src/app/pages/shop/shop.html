@@ -1,0 +1,128 @@
+<div class="client-page">
+
+  <section class="client-hero">
+    <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <div>
+        <p class="client-hero-eyebrow">Order supplies</p>
+        <h1 class="client-hero-title">Shop</h1>
+        <p class="client-hero-sub">Order fire extinguishers for your business. Delivery after admin approval.</p>
+      </div>
+      <button type="button" (click)="goToCart()" class="client-hero-btn shrink-0">
+        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+        Cart ({{ cartCount }})
+      </button>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section class="client-card client-card--lift p-5">
+    <div class="flex flex-col sm:flex-row gap-4">
+      <div class="relative flex-1">
+        <div class="client-search">
+          <i data-lucide="search" class="client-search-icon"></i>
+          <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="applyFilter()"
+            placeholder="Search by type or capacity…" class="client-input" />
+        </div>
+      </div>
+      <select [(ngModel)]="filterType" (ngModelChange)="applyFilter()" class="client-input sm:w-44">
+        <option value="">All types</option>
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-16 text-base text-slate-400">Loading products…</div>
+
+  <!-- Empty -->
+  <section *ngIf="!isLoading && filteredProducts.length === 0" class="client-card client-empty">
+    <div class="client-empty-icon">
+      <i data-lucide="shopping-bag" class="w-8 h-8"></i>
+    </div>
+    <p class="text-lg font-semibold text-[#0B1437]">No products available</p>
+    <p class="text-base text-slate-500 mt-2">Check back later or adjust your filters.</p>
+  </section>
+
+  <!-- Product grid -->
+  <section *ngIf="!isLoading && filteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <article *ngFor="let p of filteredProducts"
+      class="client-card client-card--lift overflow-hidden flex flex-col">
+      <div class="h-44 flex items-center justify-center relative" [ngClass]="p.imgBg">
+        <div *ngIf="!p.image" class="flex flex-col items-center">
+          <div class="w-12 h-20 bg-red-500 rounded-2xl shadow-md"></div>
+          <div class="w-14 h-2 bg-red-700 rounded-b-lg mt-1"></div>
+        </div>
+        <img *ngIf="p.image" [src]="p.image" class="w-full h-full object-cover" alt="" />
+        <span class="absolute top-3 right-3 client-badge text-sm" [ngClass]="p.badgeClass">{{ p.type }}</span>
+      </div>
+
+      <div class="p-5 flex flex-col flex-1">
+        <h3 class="text-lg font-semibold text-[#0B1437]">{{ p.type }} Extinguisher</h3>
+        <p class="text-base text-slate-500 mt-1">{{ p.capacity }} capacity</p>
+
+        <div class="mt-4 flex items-baseline gap-1">
+          <span class="text-2xl font-bold text-[#0B1437]">{{ p.price | number:'1.0-0' }}</span>
+          <span class="text-base text-slate-500">RWF</span>
+        </div>
+
+        <p class="text-sm mt-2"
+          [class.text-emerald-600]="!p.soldOut"
+          [class.text-red-500]="p.soldOut">
+          {{ p.soldOut ? 'Out of stock' : p.total_in_stock + ' in stock' }}
+        </p>
+
+        <div class="flex gap-2 mt-5 mt-auto pt-4">
+          <button *ngIf="!p.soldOut" type="button" (click)="openProductModal(p)"
+            class="client-btn-primary flex-1 text-sm py-2.5">
+            Add to cart
+          </button>
+          <button *ngIf="p.soldOut" type="button" disabled
+            class="client-btn-secondary flex-1 opacity-50 cursor-not-allowed text-sm py-2.5">
+            Sold out
+          </button>
+          <button type="button" (click)="openProductModal(p)"
+            class="client-btn-secondary px-4 text-sm py-2.5">
+            Details
+          </button>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- Modal -->
+  <div *ngIf="showModal && selectedProduct" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#0B1437]/50 backdrop-blur-sm" (click)="closeModal()"></div>
+    <div class="relative client-card w-full max-w-lg p-8 shadow-xl">
+      <button type="button" (click)="closeModal()"
+        class="absolute top-4 right-4 w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <h2 class="text-2xl font-bold text-[#0B1437]">{{ selectedProduct.type }} Extinguisher</h2>
+      <p class="text-base text-slate-500 mt-1">{{ selectedProduct.capacity }} · {{ selectedProduct.type }}</p>
+
+      <div class="flex items-baseline gap-2 mt-6">
+        <span class="text-3xl font-bold text-[#0B1437]">{{ selectedProduct.price | number:'1.0-0' }}</span>
+        <span class="text-base text-slate-500">RWF</span>
+      </div>
+
+      <p class="text-base text-slate-600 mt-4">
+        {{ selectedProduct.total_in_stock }} units available. Orders are reviewed by our team before delivery.
+      </p>
+
+      <div class="flex items-center gap-4 mt-8">
+        <div class="flex items-center border border-slate-200 rounded-xl overflow-hidden">
+          <button type="button" (click)="decreaseQty()"
+            class="w-11 h-11 flex items-center justify-center text-xl text-slate-500 hover:bg-slate-50">−</button>
+          <span class="w-12 text-center text-lg font-semibold">{{ modalQty }}</span>
+          <button type="button" (click)="increaseQty()"
+            class="w-11 h-11 flex items-center justify-center text-xl text-slate-500 hover:bg-slate-50">+</button>
+        </div>
+        <button type="button" (click)="addToCart()" class="client-btn-primary flex-1">
+          Add to cart
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

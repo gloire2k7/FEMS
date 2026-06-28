@@ -1,0 +1,87 @@
+﻿<div class="client-page max-w-6xl pb-8">
+
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
+    <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <div>
+        <p class="client-hero-eyebrow">Client management</p>
+        <h1 class="client-hero-title">Companies</h1>
+        <p class="client-hero-sub">Review registrations and manage active client accounts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tabs -->
+  <div class="flex flex-wrap items-center gap-3">
+    <button type="button" (click)="switchTab('pending')"
+      [class.bg-[#0B1437]]="tab === 'pending'" [class.text-white]="tab === 'pending'"
+      [class.bg-white]="tab !== 'pending'" [class.text-slate-600]="tab !== 'pending'"
+      class="px-5 py-2.5 rounded-xl text-base font-semibold border border-slate-200 transition-colors">
+      Pending approval
+    </button>
+    <button type="button" (click)="switchTab('active')"
+      [class.bg-[#0B1437]]="tab === 'active'" [class.text-white]="tab === 'active'"
+      [class.bg-white]="tab !== 'active'" [class.text-slate-600]="tab !== 'active'"
+      class="px-5 py-2.5 rounded-xl text-base font-semibold border border-slate-200 transition-colors">
+      Active clients
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="client-search">
+    <i data-lucide="search" class="client-search-icon"></i>
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Search by company, email, or phone…"
+      class="client-input w-full">
+  </div>
+
+  <div *ngIf="loading" class="space-y-4">
+    <div class="h-24 skeleton rounded-2xl" *ngFor="let _ of [1,2,3]"></div>
+  </div>
+
+  <div *ngIf="!loading && filteredClients.length === 0" class="bg-white rounded-2xl border border-slate-100 p-16 text-center">
+    <span class="inline-flex w-14 h-14 rounded-2xl bg-slate-50 items-center justify-center mb-4">
+      <i data-lucide="users" class="w-7 h-7 text-slate-300"></i>
+    </span>
+    <p class="font-medium text-[#0B1437]">No clients found</p>
+    <p class="text-sm text-slate-500 mt-1">{{ tab === 'pending' ? 'No pending registrations right now.' : 'No active clients match your search.' }}</p>
+  </div>
+
+  <div *ngIf="!loading && filteredClients.length > 0" class="space-y-4">
+    <article *ngFor="let c of filteredClients"
+      class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-wrap items-start justify-between gap-4">
+      <div class="flex items-start gap-4 min-w-0">
+        <span class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-700 font-bold text-lg flex items-center justify-center shrink-0">
+          {{ initials(c.company_name || c.name) }}
+        </span>
+        <div class="min-w-0">
+          <h3 class="text-lg font-semibold text-[#0B1437]">{{ c.company_name || c.name }}</h3>
+          <p class="text-base text-slate-500 mt-0.5">{{ c.email }}</p>
+          <p class="text-sm text-slate-400 mt-1" *ngIf="c.phone">{{ c.phone }}</p>
+          <p class="text-sm text-slate-400" *ngIf="c.address">{{ c.address }}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <ng-container *ngIf="tab === 'pending'">
+          <button type="button" (click)="approve(c)" [disabled]="isProcessing(c.id)"
+            class="client-btn-primary px-5 py-2.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed">
+            {{ isProcessing(c.id) ? 'Approving…' : 'Approve' }}
+          </button>
+          <button type="button" (click)="reject(c)" [disabled]="isProcessing(c.id)"
+            class="client-btn-secondary px-5 py-2.5 text-sm text-red-600 border-red-100 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed">
+            {{ isProcessing(c.id) ? 'Rejecting…' : 'Reject' }}
+          </button>
+        </ng-container>
+        <ng-container *ngIf="tab === 'active'">
+          <button type="button" (click)="resendCredentials(c)" [disabled]="isProcessing(c.id)"
+            class="client-btn-secondary px-4 py-2.5 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+            title="Generate a new password and email it to the client">
+            {{ isProcessing(c.id) ? 'Sending…' : 'Resend credentials' }}
+          </button>
+          <span class="text-sm font-semibold text-emerald-700 px-3 py-1.5 bg-emerald-50 rounded-full">Active</span>
+        </ng-container>
+      </div>
+    </article>
+  </div>
+
+  <app-pagination *ngIf="!loading && lastPage > 1" [page]="page" [lastPage]="lastPage" [total]="total" (pageChange)="load($event)" />
+
+</div>

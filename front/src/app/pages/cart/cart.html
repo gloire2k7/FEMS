@@ -1,0 +1,203 @@
+<div class="client-page">
+
+  <!-- Hero -->
+  <section class="client-hero">
+    <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <div>
+        <nav class="flex items-center gap-2 text-sm font-medium text-white/60 mb-3">
+          <a routerLink="/shop" class="hover:text-white transition-colors">Shop</a>
+          <span>/</span>
+          <span class="text-white/90">Cart</span>
+        </nav>
+        <h1 class="client-hero-title">Shopping Cart</h1>
+        <p class="client-hero-sub" *ngIf="items.length > 0">
+          {{ totalItems }} {{ totalItems === 1 ? 'item' : 'items' }} · Review your order before checkout.
+        </p>
+        <p class="client-hero-sub" *ngIf="items.length === 0">
+          Your cart is empty. Browse the shop to add fire extinguishers.
+        </p>
+      </div>
+      <a routerLink="/shop" class="client-hero-btn shrink-0">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+        Back to shop
+      </a>
+    </div>
+  </section>
+
+  <!-- Info note -->
+  <section *ngIf="items.length > 0" class="client-card p-5 border-amber-200/60 bg-amber-50/40">
+    <div class="flex items-start gap-4">
+      <span class="w-11 h-11 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+        <i data-lucide="info" class="w-5 h-5 text-amber-700"></i>
+      </span>
+      <div>
+        <p class="text-base font-semibold text-amber-900">Orders require admin approval</p>
+        <p class="text-base text-amber-800/80 mt-1 leading-relaxed">
+          After checkout, your order will be reviewed. You'll be notified once it's approved and scheduled for delivery.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Empty state -->
+  <section *ngIf="items.length === 0" class="client-card client-empty">
+    <div class="client-empty-icon">
+      <i data-lucide="shopping-cart" class="w-8 h-8"></i>
+    </div>
+    <p class="text-xl font-semibold text-[#0B1437]">Your cart is empty</p>
+    <p class="text-base text-slate-500 mt-2 max-w-md mx-auto">
+      Add fire extinguishers from the shop. They'll appear here ready for checkout.
+    </p>
+    <a routerLink="/shop" class="client-btn-primary mt-6 inline-flex">
+      <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+      Browse shop
+    </a>
+  </section>
+
+  <!-- Main layout -->
+  <div *ngIf="items.length > 0" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+    <!-- Left column -->
+    <div class="lg:col-span-2 space-y-6">
+
+      <!-- Items -->
+      <section class="client-card overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+          <h2 class="text-lg font-semibold text-[#0B1437]">Items ({{ items.length }})</h2>
+          <button type="button" (click)="clearCart()"
+            class="text-base font-semibold text-red-600 hover:text-red-700 transition-colors">
+            Clear cart
+          </button>
+        </div>
+
+        <div class="divide-y divide-slate-100">
+          <article *ngFor="let item of items; let i = index" class="p-6 flex flex-col sm:flex-row gap-5">
+            <!-- Thumbnail -->
+            <div class="w-20 h-20 rounded-xl shrink-0 flex items-center justify-center border border-slate-100"
+              [ngClass]="getImgBg(item.type)">
+              <div class="flex flex-col items-center">
+                <div class="w-8 h-14 bg-red-500 rounded-xl shadow-sm"></div>
+                <div class="w-10 h-1.5 bg-red-700 rounded-b-md -mt-0.5"></div>
+              </div>
+            </div>
+
+            <!-- Details -->
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 class="text-lg font-semibold text-[#0B1437]">{{ item.type }} Extinguisher</h3>
+                  <p class="text-base text-slate-500 mt-1">{{ item.capacity }} · {{ item.type }}</p>
+                  <p class="text-base font-semibold text-[#0B1437] mt-2">
+                    {{ item.price | number:'1.0-0' }} <span class="text-slate-500 font-normal">RWF each</span>
+                  </p>
+                </div>
+                <p class="text-xl font-bold text-[#0B1437] tabular-nums">
+                  {{ (item.price * item.quantity) | number:'1.0-0' }} <span class="text-base font-semibold text-slate-500">RWF</span>
+                </p>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-4 mt-5">
+                <div class="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-white">
+                  <button type="button" (click)="decrease(item)"
+                    class="w-11 h-11 flex items-center justify-center text-xl text-slate-500 hover:bg-slate-50 transition-colors">−</button>
+                  <span class="w-12 text-center text-lg font-semibold text-[#0B1437] tabular-nums">{{ item.quantity }}</span>
+                  <button type="button" (click)="increase(item)"
+                    class="w-11 h-11 flex items-center justify-center text-xl text-slate-500 hover:bg-slate-50 transition-colors"
+                    [disabled]="item.quantity >= item.total_in_stock"
+                    [class.opacity-40]="item.quantity >= item.total_in_stock">+</button>
+                </div>
+
+                <button type="button" (click)="removeItem(i)"
+                  class="inline-flex items-center gap-2 text-base font-medium text-slate-500 hover:text-red-600 transition-colors">
+                  <i data-lucide="trash-2" class="w-5 h-5"></i>
+                  Remove
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Account info -->
+      <section class="client-card p-6">
+        <h2 class="text-lg font-semibold text-[#0B1437] mb-5">Delivery account</h2>
+        <dl class="grid sm:grid-cols-2 gap-5 text-base">
+          <div>
+            <dt class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-1">Company</dt>
+            <dd class="font-medium text-[#0B1437]">{{ client?.company_name || client?.name || '—' }}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-1">Contact</dt>
+            <dd class="font-medium text-[#0B1437]">{{ client?.name || client?.contact_person || '—' }}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-1">Email</dt>
+            <dd class="font-medium text-[#0B1437]">{{ client?.email || '—' }}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-1">Phone</dt>
+            <dd class="font-medium text-[#0B1437]">{{ client?.phone || '—' }}</dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+
+    <!-- Order summary -->
+    <aside class="lg:col-span-1 space-y-5">
+      <section class="client-card p-6 lg:sticky lg:top-6">
+        <h2 class="text-lg font-semibold text-[#0B1437] mb-6">Order summary</h2>
+
+        <div class="space-y-4 text-base">
+          <div class="flex items-center justify-between">
+            <span class="text-slate-500">Subtotal ({{ totalItems }} items)</span>
+            <span class="font-semibold text-[#0B1437] tabular-nums">{{ subtotal | number:'1.0-0' }} RWF</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-slate-500">Delivery</span>
+            <span class="font-semibold text-emerald-600">Free</span>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-100 mt-6 pt-6">
+          <div class="flex items-end justify-between gap-4">
+            <span class="text-base font-semibold text-[#0B1437]">Total</span>
+            <div class="text-right">
+              <p class="text-3xl font-bold text-[#0B1437] tabular-nums leading-none">
+                {{ grandTotal | number:'1.0-0' }}
+              </p>
+              <p class="text-base text-slate-500 mt-1">RWF</p>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" (click)="goToCheckOut()" class="client-btn-primary w-full mt-6 py-3.5">
+          Proceed to checkout
+          <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </button>
+        <button type="button" (click)="continueShopping()" class="client-btn-secondary w-full mt-3 py-3.5">
+          Continue shopping
+        </button>
+
+        <p class="flex items-center justify-center gap-2 mt-5 text-sm text-slate-400">
+          <i data-lucide="lock" class="w-4 h-4"></i>
+          Secure checkout
+        </p>
+      </section>
+
+      <section class="client-card p-5">
+        <div class="flex items-start gap-4">
+          <span class="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
+            <i data-lucide="headphones" class="w-5 h-5 text-slate-600"></i>
+          </span>
+          <div>
+            <p class="text-base font-semibold text-[#0B1437]">Need help?</p>
+            <p class="text-base text-slate-500 mt-1 leading-relaxed">
+              Contact our team for bulk orders or custom delivery requests.
+            </p>
+          </div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+</div>

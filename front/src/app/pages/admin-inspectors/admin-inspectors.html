@@ -1,0 +1,141 @@
+<div class="client-page max-w-6xl pb-8">
+
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
+    <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <div>
+        <p class="client-hero-eyebrow">Field team</p>
+        <h1 class="client-hero-title">Inspectors</h1>
+        <p class="client-hero-sub">Manage your inspection workforce, availability, and performance.</p>
+      </div>
+      <a routerLink="/admin-assigned-inspections" class="client-hero-btn shrink-0">
+        <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+        Assign work
+      </a>
+    </div>
+  </section>
+
+  <section class="client-stat-grid client-stat-grid--4" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+    <button type="button" (click)="setFilter('all')"
+      class="client-stat client-stat--primary client-stat-link text-left"
+      [class.client-stat-link--active]="statusFilter === 'all'">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Inspectors</p>
+          <p class="client-stat-value">{{ inspectors.length }}</p>
+        </div>
+        <span class="client-stat-icon"><i data-lucide="users" class="w-5 h-5"></i></span>
+      </div>
+    </button>
+    <button type="button" (click)="setFilter('Active')"
+      class="client-stat client-stat--success client-stat-link text-left"
+      [class.client-stat-link--active]="statusFilter === 'Active'">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Active</p>
+          <p class="client-stat-value">{{ totalActive }}</p>
+        </div>
+        <span class="client-stat-icon"><i data-lucide="user-check" class="w-5 h-5"></i></span>
+      </div>
+    </button>
+    <div class="client-stat client-stat--info">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Available now</p>
+          <p class="client-stat-value">{{ totalAvailable }}</p>
+        </div>
+        <span class="client-stat-icon"><i data-lucide="circle-dot" class="w-5 h-5"></i></span>
+      </div>
+    </div>
+  </section>
+
+  <div class="client-search">
+    <i data-lucide="search" class="client-search-icon"></i>
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Search by name, ID, or email…"
+      class="client-input w-full">
+  </div>
+
+  <div class="grid lg:grid-cols-5 gap-6">
+    <section class="lg:col-span-3 space-y-3">
+      <article *ngFor="let insp of filteredInspectors" (click)="selectInspector(insp)"
+        class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex items-center gap-4 cursor-pointer hover:shadow-md transition-all"
+        [class.ring-2]="selectedInspector?.id === insp.id" [class.ring-blue-200]="selectedInspector?.id === insp.id">
+        <img [src]="insp.avatar" [alt]="insp.name" class="w-12 h-12 rounded-full border border-slate-100 shrink-0">
+        <div class="flex-1 min-w-0">
+          <h3 class="font-semibold text-[#0B1437]">{{ insp.name }}</h3>
+          <p class="text-sm text-slate-500 truncate">{{ insp.email }}</p>
+          <p class="text-xs text-slate-400 mt-0.5">{{ insp.id }} · {{ insp.base }}</p>
+        </div>
+        <div class="flex flex-col items-end gap-1 shrink-0">
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full ring-1" [ngClass]="getStatusClass(insp.status)">
+            {{ insp.status }}
+          </span>
+          <span class="text-xs font-medium px-2 py-0.5 rounded-full" [ngClass]="getAvailClass(insp.availability)">
+            {{ insp.availability }}
+          </span>
+        </div>
+      </article>
+
+      <div *ngIf="filteredInspectors.length === 0" class="bg-white rounded-2xl border border-slate-100 p-12 text-center text-slate-500">
+        No inspectors match your search.
+      </div>
+    </section>
+
+    <aside class="lg:col-span-2">
+      <div *ngIf="!selectedInspector" class="bg-white rounded-2xl border border-slate-100 p-10 text-center h-full min-h-[280px] flex flex-col items-center justify-center">
+        <span class="inline-flex w-14 h-14 rounded-2xl bg-slate-50 items-center justify-center mb-4">
+          <i data-lucide="user" class="w-7 h-7 text-slate-300"></i>
+        </span>
+        <p class="font-medium text-[#0B1437]">Inspector profile</p>
+        <p class="text-sm text-slate-500 mt-1">Select an inspector to view details.</p>
+      </div>
+
+      <div *ngIf="selectedInspector" class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5 sticky top-4">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <img [src]="selectedInspector.avatar" class="w-14 h-14 rounded-full border border-slate-100">
+            <div>
+              <h3 class="text-lg font-semibold text-[#0B1437]">{{ selectedInspector.name }}</h3>
+              <p class="text-sm text-slate-500">{{ selectedInspector.id }}</p>
+            </div>
+          </div>
+          <button type="button" (click)="closePanel()" class="text-slate-400 hover:text-slate-600 p-1" title="Close">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-slate-50 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-[#0B1437]">{{ selectedInspector.totalInspections }}</p>
+            <p class="text-xs text-slate-500 mt-1">Inspections</p>
+          </div>
+          <div class="bg-emerald-50 rounded-xl p-4 text-center">
+            <p class="text-2xl font-bold text-emerald-700">{{ selectedInspector.completionRate }}%</p>
+            <p class="text-xs text-slate-500 mt-1">Completion</p>
+          </div>
+        </div>
+
+        <div class="space-y-3 text-sm">
+          <div class="flex items-center gap-3 text-slate-600">
+            <i data-lucide="mail" class="w-4 h-4 text-slate-400 shrink-0"></i>
+            {{ selectedInspector.email }}
+          </div>
+          <div class="flex items-center gap-3 text-slate-600">
+            <i data-lucide="phone" class="w-4 h-4 text-slate-400 shrink-0"></i>
+            {{ selectedInspector.phone }}
+          </div>
+          <div class="flex items-center gap-3 text-slate-600">
+            <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 shrink-0"></i>
+            {{ selectedInspector.base }}
+          </div>
+        </div>
+
+        <a routerLink="/admin-assigned-inspections"
+          class="client-btn-primary w-full py-3 flex items-center justify-center gap-2 mt-2">
+          <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+          Assign inspection
+        </a>
+      </div>
+    </aside>
+  </div>
+
+</div>

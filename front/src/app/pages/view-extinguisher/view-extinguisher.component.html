@@ -1,0 +1,194 @@
+<div class="client-page max-w-5xl pb-8">
+
+  <div *ngIf="loading" class="flex flex-col items-center justify-center py-20 space-y-4">
+    <div class="w-10 h-10 border-4 border-[#0B1437] border-t-transparent rounded-full animate-spin"></div>
+    <p class="text-sm font-medium text-slate-500">Loading unit details…</p>
+  </div>
+
+  <div *ngIf="!loading && error" class="client-card client-empty text-center py-12">
+    <p class="text-lg font-semibold text-[#0B1437]">{{ error }}</p>
+    <a routerLink="/extinguishers" class="client-btn-primary mt-4 inline-flex items-center gap-2 no-underline px-6 py-3">
+      Back to my extinguishers
+    </a>
+  </div>
+
+  <ng-container *ngIf="!loading && unit">
+
+    <section class="client-hero mb-6">
+      <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <div>
+          <nav class="flex items-center gap-2 text-sm font-medium text-white/60 mb-3">
+            <a routerLink="/extinguishers" class="hover:text-white transition-colors">My extinguishers</a>
+            <span>/</span>
+            <span class="text-white/90">{{ unit.serial_number }}</span>
+          </nav>
+          <h1 class="client-hero-title">{{ unit.type }} Extinguisher</h1>
+          <p class="client-hero-sub">{{ unit.capacity }} · Serial {{ unit.serial_number }}</p>
+        </div>
+        <div class="flex flex-wrap gap-3 shrink-0">
+          <span class="status-pill self-start" [ngClass]="getStatusClass(unit.status)">
+            <span class="w-1.5 h-1.5 rounded-full" [style.backgroundColor]="getStatusColor(unit.status)"></span>
+            {{ statusLabel }}
+          </span>
+          <a routerLink="/service-requests" class="client-hero-btn">
+            <i data-lucide="wrench" class="w-5 h-5"></i>
+            Request service
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <div *ngIf="unit.status !== 'filled' && unit.status !== 'passed' && statusLabel !== 'Valid'"
+      class="alert-maintenance p-4 md:p-5 flex gap-3 mb-6">
+      <i data-lucide="alert-triangle" class="w-5 h-5 text-[#FFB107] shrink-0"></i>
+      <div>
+        <h4 class="text-sm font-bold text-[#92400E]">Action required</h4>
+        <p class="text-sm text-[#B45309] mt-1">This unit is flagged as <strong>{{ unit.status }}</strong>. Inspection or refill may be needed.</p>
+      </div>
+    </div>
+
+    <!-- QR + specs -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="card-premium p-6 flex flex-col items-center">
+        <img *ngIf="unit.qr_code_path"
+          [src]="qrUrl(unit.qr_code_path)" alt="QR code"
+          class="w-full max-w-[180px] aspect-square object-contain bg-slate-50 rounded-xl p-3">
+        <p *ngIf="!unit.qr_code_path" class="text-sm text-slate-400 py-8">QR code not available</p>
+        <p class="mt-4 text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">Unit QR code</p>
+      </div>
+
+      <div class="lg:col-span-2 card-premium p-6">
+        <h3 class="text-sm font-bold text-[#0B1437] uppercase tracking-wider mb-5">Technical specifications</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <p class="spec-label">Type</p>
+            <p class="spec-value mt-1">{{ unit.type }}</p>
+          </div>
+          <div>
+            <p class="spec-label">Capacity</p>
+            <p class="spec-value mt-1">{{ unit.capacity }}</p>
+          </div>
+          <div>
+            <p class="spec-label">Serial number</p>
+            <p class="spec-value mt-1">{{ unit.serial_number }}</p>
+          </div>
+          <div>
+            <p class="spec-label">Status</p>
+            <p class="spec-value mt-1">{{ statusLabel }}</p>
+          </div>
+          <div>
+            <p class="spec-label">Manufacturing date</p>
+            <p class="spec-value mt-1">{{ unit.manufacturing_date ? (unit.manufacturing_date | date:'mediumDate') : 'N/A' }}</p>
+          </div>
+          <div>
+            <p class="spec-label">Last filled</p>
+            <p class="spec-value mt-1">{{ unit.filling_date ? (unit.filling_date | date:'mediumDate') : 'N/A' }}</p>
+          </div>
+          <div>
+            <p class="spec-label">Expiry date</p>
+            <p class="spec-value mt-1">{{ unit.expiry_date ? (unit.expiry_date | date:'mediumDate') : 'N/A' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lifecycle -->
+    <div class="card-premium p-6 mt-6">
+      <h3 class="text-sm font-bold text-[#0B1437] uppercase tracking-wider mb-6">Lifecycle timeline</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div>
+          <p class="text-xs font-semibold text-slate-400 uppercase mb-2">Manufacturing</p>
+          <p class="text-sm font-bold text-[#0B1437]">{{ unit.manufacturing_date ? (unit.manufacturing_date | date:'mediumDate') : 'N/A' }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-slate-400 uppercase mb-2">Last refilled</p>
+          <p class="text-sm font-bold text-emerald-600">{{ unit.filling_date ? (unit.filling_date | date:'mediumDate') : 'N/A' }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-amber-500 uppercase mb-2">Expiry</p>
+          <p class="text-sm font-bold text-amber-600">{{ unit.expiry_date ? (unit.expiry_date | date:'mediumDate') : 'N/A' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inspection label (etiquette) -->
+    <div class="card-premium p-6 mt-6">
+      <h3 class="text-sm font-bold text-[#0B1437] uppercase tracking-wider mb-4">Inspection label</h3>
+      <div class="flex flex-wrap items-center justify-between gap-4 p-4 border border-slate-100 rounded-xl">
+        <div class="flex items-center gap-3 min-w-0">
+          <i data-lucide="file-text" class="w-5 h-5 text-slate-400 shrink-0"></i>
+          <div>
+            <p class="font-semibold text-slate-700">Unit etiquette (PDF)</p>
+            <p class="text-sm text-slate-500">{{ unit.label_pdf_path ? 'Ready to download.' : 'Generated upon order approval.' }}</p>
+          </div>
+        </div>
+        <button *ngIf="unit.label_pdf_path" type="button" (click)="downloadLabel()"
+          class="client-btn-primary px-4 py-2 text-sm inline-flex items-center gap-2 shrink-0">
+          <i data-lucide="download" class="w-4 h-4"></i> Download
+        </button>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="card-premium p-6 mt-6">
+      <h3 class="text-sm font-bold text-[#0B1437] uppercase tracking-wider mb-4">Location</h3>
+
+      <div *ngIf="unit.location_id" class="flex flex-wrap items-center gap-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+        <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+          <i data-lucide="map-pin" class="w-5 h-5 text-blue-600"></i>
+        </div>
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-semibold text-blue-500 uppercase">Assigned location</p>
+          <p class="font-bold text-blue-900">{{ unit.location_name }}</p>
+          <p *ngIf="unit.location_address" class="text-sm text-blue-700/80">{{ unit.location_address }}</p>
+        </div>
+        <a [routerLink]="['/locations', unit.location_id]" class="text-sm font-medium text-blue-600 hover:underline shrink-0">
+          Manage →
+        </a>
+      </div>
+
+      <div *ngIf="!unit.location_id" class="space-y-4">
+        <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+          <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
+            <i data-lucide="map-pin-off" class="w-5 h-5 text-slate-400"></i>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-700">Not assigned to any location</p>
+            <p class="text-sm text-slate-500">Add this unit to one of your sites.</p>
+          </div>
+        </div>
+
+        <p *ngIf="locationMessage" class="text-sm px-3 py-2 rounded-lg"
+          [class.bg-emerald-50]="!locationError" [class.text-emerald-700]="!locationError"
+          [class.bg-red-50]="locationError" [class.text-red-700]="locationError">
+          {{ locationMessage }}
+        </p>
+
+        <div *ngIf="locations.length" class="flex flex-col sm:flex-row gap-3">
+          <select [(ngModel)]="selectedLocationId" class="client-input flex-1">
+            <option [ngValue]="null">Select a location…</option>
+            <option *ngFor="let loc of locations" [ngValue]="loc.id">{{ loc.location_name }}</option>
+          </select>
+          <button type="button" (click)="assignToLocation()" [disabled]="!selectedLocationId || assigning"
+            class="client-btn-primary shrink-0 disabled:opacity-40">
+            Add to location
+          </button>
+        </div>
+
+        <p *ngIf="!locations.length" class="text-sm text-slate-500">
+          <a routerLink="/locations" class="text-blue-600 hover:underline">Create a location</a> first to assign this unit.
+        </p>
+      </div>
+    </div>
+
+    <!-- Service CTA -->
+    <section class="client-card p-6 mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h2 class="text-lg font-semibold text-[#0B1437]">Need maintenance or inspection?</h2>
+        <p class="text-base text-slate-500 mt-1">Submit a service request and our team will follow up.</p>
+      </div>
+      <a routerLink="/service-requests" class="client-btn-primary shrink-0 inline-flex">Request service</a>
+    </section>
+
+  </ng-container>
+</div>

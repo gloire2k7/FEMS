@@ -1,0 +1,93 @@
+<div class="client-page pb-8">
+
+  <section class="client-hero">
+    <div class="client-hero-inner flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
+      <div>
+        <p class="client-hero-eyebrow">Site management</p>
+        <h1 class="client-hero-title">Locations</h1>
+        <p class="client-hero-sub">Fire safety points across client sites.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="client-stat-grid client-stat-grid--4" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+    <button type="button" (click)="setFilter('all')"
+      class="client-stat client-stat--primary client-stat-link text-left"
+      [class.client-stat-link--active]="statusFilter === 'all'">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">All sites</p>
+          <p class="client-stat-value">{{ totalLocations }}</p>
+        </div>
+        <span class="client-stat-icon"><i data-lucide="map-pin" class="w-5 h-5"></i></span>
+      </div>
+    </button>
+    <button type="button" (click)="setFilter('refill')"
+      class="client-stat client-stat--warning client-stat-link text-left"
+      [class.client-stat-link--active]="statusFilter === 'refill'">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Needs refill</p>
+          <p class="client-stat-value">{{ refillCount }}</p>
+        </div>
+        <span class="client-stat-icon"><i data-lucide="droplet" class="w-5 h-5"></i></span>
+      </div>
+    </button>
+    <button type="button" (click)="setFilter('expired')"
+      class="client-stat client-stat--featured client-stat-link text-left"
+      [class.client-stat-link--active]="statusFilter === 'expired'">
+      <div class="relative z-10 flex items-start justify-between gap-3">
+        <div>
+          <p class="client-stat-label">Expired</p>
+          <p class="client-stat-value">{{ expiredCount }}</p>
+        </div>
+        <span class="client-stat-icon"><i data-lucide="alert-octagon" class="w-5 h-5"></i></span>
+      </div>
+    </button>
+  </section>
+
+  <section class="client-card p-4">
+    <div class="client-search max-w-full">
+      <i data-lucide="search" class="client-search-icon"></i>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Search locations…" class="client-input w-full">
+    </div>
+  </section>
+
+  <section *ngIf="filteredLocations.length === 0" class="client-card client-empty">
+    <div class="client-empty-icon">
+      <i data-lucide="map-pin" class="w-8 h-8"></i>
+    </div>
+    <p class="text-lg font-semibold text-[#0B1437]">No locations found</p>
+    <p class="text-base text-slate-500 mt-2">Try another search or clear the filter.</p>
+    <button type="button" (click)="setFilter('all'); searchTerm = ''"
+      class="client-btn-secondary mt-6 inline-flex">Show all</button>
+  </section>
+
+  <section class="space-y-3">
+    <a *ngFor="let loc of filteredLocations" [routerLink]="['/admin-location-details']"
+      [queryParams]="{ site: loc.id, name: loc.name }"
+      class="client-card client-card--lift block p-5 no-underline text-inherit">
+      <div class="flex items-center gap-4">
+        <span class="w-11 h-11 rounded-2xl bg-slate-100 text-[#0B1437] flex items-center justify-center shrink-0">
+          <i data-lucide="building-2" class="w-5 h-5"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <h3 class="text-lg font-semibold text-[#0B1437]">{{ loc.name }}</h3>
+            <span class="client-badge text-xs font-semibold px-2.5 py-0.5 rounded-full ring-1"
+              [ngClass]="statusBadgeClass(loc.status)">
+              {{ statusLabel(loc.status) }}
+            </span>
+          </div>
+          <p class="text-sm text-slate-500 mt-0.5 truncate">{{ loc.zone }}<span *ngIf="loc.clientName"> · {{ loc.clientName }}</span></p>
+        </div>
+        <div class="text-right shrink-0 hidden sm:block">
+          <p class="text-xl font-bold text-[#0B1437]">{{ loc.totalExtinguishers }}</p>
+          <p class="text-xs text-slate-400">units</p>
+        </div>
+        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-300 shrink-0"></i>
+      </div>
+    </a>
+  </section>
+
+</div>

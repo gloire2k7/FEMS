@@ -1,0 +1,115 @@
+<div class="client-page max-w-4xl pb-8">
+
+  <a routerLink="/admin-orders" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#0B1437] mb-4 no-underline">
+    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to orders
+  </a>
+
+  <div *ngIf="loading" class="py-16 text-center text-slate-400">Loading order…</div>
+  <div *ngIf="error && !loading" class="client-card client-empty"><p>{{ error }}</p></div>
+
+  <ng-container *ngIf="order && !loading">
+    <section class="client-hero rounded-3xl px-8 py-8 text-white shadow-lg shadow-[#0B1437]/20 mb-6">
+      <p class="client-hero-eyebrow">Order #{{ order.id }}</p>
+      <h1 class="client-hero-title">{{ order.type }} · {{ order.capacity }} kg × {{ order.quantity }}</h1>
+      <p class="client-hero-sub">{{ order.client_name }} · {{ order.total_price | number:'1.0-0' }} RWF</p>
+      <span class="inline-block mt-3 text-sm font-semibold px-3 py-1 rounded-full bg-white/20">{{ order.status }}</span>
+    </section>
+
+    <section class="client-card p-6 mb-6">
+      <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Order details</h2>
+      <div class="grid sm:grid-cols-2 gap-4 text-sm">
+        <div><span class="text-slate-500">Client:</span> <span class="font-medium">{{ order.client_name }}</span></div>
+        <div><span class="text-slate-500">Email:</span> {{ order.client_email }}</div>
+        <div><span class="text-slate-500">Phone:</span> {{ order.client_phone || '—' }}</div>
+        <div><span class="text-slate-500">Payment:</span> {{ order.payment_method }}</div>
+        <div class="sm:col-span-2"><span class="text-slate-500">Delivery:</span> {{ order.delivery_address }}</div>
+        <div><span class="text-slate-500">Unit price:</span> {{ order.unit_price | number:'1.0-0' }} RWF</div>
+        <div><span class="text-slate-500">Total:</span> {{ order.total_price | number:'1.0-0' }} RWF</div>
+        <div *ngIf="order.parent_order_id"><span class="text-slate-500">From order:</span> #{{ order.parent_order_id }}</div>
+        <div *ngIf="order.notes" class="sm:col-span-2"><span class="text-slate-500">Notes:</span> {{ order.notes }}</div>
+      </div>
+    </section>
+
+    <section class="client-card p-6 mb-6" *ngIf="canReview">
+      <h2 class="text-lg font-semibold text-[#0B1437] mb-2">Stock availability</h2>
+      <div class="p-4 rounded-xl mb-4"
+        [class.bg-emerald-50]="order.can_grant_full"
+        [class.border-emerald-100]="order.can_grant_full"
+        [class.bg-amber-50]="!order.can_grant_full && order.stock_available > 0"
+        [class.border-amber-100]="!order.can_grant_full && order.stock_available > 0"
+        [class.bg-red-50]="order.stock_available === 0"
+        [class.border-red-100]="order.stock_available === 0"
+        class="border">
+        <p class="font-medium text-[#0B1437]">{{ stockMessage }}</p>
+        <p class="text-sm text-slate-600 mt-1">In stock: <strong>{{ order.stock_available }}</strong> · Requested: <strong>{{ order.quantity }}</strong> · Max grantable: <strong>{{ order.max_grantable }}</strong></p>
+      </div>
+
+      <div *ngIf="actionError" class="mb-4 p-3 rounded-xl bg-red-50 text-red-700 text-sm">{{ actionError }}</div>
+      <div *ngIf="actionSuccess" class="mb-4 p-3 rounded-xl bg-emerald-50 text-emerald-800 text-sm">{{ actionSuccess }}</div>
+
+      <div class="space-y-4" *ngIf="order.max_grantable > 0">
+        <div>
+          <label class="text-xs font-semibold text-slate-500 uppercase">Expected delivery date</label>
+          <input type="date" [(ngModel)]="deliveryDate" class="client-input mt-1 max-w-xs">
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" name="grantMode" value="full" [(ngModel)]="grantMode">
+            <span class="text-sm font-medium">Grant full order ({{ order.max_grantable }} units)</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer" *ngIf="order.max_grantable < order.quantity || order.stock_available < order.quantity">
+            <input type="radio" name="grantMode" value="partial" [(ngModel)]="grantMode">
+            <span class="text-sm font-medium">Grant partially</span>
+          </label>
+        </div>
+
+        <div *ngIf="grantMode === 'partial'">
+          <label class="text-xs font-semibold text-slate-500 uppercase">Units to grant</label>
+          <input type="number" [(ngModel)]="grantQuantity" [min]="1" [max]="order.max_grantable"
+            class="client-input mt-1 max-w-xs">
+          <p class="text-xs text-slate-400 mt-1">Remaining {{ order.quantity - grantQuantity }} units will become a new pending order.</p>
+        </div>
+
+        <div class="flex flex-wrap gap-3 pt-2">
+          <button type="button" (click)="submitGrant()" [disabled]="processing"
+            class="client-btn-primary px-6 py-3 disabled:opacity-50">
+            {{ processing ? 'Processing…' : (grantMode === 'partial' ? 'Grant partial order' : 'Grant order') }}
+          </button>
+          <button type="button" (click)="showDenyModal = true" class="client-btn-secondary px-6 py-3 text-red-600 border-red-100">
+            Deny order
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="order.max_grantable === 0" class="pt-2">
+        <p class="text-sm text-slate-600 mb-3">No stock available to grant any units. Deny the order or register more inventory first.</p>
+        <button type="button" (click)="showDenyModal = true" class="client-btn-secondary px-6 py-3 text-red-600">Deny order</button>
+      </div>
+    </section>
+
+    <section class="client-card p-6 mb-6" *ngIf="order.status === 'granted'">
+      <h2 class="text-lg font-semibold text-[#0B1437] mb-3">Granted</h2>
+      <p class="text-sm text-slate-600">Granted {{ order.granted_quantity || order.quantity }} unit(s)</p>
+      <p class="text-sm text-slate-600" *ngIf="order.expected_delivery_date">Expected delivery: {{ order.expected_delivery_date | date:'mediumDate' }}</p>
+      <button *ngIf="approvalResult?.labels_zip" type="button" (click)="downloadLabels()"
+        class="client-btn-secondary mt-4 px-5 py-2 text-sm inline-flex items-center gap-2">
+        <i data-lucide="download" class="w-4 h-4"></i> Download inspection labels
+      </button>
+    </section>
+  </ng-container>
+</div>
+
+<!-- Deny modal -->
+<div *ngIf="showDenyModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+    <h3 class="text-lg font-semibold text-[#0B1437] mb-2">Deny order</h3>
+    <p class="text-sm text-slate-500 mb-4">Provide a reason for the client.</p>
+    <textarea [(ngModel)]="denyReason" rows="3" class="client-input w-full" placeholder="Reason for denial"></textarea>
+    <div class="flex gap-3 mt-4">
+      <button type="button" (click)="confirmDeny()" [disabled]="!denyReason.trim() || processing"
+        class="client-btn-primary flex-1 py-2.5 disabled:opacity-50">Confirm deny</button>
+      <button type="button" (click)="showDenyModal = false" class="client-btn-secondary px-5 py-2.5">Cancel</button>
+    </div>
+  </div>
+</div>

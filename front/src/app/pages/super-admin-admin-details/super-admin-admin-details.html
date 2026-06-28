@@ -1,0 +1,116 @@
+<div class="client-page max-w-4xl pb-8">
+
+  <a routerLink="/super-admin-admins" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-[#0B1437] mb-4 no-underline">
+    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to admins
+  </a>
+
+  <div *ngIf="loading" class="space-y-4">
+    <div class="h-32 skeleton rounded-2xl"></div>
+    <div class="h-48 skeleton rounded-2xl"></div>
+  </div>
+
+  <div *ngIf="error && !loading" class="client-card client-empty">
+    <p class="text-lg font-semibold text-[#0B1437]">{{ error }}</p>
+  </div>
+
+  <ng-container *ngIf="admin && !loading">
+
+    <!-- Hero -->
+    <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-violet-900/20"
+      style="background: linear-gradient(135deg, #1a0f2e 0%, #0B1437 100%);">
+      <div class="client-hero-inner flex flex-col sm:flex-row sm:items-center gap-6">
+        <span class="w-16 h-16 rounded-2xl bg-white/10 text-white font-bold text-2xl flex items-center justify-center shrink-0 ring-2 ring-white/20">
+          {{ initials(admin.name) }}
+        </span>
+        <div class="flex-1">
+          <p class="client-hero-eyebrow">Administrator</p>
+          <h1 class="client-hero-title">{{ admin.name }}</h1>
+          <p class="client-hero-sub">{{ admin.email }}</p>
+        </div>
+        <span class="inline-flex text-sm font-semibold px-3 py-1.5 rounded-full shrink-0"
+          [class.bg-emerald-400/20]="admin.status === 'active'" [class.text-emerald-200]="admin.status === 'active'"
+          [class.bg-red-400/20]="admin.status !== 'active'" [class.text-red-200]="admin.status !== 'active'">
+          {{ admin.status }}
+        </span>
+      </div>
+    </section>
+
+    <!-- Account details -->
+    <section class="client-card p-6">
+      <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Account details</h2>
+      <div class="grid sm:grid-cols-2 gap-4 text-sm">
+        <div>
+          <p class="text-slate-400 mb-1">Full name</p>
+          <p class="font-medium text-[#0B1437]">{{ admin.name }}</p>
+        </div>
+        <div>
+          <p class="text-slate-400 mb-1">Email</p>
+          <p class="font-medium text-[#0B1437]">{{ admin.email }}</p>
+        </div>
+        <div>
+          <p class="text-slate-400 mb-1">Role</p>
+          <p class="font-medium text-[#0B1437]">{{ admin.role_name || admin.role || 'Admin' }}</p>
+        </div>
+        <div>
+          <p class="text-slate-400 mb-1">Status</p>
+          <p class="font-medium capitalize"
+            [class.text-emerald-600]="admin.status === 'active'"
+            [class.text-red-600]="admin.status !== 'active'">{{ admin.status }}</p>
+        </div>
+        <div>
+          <p class="text-slate-400 mb-1">Joined</p>
+          <p class="font-medium text-[#0B1437]">{{ admin.created_at | date:'mediumDate' }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Permissions summary -> Access control -->
+    <section class="client-card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-[#0B1437]">Permissions</h2>
+        <a [routerLink]="['/access-control']" [queryParams]="{ user: admin.id }"
+          class="client-btn-secondary px-4 py-2 text-sm inline-flex items-center gap-2 no-underline">
+          <i data-lucide="key-round" class="w-4 h-4"></i> Manage permissions
+        </a>
+      </div>
+      <p *ngIf="admin.permissions?.length; else noPerms" class="text-sm text-slate-500">
+        This administrator has <span class="font-semibold text-[#0B1437]">{{ admin.permissions.length }}</span> permission(s) granted.
+        Open <span class="font-medium text-[#0B1437]">Access control</span> to grant or revoke any of them in detail.
+      </p>
+      <ng-template #noPerms>
+        <p class="text-sm text-slate-400">No permissions assigned. Use Access control to grant access.</p>
+      </ng-template>
+    </section>
+
+    <!-- Action buttons -->
+    <div class="flex flex-wrap gap-3">
+      <button type="button" (click)="toggleStatus()" class="client-btn-primary px-6 py-3">
+        {{ admin.status === 'active' ? 'Deactivate account' : 'Activate account' }}
+      </button>
+
+      <!-- Delete — default state -->
+      <button *ngIf="!confirmDelete" type="button" (click)="requestDelete()"
+        class="client-btn-secondary px-6 py-3 text-red-600 border-red-100 hover:bg-red-50">
+        <i data-lucide="trash-2" class="w-4 h-4 inline-block mr-1"></i> Delete admin
+      </button>
+
+      <!-- Delete — confirmation state -->
+      <ng-container *ngIf="confirmDelete">
+        <span class="self-center text-sm text-red-600 font-medium">Are you sure? This cannot be undone.</span>
+        <button type="button" (click)="confirmDeleteAdmin()" [disabled]="deleting"
+          class="client-btn-secondary px-5 py-3 text-red-700 border-red-200 hover:bg-red-50">
+          {{ deleting ? 'Deleting…' : 'Yes, delete' }}
+        </button>
+        <button type="button" (click)="cancelDelete()"
+          class="client-btn-secondary px-5 py-3">
+          Cancel
+        </button>
+      </ng-container>
+
+      <a *ngIf="!confirmDelete" routerLink="/super-admin-admins"
+        class="client-btn-secondary px-6 py-3 no-underline inline-flex items-center">Done</a>
+    </div>
+
+  </ng-container>
+
+</div>

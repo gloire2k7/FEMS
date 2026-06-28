@@ -1,0 +1,306 @@
+<div class="p-6 bg-[#F6F8FC] min-h-screen">
+
+  <!-- HEADER -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-lg font-semibold text-[#0B1437]">Service Requests</h1>
+      <p class="text-xs text-gray-500">
+        Manage extinguishers requiring attention and track service requests.
+      </p>
+    </div>
+
+    <button
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0B1437] text-white text-xs font-medium hover:bg-[#0B1437]/90">
+      <i data-lucide="download" class="w-4 h-4"></i>
+      Export Report
+    </button>
+  </div>
+
+  <!-- TOP CARDS -->
+  <div class="grid grid-cols-4 gap-4 mb-6">
+
+    <!-- EXPIRED -->
+    <div class="bg-[#0B1437] rounded-xl p-4 text-white shadow flex flex-col justify-between min-h-[120px]">
+      <div class="flex items-start justify-between">
+        <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-white"></i>
+        </div>
+        <span class="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-red-500 text-white">
+          URGENT
+        </span>
+      </div>
+
+      <div>
+        <p class="text-2xl font-bold leading-tight">3</p>
+        <p class="text-[11px] text-white/70">Expired Units</p>
+        <p class="text-[10px] text-white/50 mt-0.5">Immediate action required</p>
+      </div>
+    </div>
+
+    <!-- REFILL -->
+    <div
+      class="bg-[#0B1437] rounded-xl p-4 text-white shadow flex flex-col justify-between min-h-[120px] ring-2 ring-yellow-400/40">
+      <div class="flex items-start justify-between">
+        <div class="w-8 h-8 rounded-lg bg-yellow-400/20 flex items-center justify-center">
+          <i data-lucide="droplet" class="w-4 h-4 text-yellow-400"></i>
+        </div>
+        <span class="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-yellow-400 text-black">
+          REFILL
+        </span>
+      </div>
+
+      <div>
+        <p class="text-2xl font-bold leading-tight">8</p>
+        <p class="text-[11px] text-white/70">Needs Refill</p>
+        <p class="text-[10px] text-white/50 mt-0.5">Schedule service soon</p>
+      </div>
+    </div>
+
+    <!-- MAINTENANCE -->
+    <div class="bg-white rounded-xl p-4 shadow border border-gray-200 flex flex-col justify-between min-h-[120px]">
+      <div class="flex items-start justify-between">
+        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+          <i data-lucide="settings" class="w-4 h-4 text-blue-600"></i>
+        </div>
+      </div>
+
+      <div>
+        <p class="text-2xl font-bold leading-tight text-[#0B1437]">5</p>
+        <p class="text-[11px] text-gray-600">Under Maintenance</p>
+        <p class="text-[10px] text-gray-400 mt-0.5">Currently in service</p>
+      </div>
+    </div>
+
+    <!-- OPEN -->
+    <div class="bg-[#0B1437] rounded-xl p-4 text-white shadow flex flex-col justify-between min-h-[120px]">
+      <div class="flex items-start justify-between">
+        <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+          <i data-lucide="clipboard-list" class="w-4 h-4 text-white"></i>
+        </div>
+      </div>
+
+      <div>
+        <p class="text-2xl font-bold leading-tight">12</p>
+        <p class="text-[11px] text-white/70">Open Requests</p>
+        <p class="text-[10px] text-white/50 mt-0.5">Pending & in progress</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SEARCH -->
+  <div class="flex flex-wrap items-center gap-3 mb-6">
+    <input class="flex-1 h-9 rounded-lg border border-gray-200 bg-white px-3 text-xs placeholder:text-gray-400"
+      placeholder="Search by Extinguisher ID or Request ID..." />
+
+    <input class="w-40 h-9 rounded-lg border border-gray-200 bg-white px-3 text-xs placeholder:text-gray-400"
+      placeholder="Status" />
+
+    <input class="w-40 h-9 rounded-lg border border-gray-200 bg-white px-3 text-xs placeholder:text-gray-400"
+      placeholder="Priority" />
+  </div>
+
+  <!-- ATTENTION -->
+  <div>
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-sm font-semibold text-[#0B1437]">Extinguishers Requiring Attention</h2>
+        <p class="text-[11px] text-gray-500">Units that need immediate or scheduled service</p>
+      </div>
+      <span class="px-3 py-1 rounded-full text-[10px] bg-red-100 text-red-600 font-semibold">
+        16 Units
+      </span>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+
+      <!-- CARD -->
+      <div class="bg-white p-4 rounded-xl shadow border-l-4 border-red-500 flex flex-col gap-3">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="font-bold text-sm text-[#0B1437]">#EX-291</p>
+            <p class="text-[11px] text-gray-500">CO₂ Type</p>
+          </div>
+          <span class="text-[9px] px-2 py-0.5 rounded-full bg-red-100 text-red-600 font-semibold">
+            URGENT
+          </span>
+        </div>
+
+        <div class="text-[11px] text-gray-600 space-y-1">
+          <p><b>Capacity:</b> 5kg</p>
+          <p><b>Location:</b> Warehouse Zone B</p>
+          <p class="text-red-600"><b>Expired:</b> Sept 12, 2023</p>
+        </div>
+
+        <span class="w-fit px-3 py-1 rounded-full text-[10px] bg-red-100 text-red-600 font-semibold">
+          Expired
+        </span>
+
+        <button
+          (click)="openModal({id: '#EX-291', location: 'Warehouse Zone B', type: 'CO₂ Type', capacity: '5kg', issue: 'Expired'})"
+          class="mt-1 h-9 rounded-lg bg-[#0B1437] text-white text-xs font-medium flex items-center justify-center gap-2 hover:bg-[#0B1437]/90">
+          <i data-lucide="wrench" class="w-4 h-4"></i>
+          Request Service
+        </button>
+      </div>
+
+      <!-- CARD -->
+      <div class="bg-white p-4 rounded-xl shadow border-l-4 border-yellow-400 flex flex-col gap-3">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="font-bold text-sm text-[#0B1437]">#EX-102</p>
+            <p class="text-[11px] text-gray-500">Dry Powder ABC</p>
+          </div>
+          <span class="text-[9px] px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 font-semibold">
+            HIGH
+          </span>
+        </div>
+
+        <div class="text-[11px] text-gray-600 space-y-1">
+          <p><b>Capacity:</b> 4kg</p>
+          <p><b>Location:</b> Kitchen Area</p>
+          <p class="text-yellow-600"><b>Issue:</b> Low Pressure</p>
+        </div>
+
+        <span class="w-fit px-3 py-1 rounded-full text-[10px] bg-yellow-100 text-yellow-700 font-semibold">
+          Needs Refill
+        </span>
+
+        <button
+          (click)="openModal({id: '#EX-102', location: 'Kitchen Area', type: 'Dry Powder ABC', capacity: '4kg', issue: 'Low Pressure'})"
+          class="mt-1 h-9 rounded-lg bg-[#0B1437] text-white text-xs font-medium flex items-center justify-center gap-2 hover:bg-[#0B1437]/90">
+          <i data-lucide="wrench" class="w-4 h-4"></i>
+          Request Service
+        </button>
+      </div>
+
+      <!-- CARD -->
+      <div class="bg-white p-4 rounded-xl shadow border-l-4 border-blue-500 flex flex-col gap-3">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="font-bold text-sm text-[#0B1437]">#EX-445</p>
+            <p class="text-[11px] text-gray-500">Foam Type</p>
+          </div>
+          <span class="text-[9px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold">
+            MEDIUM
+          </span>
+        </div>
+
+        <div class="text-[11px] text-gray-600 space-y-1">
+          <p><b>Capacity:</b> 6L</p>
+          <p><b>Location:</b> Server Room A</p>
+          <p class="text-blue-600"><b>Issue:</b> Valve Check Required</p>
+        </div>
+
+        <span class="w-fit px-3 py-1 rounded-full text-[10px] bg-blue-100 text-blue-700 font-semibold">
+          Under Maintenance
+        </span>
+
+        <button
+          (click)="openModal({id: '#EX-445', location: 'Server Room A', type: 'Foam Type', capacity: '6L', issue: 'Valve Check Required'})"
+          class="mt-1 h-9 rounded-lg bg-[#0B1437] text-white text-xs font-medium flex items-center justify-center gap-2 hover:bg-[#0B1437]/90">
+          <i data-lucide="wrench" class="w-4 h-4"></i>
+          Request Service
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div *ngIf="showModal" class="modal-overlay">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden modal-content">
+
+      <!-- Modal Header -->
+      <div class="bg-[#0B1437] p-4 text-white flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+            <i data-lucide="wrench" class="w-5 h-5 text-white"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold">Request Service</h2>
+            <p class="text-[11px] text-white/50">Submit a request for this unit</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-[10px] text-white/40 font-medium">x-y</span>
+          <button (click)="closeModal()"
+            class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-5">
+        <!-- Summary Info Box -->
+        <div class="bg-[#F6F8FC] rounded-lg p-4 mb-5 grid grid-cols-2 gap-4 border border-[#E5E7EB]">
+          <div>
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Extinguisher ID</p>
+            <p class="text-sm font-bold text-[#0B1437]">{{ serviceRequest.extinguisherId }}</p>
+          </div>
+          <div>
+            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Location</p>
+            <p class="text-sm font-bold text-[#0B1437]">{{ serviceRequest.location }}</p>
+          </div>
+        </div>
+
+        <!-- Form Fields -->
+        <div class="space-y-3">
+          <!-- Service Type -->
+          <div class="form-input-container">
+            <label class="form-label">Service Type <span class="text-red-500">*</span></label>
+            <select [(ngModel)]="serviceRequest.serviceType"
+              class="form-input appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[right_16px_center] bg-no-repeat">
+              <option value="">Select service type...</option>
+              <option *ngFor="let type of serviceTypes" [value]="type.value">
+                {{ type.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Priority Selection -->
+          <div class="form-input-container">
+            <label class="form-label">Priority <span class="text-red-500">*</span></label>
+            <div class="priority-options">
+              <button *ngFor="let priority of priorities" type="button" (click)="serviceRequest.priority = priority"
+                class="priority-btn" [class.active-low]="serviceRequest.priority === 'Low' && priority === 'Low'"
+                [class.active-medium]="serviceRequest.priority === 'Medium' && priority === 'Medium'"
+                [class.active-high]="serviceRequest.priority === 'High' && priority === 'High'"
+                [class.active-urgent]="serviceRequest.priority === 'Urgent' && priority === 'Urgent'">
+                {{ priority }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Preferred Service Date -->
+          <div class="form-input-container">
+            <label class="form-label">Preferred Service Date</label>
+            <input type="date" [(ngModel)]="serviceRequest.preferredDate" class="form-input" />
+          </div>
+
+          <!-- Additional Notes -->
+          <div class="form-input-container">
+            <label class="form-label">Additional Notes</label>
+            <textarea [(ngModel)]="serviceRequest.additionalNotes"
+              placeholder="Provide any additional details or special instructions..." class="form-textarea"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-5 pt-0 flex justify-end gap-3">
+        <button (click)="closeModal()"
+          class="h-9 px-5 rounded-lg bg-gray-100 text-gray-700 text-[12px] font-bold hover:bg-gray-200 transition-colors">
+          Cancel
+        </button>
+        <button (click)="submitRequest()"
+          class="h-9 px-5 rounded-lg bg-[#0B1437] text-white text-[12px] font-bold inline-flex items-center gap-2 hover:bg-[#0B1437]/80 transition-all active:scale-95 cursor-pointer shadow-lg shadow-[#0B1437]/20">
+          <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+          Submit Request
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+</div>

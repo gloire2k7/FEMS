@@ -1,0 +1,100 @@
+<div class="client-page max-w-6xl pb-8">
+<!-- PAGE CONTENT -->
+        <div class="p-8 max-w-4xl mx-auto w-full space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            
+            <!-- Success/Error Feedback -->
+            <div *ngIf="successMessage" class="bg-emerald-50 border border-emerald-100 text-emerald-700 px-6 py-4 rounded-2xl flex items-center gap-4 animate-in zoom-in-95">
+                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                <p class="text-xs font-bold uppercase tracking-wider">{{ successMessage }}</p>
+            </div>
+            <div *ngIf="errorMessage" class="bg-red-50 border border-red-100 text-red-700 px-6 py-4 rounded-2xl flex items-center gap-4 animate-in zoom-in-95">
+                <i data-lucide="alert-circle" class="w-5 h-5"></i>
+                <p class="text-xs font-bold uppercase tracking-wider">{{ errorMessage }}</p>
+            </div>
+
+            <div
+                class="bg-[#0B1437] rounded-[32px] p-10 text-white relative overflow-hidden flex items-center justify-between shadow-2xl shadow-blue-900/20">
+                <div class="relative z-10">
+                    <h1 class="text-3xl font-black mb-1">New Inventory Entry</h1>
+                    <p class="text-[13px] text-slate-400 font-medium">Register units — price is set automatically from your pricing matrix.</p>
+                </div>
+                <div class="absolute right-0 top-0 w-64 h-64 bg-blue-600/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+                <div class="absolute right-10 top-2 opacity-10">
+                    <i data-lucide="package-plus" class="w-24 h-24"></i>
+                </div>
+            </div>
+
+            <!-- SECTION: MAIN DETAILS -->
+            <div class="space-y-6 bg-white p-10 rounded-[32px] border border-slate-100 shadow-sm">
+                <div class="flex items-center gap-5 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                        <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-[#0B1437] uppercase tracking-widest">Extinguisher Specifications</h3>
+                        <p class="text-[12px] font-medium text-slate-400">Category, capacity, expiry, and batch size only.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="space-y-3">
+                        <label class="text-[12px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                           <i data-lucide="hash" class="w-3 h-3"></i> Number of units
+                        </label>
+                        <input type="number" [(ngModel)]="formData.count" (ngModelChange)="onCountChange()" min="1" max="100"
+                            class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500/30 transition-all">
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-[12px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                            <i data-lucide="tag" class="w-3 h-3"></i> Category
+                        </label>
+                        <select [(ngModel)]="formData.type" (ngModelChange)="onProductChange()"
+                            class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500/30 transition-all appearance-none cursor-pointer">
+                            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="space-y-3">
+                        <label class="text-[12px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                            <i data-lucide="weight" class="w-3 h-3"></i> Capacity (Kg)
+                        </label>
+                        <select [(ngModel)]="formData.capacity" (ngModelChange)="onProductChange()"
+                            class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500/30 transition-all appearance-none cursor-pointer">
+                            <option *ngFor="let cap of capacities" [value]="cap">{{ cap }} kg</option>
+                        </select>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-[12px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-3 h-3"></i> Expiry Date
+                        </label>
+                        <input type="date" [(ngModel)]="formData.expiry_date"
+                            class="w-full px-6 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-none focus:border-blue-500/30 transition-all">
+                    </div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+                    <p class="text-[12px] font-black text-slate-500 uppercase tracking-widest mb-2">Calculated pricing</p>
+                    <div *ngIf="priceError" class="text-sm text-red-600">{{ priceError }}</div>
+                    <div *ngIf="!priceError" class="flex flex-wrap gap-6 text-sm">
+                        <div><span class="text-slate-500">Unit price:</span> <span class="font-bold text-[#0B1437]">{{ unitPrice | number:'1.0-0' }} RWF</span></div>
+                        <div><span class="text-slate-500">Batch total:</span> <span class="font-bold text-[#0B1437]">{{ totalPrice | number:'1.0-0' }} RWF</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="flex items-center gap-6">
+                <button (click)="saveUnit()" [disabled]="isLoading || unitPrice <= 0"
+                    class="flex-1 py-5 bg-[#0B1437] text-white rounded-[24px] text-xs font-black hover:bg-blue-900 transition-all shadow-xl shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-5 disabled:opacity-50">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    {{ isLoading ? 'Processing Creation...' : 'Confirm and Register' }}
+                </button>
+                <button routerLink="/admin-inventory"
+                    class="px-10 py-5 bg-white border-2 border-slate-100 text-slate-400 rounded-[24px] text-xs font-black hover:bg-slate-50 transition-all active:scale-95 uppercase tracking-widest">
+                    Cancel
+                </button>
+            </div>
+        </div>
+</div>

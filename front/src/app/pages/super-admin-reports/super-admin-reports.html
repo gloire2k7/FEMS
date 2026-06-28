@@ -1,0 +1,104 @@
+<div class="client-page max-w-6xl pb-8">
+
+  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-violet-900/20"
+    style="background: linear-gradient(135deg, #1a0f2e 0%, #0B1437 100%);">
+    <div class="client-hero-inner">
+      <p class="client-hero-eyebrow">Data export</p>
+      <h1 class="client-hero-title">Reports</h1>
+      <p class="client-hero-sub">Generate and download platform reports in PDF or CSV format.</p>
+    </div>
+  </section>
+
+  <section class="client-card p-6 space-y-6">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h2 class="text-lg font-semibold text-[#0B1437]">Generate new report</h2>
+        <p class="text-sm text-slate-500 mt-0.5">Choose type, date range, and format</p>
+      </div>
+      <div *ngIf="confirmationMessage" class="flex items-center gap-2 text-emerald-700 bg-emerald-50 px-4 py-2 rounded-xl text-sm font-medium border border-emerald-100">
+        <i data-lucide="check-circle" class="w-4 h-4"></i>
+        {{ confirmationMessage }}
+        <button *ngIf="generatedFilePath" type="button" (click)="downloadFile(generatedFilePath!)" class="underline ml-1 font-semibold">Download</button>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">Report type</label>
+        <select [(ngModel)]="reportForm.type" class="client-input w-full">
+          <option value="inventory">Inventory</option>
+          <option value="expired">Expired units</option>
+          <option value="compliance">Compliance</option>
+          <option value="service">Service history</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">From date</label>
+        <input type="date" [(ngModel)]="reportForm.start_date" class="client-input w-full">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">To date</label>
+        <input type="date" [(ngModel)]="reportForm.end_date" class="client-input w-full">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-slate-600 block mb-2">Format</label>
+        <select [(ngModel)]="reportForm.format" class="client-input w-full">
+          <option value="pdf">PDF</option>
+          <option value="csv">CSV</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="flex justify-end pt-2">
+      <button type="button" (click)="generateReport()" [disabled]="loading" class="client-btn-primary px-8 py-3">
+        {{ loading ? 'Generating…' : 'Generate report' }}
+      </button>
+    </div>
+  </section>
+
+  <section class="client-card overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h2 class="text-lg font-semibold text-[#0B1437]">Generated reports</h2>
+        <p class="text-sm text-slate-500 mt-0.5">{{ totalReports }} report{{ totalReports !== 1 ? 's' : '' }} available</p>
+      </div>
+      <button type="button" (click)="exportAllZip()" class="client-btn-secondary px-4 py-2.5 text-sm inline-flex items-center gap-2">
+        <i data-lucide="archive" class="w-4 h-4"></i> Export all (ZIP)
+      </button>
+    </div>
+
+    <div *ngIf="loading && reports.length === 0" class="p-8 text-center text-slate-400">Loading reports…</div>
+
+    <div *ngIf="!loading && reports.length === 0" class="client-empty py-12">
+      <div class="client-empty-icon mx-auto"><i data-lucide="file-x" class="w-8 h-8"></i></div>
+      <p class="text-base text-slate-500 mt-4">No reports generated yet.</p>
+    </div>
+
+    <div *ngIf="reports.length" class="divide-y divide-slate-50">
+      <div *ngFor="let r of reports" class="px-6 py-4 flex flex-wrap items-center gap-4 hover:bg-slate-50/50">
+        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-white" [ngClass]="r.iconClass">
+          <i [attr.data-lucide]="r.icon" class="w-5 h-5"></i>
+        </span>
+        <div class="flex-1 min-w-0">
+          <h3 class="font-semibold text-[#0B1437] truncate">{{ r.name }}</h3>
+          <p class="text-sm text-slate-500">{{ r.type }} · {{ r.created_at | date:'medium' }}</p>
+        </div>
+        <span class="text-xs font-semibold uppercase px-2.5 py-1 rounded-lg text-white" [ngClass]="r.formatClass">{{ r.format }}</span>
+        <button type="button" (click)="downloadFile(r.file_path)" class="client-btn-primary px-4 py-2 text-sm inline-flex items-center gap-2">
+          <i data-lucide="download" class="w-4 h-4"></i> Download
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="lastPage > 1" class="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+      <span class="text-sm text-slate-500">Page {{ currentPage }} of {{ lastPage }}</span>
+      <div class="flex gap-2">
+        <button type="button" (click)="loadReports(currentPage - 1)" [disabled]="currentPage === 1"
+          class="client-btn-secondary px-4 py-2 text-sm disabled:opacity-50">Previous</button>
+        <button type="button" (click)="loadReports(currentPage + 1)" [disabled]="currentPage === lastPage"
+          class="client-btn-secondary px-4 py-2 text-sm disabled:opacity-50">Next</button>
+      </div>
+    </div>
+  </section>
+
+</div>
