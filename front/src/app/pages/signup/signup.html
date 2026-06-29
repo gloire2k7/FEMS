@@ -1,132 +1,121 @@
-<div class="min-h-screen flex font-['Poppins'] overflow-hidden bg-[#0f172a] relative items-center justify-between px-8 sm:px-12 md:px-24">
-  
-  <!-- OUT OF THIS WORLD BACKGROUND -->
-  <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-    <div class="absolute inset-0 bg-[#0B1437]"></div>
-    
-    <!-- Massive Glowing Orbs -->
-    <div class="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-[#991b1b] rounded-full mix-blend-screen filter blur-[150px] opacity-70 animate-pulse"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#4f46e5] rounded-full mix-blend-screen filter blur-[130px] opacity-60"></div>
-    <div class="absolute top-[40%] left-[30%] w-[40%] h-[40%] bg-orange-600 rounded-full mix-blend-screen filter blur-[110px] opacity-40"></div>
-    
-    <!-- Abstract Tech Lines / Grid Overlay (Subtle) -->
-    <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px); background-size: 40px 40px;"></div>
-  </div>
+<!-- FEMS Sign Up — Clean Minimalist Split Layout (Reference Inspired) -->
+<div class="min-h-screen flex font-['Inter','Poppins',sans-serif] bg-white overflow-hidden">
 
-  <!-- LEFT ILLUSTRATION / COPY (Floating in Space) -->
-  <div class="relative z-10 w-full lg:w-[50%] flex flex-col justify-center text-white hidden lg:flex pr-12">
-    <!-- Logo -->
-    <div class="flex items-center gap-3 mb-12">
-      <img src="assets/logo.png" alt="FEMS Logo" class="w-14 h-14 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" />
-      <span class="text-2xl font-bold tracking-widest text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] uppercase">FEMS</span>
+  <!-- ── LEFT SIDE PANEL (Crimson Gradient with Horizontal Steps) ── -->
+  <div class="hidden lg:flex lg:w-[50%] bg-gradient-to-br from-[#8C1D24] via-[#75161C] to-[#5A0E12] text-white flex-col justify-between p-16 relative overflow-hidden">
+    <!-- Subtle abstract light blobs -->
+    <div class="absolute top-[-100px] left-[-100px] w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-[-150px] right-[-50px] w-96 h-96 bg-red-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Top: Logo -->
+    <div class="flex items-center gap-3 relative z-10">
+      <div class="w-9 h-9 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+        <img src="assets/logo.png" alt="FEMS Logo" class="w-5.5 h-5.5 object-contain brightness-0 invert" />
+      </div>
+      <span class="text-lg font-black text-white tracking-tight uppercase">FEMS</span>
     </div>
 
-    <h1 class="text-5xl xl:text-6xl font-black leading-tight mb-6 tracking-tighter drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
-      Join the <br/>
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#4f46e5] to-sky-400 drop-shadow-[0_0_15px_rgba(79,70,229,0.6)]">Safety Revolution</span>
-    </h1>
-    <p class="text-slate-300 text-lg leading-relaxed mb-12 max-w-lg font-medium drop-shadow-md">
-      Create your account today and gain complete visibility and control over your entire fire safety infrastructure.
-    </p>
-    
-    <!-- Feature highlights -->
-    <div class="grid grid-cols-2 gap-6 max-w-lg">
-      <div class="bg-white/5 border border-white/10 rounded-3xl p-5 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] transform hover:scale-105 transition-transform">
-        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-white/20 to-white/5 text-white flex items-center justify-center mb-4 shadow-[inset_0_1px_3px_rgba(255,255,255,0.3)]">
-          <i data-lucide="building" class="w-5 h-5"></i>
+    <!-- Center: Headline & Subtitle -->
+    <div class="relative z-10 max-w-xl my-auto">
+      <h1 class="text-5xl font-black tracking-tight mb-4 text-white">Get Started with Us</h1>
+      <p class="text-red-100/70 text-sm leading-relaxed max-w-sm">
+        Complete these easy steps to register your account and launch your workspace.
+      </p>
+    </div>
+
+    <!-- Bottom: 3 Horizontal Steps Side-by-Side (Exactly like reference picture) -->
+    <div class="relative z-10 grid grid-cols-3 gap-3">
+      <!-- Step 1: Active Card (White background, dark text/icon) -->
+      <div class="bg-white rounded-2xl p-4 text-gray-900 shadow-lg flex flex-col justify-between h-28">
+        <div class="w-7 h-7 rounded-full bg-gray-900 text-white flex items-center justify-center font-bold text-xs">
+          1
         </div>
-        <p class="text-sm font-bold text-white/90">Set up your workspace</p>
-        <p class="text-xs text-white/60 mt-1">Add locations seamlessly</p>
+        <p class="text-xs font-black leading-snug">Sign up your account</p>
       </div>
-      <div class="bg-white/5 border border-white/10 rounded-3xl p-5 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] transform hover:scale-105 transition-transform">
-        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-white/10 to-transparent border border-white/10 text-white flex items-center justify-center mb-4">
-          <i data-lucide="shield" class="w-5 h-5"></i>
+
+      <!-- Step 2: Inactive Card -->
+      <div class="bg-white/5 border border-white/15 rounded-2xl p-4 text-white/80 flex flex-col justify-between h-28 hover:bg-white/10 transition-colors cursor-pointer">
+        <div class="w-7 h-7 rounded-full bg-white/20 text-white flex items-center justify-center font-bold text-xs">
+          2
         </div>
-        <p class="text-sm font-bold text-white/90">Achieve Compliance</p>
-        <p class="text-xs text-white/60 mt-1">Automated safety tracking</p>
+        <p class="text-xs font-bold leading-snug">Set up your workspace</p>
+      </div>
+
+      <!-- Step 3: Inactive Card -->
+      <div class="bg-white/5 border border-white/15 rounded-2xl p-4 text-white/80 flex flex-col justify-between h-28 hover:bg-white/10 transition-colors cursor-pointer">
+        <div class="w-7 h-7 rounded-full bg-white/20 text-white flex items-center justify-center font-bold text-xs">
+          3
+        </div>
+        <p class="text-xs font-bold leading-snug">Set up your profile</p>
       </div>
     </div>
   </div>
 
-  <!-- RIGHT FORM CONTAINER (Glassmorphic Card) -->
-  <div class="relative z-20 w-full lg:w-[45%] max-w-[480px] mx-auto lg:mx-0">
-    <div class="bg-white/10 backdrop-blur-[24px] border border-white/20 rounded-[40px] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)] my-8 max-h-[90vh] overflow-y-auto scrollbar-hide">
-      
-      <div class="mb-8 text-center">
-        <!-- Logo for mobile -->
-        <div class="lg:hidden flex justify-center mb-6">
-          <img src="assets/logo.png" alt="FEMS Logo" class="w-16 h-16 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" />
+  <!-- ── RIGHT SIDE PANEL (White Theme Form - Matches Reference Picture Layout) ── -->
+  <div class="flex-grow flex items-center justify-center p-8 lg:p-16 bg-white overflow-y-auto">
+    <div class="w-full max-w-[420px] py-8">
+
+      <!-- Mobile Brand Display -->
+      <div class="lg:hidden flex items-center gap-2 mb-8">
+        <div class="w-9 h-9 rounded-xl bg-[#8C1D24] flex items-center justify-center">
+          <img src="assets/logo.png" alt="FEMS Logo" class="w-5.5 h-5.5 object-contain brightness-0 invert" />
         </div>
-        <h2 class="text-3xl font-bold text-white tracking-tight mb-2 drop-shadow-md">Create Account</h2>
-        <p class="text-sm font-medium text-slate-300">Enter your organization details</p>
+        <span class="text-lg font-black text-gray-950 uppercase">FEMS</span>
+      </div>
+
+      <!-- Title Header -->
+      <div class="mb-8">
+        <h2 class="text-3xl font-black text-gray-950 tracking-tight">Sign Up Account</h2>
+        <p class="text-xs font-bold text-gray-400 mt-1.5">Enter your organization details to create your account.</p>
       </div>
 
       <!-- Form -->
-      <form (submit)="onSubmit()" class="space-y-5">
-        <div *ngIf="error" class="bg-red-500/20 text-red-300 p-3 rounded-xl text-[12px] font-bold text-center mb-4 border border-red-500/30 backdrop-blur-md">
+      <form (submit)="onSubmit()" class="space-y-4">
+        <div *ngIf="error" class="bg-red-50 text-red-600 p-3 rounded-xl text-xs font-bold text-center border border-red-100">
           {{ error }}
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-widest mb-2 ml-1">Full Name</label>
-            <div class="relative group">
-              <input type="text" name="name" [(ngModel)]="name" placeholder="John Doe"
-                class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 pl-11 text-[13px] font-bold text-white placeholder-white/30 outline-none focus:bg-white/10 focus:border-[#4f46e5]/50 focus:ring-4 focus:ring-[#4f46e5]/20 transition-all shadow-inner" required />
-              <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors"></i>
-            </div>
+            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-0.5">Full Name</label>
+            <input type="text" name="name" [(ngModel)]="name" placeholder="John Doe"
+              class="w-full bg-[#F9FAFB] border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-[#8C1D24] focus:ring-4 focus:ring-red-50 transition-all" required />
           </div>
-
           <div>
-            <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-widest mb-2 ml-1">Company</label>
-            <div class="relative group">
-              <input type="text" name="company_name" [(ngModel)]="company_name" placeholder="Acme Inc."
-                class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 pl-11 text-[13px] font-bold text-white placeholder-white/30 outline-none focus:bg-white/10 focus:border-[#4f46e5]/50 focus:ring-4 focus:ring-[#4f46e5]/20 transition-all shadow-inner" required />
-              <i data-lucide="building" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors"></i>
-            </div>
+            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-0.5">Company</label>
+            <input type="text" name="company_name" [(ngModel)]="company_name" placeholder="Acme Inc."
+              class="w-full bg-[#F9FAFB] border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-[#8C1D24] focus:ring-4 focus:ring-red-50 transition-all" required />
           </div>
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-widest mb-2 ml-1">Email</label>
-          <div class="relative group">
-            <input type="email" name="email" [(ngModel)]="email" placeholder="eg. john.doe@space.com"
-              class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 pl-12 text-[13px] font-bold text-white placeholder-white/30 outline-none focus:bg-white/10 focus:border-[#4f46e5]/50 focus:ring-4 focus:ring-[#4f46e5]/20 transition-all shadow-inner" required />
-            <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors"></i>
+          <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-0.5">Email Address</label>
+          <input type="email" name="email" [(ngModel)]="email" placeholder="john.doe@company.com"
+            class="w-full bg-[#F9FAFB] border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-[#8C1D24] focus:ring-4 focus:ring-red-50 transition-all" required />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-0.5">Phone</label>
+            <input type="text" name="phone" [(ngModel)]="phone" placeholder="+1 (234) 567..."
+              class="w-full bg-[#F9FAFB] border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-[#8C1D24] focus:ring-4 focus:ring-red-50 transition-all" required />
+          </div>
+          <div>
+            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-0.5">Address</label>
+            <input type="text" name="address" [(ngModel)]="address" placeholder="123 Corporate Way"
+              class="w-full bg-[#F9FAFB] border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-[#8C1D24] focus:ring-4 focus:ring-red-50 transition-all" required />
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-widest mb-2 ml-1">Phone</label>
-            <div class="relative group">
-              <input type="text" name="phone" [(ngModel)]="phone" placeholder="+123..."
-                class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 pl-11 text-[13px] font-bold text-white placeholder-white/30 outline-none focus:bg-white/10 focus:border-[#4f46e5]/50 focus:ring-4 focus:ring-[#4f46e5]/20 transition-all shadow-inner" required />
-              <i data-lucide="phone" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors"></i>
-            </div>
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-widest mb-2 ml-1">Address</label>
-            <div class="relative group">
-              <input type="text" name="address" [(ngModel)]="address" placeholder="123 Main St"
-                class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 pl-11 text-[13px] font-bold text-white placeholder-white/30 outline-none focus:bg-white/10 focus:border-[#4f46e5]/50 focus:ring-4 focus:ring-[#4f46e5]/20 transition-all shadow-inner" required />
-              <i data-lucide="map-pin" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-white transition-colors"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="pt-4">
-          <p class="text-[11px] text-slate-400 mb-4 ml-1 font-medium">Password must be at least 8 characters.</p>
-          <button type="submit" [disabled]="isLoading"
-            class="w-full bg-gradient-to-r from-[#4f46e5] to-sky-500 hover:from-[#4338ca] hover:to-[#0ea5e9] text-white py-4 rounded-2xl text-[14px] font-black uppercase tracking-widest shadow-[0_10px_30px_rgba(79,70,229,0.4)] transition-all transform active:scale-[0.98] disabled:opacity-50 border border-white/10">
-            {{ isLoading ? 'Initializing Core...' : 'Launch Workspace' }}
-          </button>
-        </div>
+        <button type="submit" [disabled]="isLoading"
+          class="w-full bg-[#8C1D24] hover:bg-[#6E1318] text-white py-3.5 rounded-xl text-sm font-black uppercase tracking-wider shadow-[0_8px_20px_rgba(140,29,36,0.2)] transition-all transform active:scale-[0.98] disabled:opacity-50 mt-4">
+          {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+        </button>
       </form>
 
-      <p class="mt-8 text-center text-[13px] text-slate-400 font-medium">
+      <p class="mt-8 text-center text-xs font-semibold text-gray-400">
         Already have an account?
-        <a routerLink="/signin" class="font-bold text-white hover:text-[#4f46e5] ml-1 transition-colors drop-shadow-sm">Sign in</a>
+        <a routerLink="/signin" class="font-black text-[#8C1D24] hover:text-red-700 ml-1 transition-colors">Sign in</a>
       </p>
 
     </div>
