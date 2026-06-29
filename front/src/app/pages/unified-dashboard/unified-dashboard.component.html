@@ -1,87 +1,132 @@
-<div class="max-w-6xl">
-  <header class="mb-5">
-    <p class="text-sm font-medium text-slate-500">{{ greeting() }},</p>
-    <h1 class="text-2xl md:text-3xl font-bold text-[#0B1437] mt-0.5">{{ userName }}</h1>
-    <p class="text-slate-500 text-sm mt-0.5" *ngIf="companyName">{{ companyName }}</p>
-  </header>
-
-  <!-- Alert banners (permission-gated, clickable) -->
-  <div *ngIf="alerts.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-5">
-    <a *ngFor="let a of alerts" [routerLink]="a.route" [queryParams]="a.queryParams || {}"
-      class="flex items-center gap-3 rounded-xl ring-1 px-4 py-3 no-underline hover:shadow-sm transition-shadow" [ngClass]="a.tone">
-      <i [attr.data-lucide]="a.icon" class="w-5 h-5 shrink-0"></i>
-      <span class="min-w-0">
-        <span class="block text-sm font-semibold leading-tight">{{ a.title }}</span>
-        <span class="block text-xs opacity-80 truncate">{{ a.subtitle }}</span>
-      </span>
-    </a>
-  </div>
-
-  <!-- Stat cards (permission-gated, clickable) -->
-  <div *ngIf="statCards.length" class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-    <a *ngFor="let card of statCards" [routerLink]="card.route" [queryParams]="card.queryParams || {}"
-      class="bg-white rounded-2xl border border-slate-200 p-4 hover:shadow-md hover:-translate-y-0.5 transition-all no-underline">
-      <div class="flex items-start justify-between gap-2">
-        <div class="min-w-0">
-          <p class="text-xs font-medium text-slate-500 truncate">{{ card.label }}</p>
-          <p class="text-2xl font-bold text-[#0B1437] mt-1">{{ card.value }}</p>
-          <p class="text-xs text-slate-400 mt-0.5 truncate">{{ card.hint }}</p>
+<!-- Premium Dashboard Header Banner with Enhanced Animations -->
+<div class="relative bg-gradient-to-br from-[#8C1D24] via-[#A61B26] to-[#C4252F] rounded-3xl p-6 md:p-8 mb-6 overflow-hidden text-white shadow-2xl animate-fade-in-up">
+  <!-- Animated background orbs -->
+  <div class="absolute top-0 right-0 w-80 h-80 bg-white/8 rounded-full blur-3xl pointer-events-none animate-float"></div>
+  <div class="absolute bottom-0 left-0 w-64 h-64 bg-pink-300/15 rounded-full blur-2xl pointer-events-none animate-float" style="animation-delay: 1s;"></div>
+  <div class="absolute top-1/2 left-1/2 w-48 h-48 bg-red-300/10 rounded-full blur-xl pointer-events-none animate-float" style="animation-delay: 2s;"></div>
+  
+  <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <!-- Professional Logo -->
+    <div class="animate-fade-in-up animate-delay-1">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="relative group cursor-pointer">
+          <div class="absolute -inset-1 bg-gradient-to-r from-pink-400 to-red-400 rounded-lg blur opacity-40 group-hover:opacity-70 transition-opacity"></div>
+          <div class="relative w-12 h-12 rounded-lg bg-white/20 backdrop-blur-md border-2 border-white/40 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
+            <img src="assets/logo.png" alt="FEMS Logo" class="w-8 h-8 object-contain brightness-0 invert" />
+          </div>
         </div>
-        <span class="w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center shrink-0" [ngClass]="card.accent">
-          <i [attr.data-lucide]="card.icon" class="w-5 h-5"></i>
-        </span>
+        <div class="flex flex-col">
+          <span class="text-2xl font-black text-white tracking-tight leading-none drop-shadow-lg">FEMS</span>
+          <span class="text-[10px] font-bold text-pink-100/90 tracking-[0.15em] uppercase">Fire Safety</span>
+        </div>
       </div>
-    </a>
-  </div>
-
-  <!-- Charts (permission-gated) -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
-    <app-chart-card *ngIf="showOrderChart && orderChart.length" title="Orders by status" [link]="ordersLink" linkLabel="View orders">
-      <app-donut-chart [segments]="orderChart" centerLabel="Orders" />
-    </app-chart-card>
-
-    <app-chart-card *ngIf="can('admins.view') && platformChart.length" title="Platform" subtitle="People on the platform" link="/super-admin-admins" linkLabel="Manage">
-      <app-donut-chart [segments]="platformChart" centerLabel="People" />
-    </app-chart-card>
-
-    <app-chart-card *ngIf="can('inventory.view')" title="Stock by type" subtitle="Available warehouse units" link="/admin-inventory" linkLabel="Inventory">
-      <app-h-bar-chart [segments]="stockChart" />
-    </app-chart-card>
-
-    <app-chart-card *ngIf="can('extinguishers.view')" title="My units by type" subtitle="Registered to your company" link="/extinguishers" linkLabel="View units">
-      <app-h-bar-chart [segments]="unitsChart" />
-    </app-chart-card>
-  </div>
-
-  <!-- Quick actions (compact chips, permission-gated) -->
-  <div *ngIf="quickActions.length" class="mb-5">
-    <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Quick actions</h2>
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
-      <a *ngFor="let action of quickActions" [routerLink]="action.route" [queryParams]="action.queryParams || {}"
-        class="flex items-center gap-2.5 bg-white rounded-xl border border-slate-200 px-3 py-2.5 hover:shadow-md hover:border-slate-300 transition-all no-underline">
-        <span class="w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center shrink-0" [ngClass]="action.accent">
-          <i [attr.data-lucide]="action.icon" class="w-4 h-4"></i>
-        </span>
-        <span class="text-sm font-medium text-[#0B1437] truncate">{{ action.title }}</span>
-      </a>
+      <p class="text-pink-100 text-sm font-bold uppercase tracking-widest">{{ greeting() }}</p>
+      <h1 class="text-3xl md:text-4xl font-black tracking-tight text-white drop-shadow-lg mt-1">{{ userName }}</h1>
+      <p class="text-pink-50/90 text-sm mt-1 font-semibold" *ngIf="companyName">{{ companyName }}</p>
     </div>
-  </div>
-
-  <!-- Recent orders (permission-gated) -->
-  <section *ngIf="showOrderChart && recentOrders.length" class="bg-white rounded-2xl border border-slate-200 p-5">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-base font-semibold text-[#0B1437]">Recent orders</h2>
-      <a [routerLink]="ordersLink" class="text-sm font-semibold text-[#0B1437] hover:text-blue-700 inline-flex items-center gap-1">
-        View all <i data-lucide="arrow-right" class="w-4 h-4"></i>
-      </a>
-    </div>
-    <div class="divide-y divide-slate-100">
-      <div *ngFor="let o of recentOrders" class="flex items-center justify-between gap-3 py-2.5">
-        <div class="min-w-0">
-          <p class="text-sm font-medium text-[#0B1437] truncate">{{ o.type }} · {{ o.capacity }}kg × {{ o.quantity }}</p>
-          <p class="text-xs text-slate-400 truncate">{{ o.company_name || o.client_name || ('Order #' + o.id) }}</p>
+    <div class="flex items-center gap-5 animate-fade-in-up animate-delay-2">
+      <div class="text-right hidden sm:block bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-3 border border-white/20">
+        <p class="text-sm text-white font-bold uppercase tracking-wider">{{ currentDate() }}</p>
+        <p class="text-xs text-pink-100/80 font-semibold mt-1">{{ currentTime() }}</p>
+      </div>
+      <div class="relative group cursor-pointer">
+        <div class="absolute -inset-1 bg-gradient-to-r from-pink-400 to-red-400 rounded-xl blur opacity-40 group-hover:opacity-70 transition-opacity"></div>
+        <div class="relative w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+          <i data-lucide="user" class="w-7 h-7 text-white"></i>
         </div>
-        <span class="text-xs font-semibold px-2.5 py-1 rounded-full ring-1 shrink-0" [ngClass]="statusClass(o.status)">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Alert banners (permission-gated, clickable) with animations -->
+<div *ngIf="alerts.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+  <a *ngFor="let a of alerts; let i = index" [routerLink]="a.route" [queryParams]="a.queryParams || {}"
+    class="flex items-center gap-3 rounded-xl ring-1 px-4 py-3 no-underline hover:shadow-lg hover:scale-105 transition-all duration-300 animate-fade-in-up"
+    [style.animation-delay]="(i * 0.08) + 's'" [ngClass]="a.tone">
+    <i [attr.data-lucide]="a.icon" class="w-5 h-5 shrink-0"></i>
+    <span class="min-w-0">
+      <span class="block text-sm font-semibold leading-tight">{{ a.title }}</span>
+      <span class="block text-xs opacity-80 truncate">{{ a.subtitle }}</span>
+    </span>
+  </a>
+</div>
+
+<!-- Stat cards (permission-gated, clickable) with staggered animations -->
+<div *ngIf="statCards.length" class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+  <a *ngFor="let card of statCards; let i = index" [routerLink]="card.route" [queryParams]="card.queryParams || {}"
+    class="bg-white rounded-2xl border border-slate-200 p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline group animate-fade-in-up"
+    [style.animation-delay]="(i * 0.05) + 's'">
+    <div class="flex items-start justify-between gap-2">
+      <div class="min-w-0 flex-1">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider truncate">{{ card.label }}</p>
+        <p class="text-2xl font-black text-[#0B1437] mt-1 tracking-tight group-hover:text-[#8C1D24] transition-colors">{{ card.value }}</p>
+        <p class="text-[10px] text-slate-400 mt-0.5 font-medium truncate">{{ card.hint }}</p>
+      </div>
+      <span class="w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-all duration-300" [ngClass]="card.accent">
+        <i [attr.data-lucide]="card.icon" class="w-5 h-5"></i>
+      </span>
+    </div>
+  </a>
+</div>
+
+  <!-- Charts (permission-gated) with staggered animations -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+    <div *ngIf="showOrderChart && orderChart.length" class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all animate-fade-in-up" style="animation-delay: 0.1s;">
+      <app-chart-card title="Orders by status" [link]="ordersLink" linkLabel="View orders">
+        <app-donut-chart [segments]="orderChart" centerLabel="Orders" />
+      </app-chart-card>
+    </div>
+
+    <div *ngIf="can('admins.view') && platformChart.length" class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all animate-fade-in-up" style="animation-delay: 0.15s;">
+      <app-chart-card title="Platform" subtitle="People on the platform" link="/super-admin-admins" linkLabel="Manage">
+        <app-donut-chart [segments]="platformChart" centerLabel="People" />
+      </app-chart-card>
+    </div>
+
+    <div *ngIf="can('inventory.view')" class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all animate-fade-in-up" style="animation-delay: 0.2s;">
+      <app-chart-card title="Stock by type" subtitle="Available warehouse units" link="/admin-inventory" linkLabel="Inventory">
+        <app-h-bar-chart [segments]="stockChart" />
+      </app-chart-card>
+    </div>
+
+    <div *ngIf="can('extinguishers.view')" class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all animate-fade-in-up" style="animation-delay: 0.25s;">
+      <app-chart-card title="My units by type" subtitle="Registered to your company" link="/extinguishers" linkLabel="View units">
+        <app-h-bar-chart [segments]="unitsChart" />
+      </app-chart-card>
+    </div>
+  </div>
+
+  <!-- Quick actions (modern icon cards, permission-gated) with animations -->
+  <div *ngIf="quickActions.length" class="mb-6">
+    <h2 class="text-sm font-black text-slate-600 uppercase tracking-widest mb-4">Quick Actions</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      <a *ngFor="let action of quickActions; let i = index" [routerLink]="action.route" [queryParams]="action.queryParams || {}"
+        class="flex flex-col items-center gap-3 bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-xl hover:border-[#8C1D24]/20 hover:-translate-y-1 transition-all duration-300 no-underline group text-center animate-fade-in-up"
+        [style.animation-delay]="(0.3 + i * 0.05) + 's'">
+        <span class="w-12 h-12 rounded-2xl bg-gradient-to-br flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-all duration-300" [ngClass]="action.accent">
+          <i [attr.data-lucide]="action.icon" class="w-5 h-5"></i>
+        </span>
+        <span class="text-xs font-bold text-slate-700 leading-tight">{{ action.title }}</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Recent orders (permission-gated) with enhanced styling -->
+  <section *ngIf="showOrderChart && recentOrders.length" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up" style="animation-delay: 0.35s;">
+    <div class="flex items-center justify-between p-6 border-b border-slate-100 bg-gradient-to-r from-slate-50/50 to-white">
+      <h2 class="text-base font-black text-[#0B1437] tracking-tight">Recent Orders</h2>
+      <a [routerLink]="ordersLink" class="text-xs font-bold text-[#8C1D24] hover:text-[#6E1318] inline-flex items-center gap-1.5 transition-all hover:gap-2 group">
+        View all <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
+      </a>
+    </div>
+    <div class="divide-y divide-slate-50">
+      <div *ngFor="let o of recentOrders" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gradient-to-r hover:from-red-50/30 hover:to-transparent transition-all duration-200 group cursor-pointer">
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-bold text-[#0B1437] truncate group-hover:text-[#8C1D24] transition-colors">{{ o.type }} · {{ o.capacity }}kg × {{ o.quantity }}</p>
+          <p class="text-xs text-slate-400 truncate mt-0.5">{{ o.company_name || o.client_name || ('Order #' + o.id) }}</p>
+        </div>
+        <span class="text-[11px] font-black px-3 py-1.5 rounded-full ring-1 shrink-0 uppercase tracking-wider transition-all hover:scale-105" [ngClass]="statusClass(o.status)">
           {{ statusLabel(o.status) }}
         </span>
       </div>
@@ -89,11 +134,10 @@
   </section>
 
   <div *ngIf="!loading && !statCards.length && !quickActions.length"
-    class="bg-white rounded-2xl border border-slate-200 p-10 text-center">
+    class="bg-white rounded-2xl border border-slate-200 p-10 text-center shadow-sm">
     <span class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto mb-4">
       <i data-lucide="layout-dashboard" class="w-7 h-7"></i>
     </span>
-    <p class="text-lg font-semibold text-[#0B1437]">Welcome to FEMS</p>
-    <p class="text-slate-500 mt-2 max-w-md mx-auto">Your administrator hasn't granted you any modules yet. Use the menu for anything available to you, or contact your Super Admin.</p>
+    <p class="text-lg font-black text-[#0B1437]">Welcome to FEMS</p>
+    <p class="text-slate-500 mt-2 max-w-md mx-auto text-sm font-medium">Your administrator hasn't granted you any modules yet. Use the menu for anything available to you, or contact your Super Admin.</p>
   </div>
-</div>

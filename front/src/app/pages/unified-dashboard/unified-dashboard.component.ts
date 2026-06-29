@@ -214,6 +214,14 @@ export class UnifiedDashboardComponent implements OnInit, AfterViewInit {
     return 'Good evening';
   }
 
+  currentDate(): string {
+    return new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  currentTime(): string {
+    return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  }
+
   private monthName(): string {
     return new Date().toLocaleString('en-US', { month: 'long' });
   }
