@@ -83,6 +83,8 @@ class Router
     private function sendNotFound($message)
     {
         http_response_code(404);
+        header('Content-Type: application/json');
         echo json_encode(["message" => $message]);
+        exit;
     }
 }

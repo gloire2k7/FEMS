@@ -9,6 +9,9 @@
 
 @import "tailwindcss";
 
+/* Scan Angular templates (including inline component templates in .ts files) */
+@source "../**/*.{html,ts,css}";
+
 /* ── CSS Design Tokens ── */
 :root {
   --red:        #8C1D24;   /* Deep Crimson  (signin sidebar) */

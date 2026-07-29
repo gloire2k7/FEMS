@@ -1,450 +1,183 @@
-<!-- ================================================================
-     FEMS — Unified Premium Landing Page (#8C1D24 Crimson & #EA580C Flame Orange)
-     ================================================================ -->
-<div class="min-h-screen bg-[#F8FAFC] font-['Inter',sans-serif] overflow-x-hidden text-slate-900 p-2 sm:p-4">
+<!-- FEMS Landing — premium single-viewport experience -->
+<div class="landing-shell h-screen flex flex-col overflow-hidden">
 
-  <!-- Outer Canvas Card -->
-  <div class="w-full max-w-[1400px] mx-auto bg-[#F8FAFC] rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/70 overflow-hidden">
+  <!-- Ambient background -->
+  <div class="landing-bg" aria-hidden="true">
+    <div class="landing-bg-orb landing-bg-orb--1"></div>
+    <div class="landing-bg-orb landing-bg-orb--2"></div>
+    <div class="landing-bg-grid"></div>
+  </div>
 
-    <!-- ══════════════════════════════════════════════
-         STICKY NAVIGATION
-    ══════════════════════════════════════════════ -->
-    <header
-      class="sticky top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/70 transition-all duration-300">
-      <div class="px-6 md:px-10 h-20 flex items-center justify-between">
-
-        <!-- Logo -->
-        <a routerLink="/" class="flex items-center gap-3.5 group flex-shrink-0">
-          <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#8C1D24] to-[#EA580C] flex items-center justify-center shadow-md shadow-red-900/15 group-hover:shadow-red-900/25 transition-transform duration-300 group-hover:scale-105">
-            <img src="assets/logo.png" alt="FEMS" class="w-5.5 h-5.5 brightness-0 invert object-contain" />
-          </div>
-          <div class="flex flex-col leading-none">
-            <span class="text-xl font-black text-slate-900 tracking-tight">FEMS</span>
-            <span class="text-[9px] font-bold text-[#8C1D24] tracking-[0.2em] uppercase mt-0.5">Fire Safety</span>
-          </div>
-        </a>
-
-        <!-- Desktop Nav Links -->
-        <nav class="hidden lg:flex items-center gap-2">
-          <a href="#about"        class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-[#8C1D24] hover:bg-orange-50/60 rounded-xl transition-all">About</a>
-          <a href="#features"     class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-[#8C1D24] hover:bg-orange-50/60 rounded-xl transition-all">Features</a>
-          <a href="#how-it-works" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-[#8C1D24] hover:bg-orange-50/60 rounded-xl transition-all">How it Works</a>
-          <a href="#testimonials" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-[#8C1D24] hover:bg-orange-50/60 rounded-xl transition-all">Testimonials</a>
-          <a href="#faq"          class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-[#8C1D24] hover:bg-orange-50/60 rounded-xl transition-all">FAQ</a>
-        </nav>
-
-        <!-- CTA Buttons (Shape-Changing Hover: rounded-xl -> rounded-full without color change) -->
-        <div class="flex items-center gap-3">
-          <a routerLink="/signin" class="hidden sm:block text-sm font-bold text-slate-700 hover:text-[#8C1D24] transition-colors px-4 py-2">Sign In</a>
-          <a routerLink="/signup"
-            class="bg-[#EA580C] text-white text-sm font-bold px-6 py-3 rounded-xl hover:rounded-full hover:scale-[1.02] shadow-md shadow-orange-500/20 transition-all duration-300">
-            Get Started
-          </a>
-          <!-- Mobile menu button -->
-          <button (click)="mobileMenuOpen = !mobileMenuOpen"
-            class="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
-            <i [attr.data-lucide]="mobileMenuOpen ? 'x' : 'menu'" class="w-6 h-6"></i>
-          </button>
-        </div>
+  <!-- Header -->
+  <header class="landing-header shrink-0">
+    <a routerLink="/" class="landing-brand">
+      <div class="landing-brand-icon">
+        <img src="assets/logo.png" alt="FEMS" class="w-4 h-4 brightness-0 invert object-contain" />
       </div>
-
-      <!-- Mobile Menu -->
-      <div *ngIf="mobileMenuOpen" class="lg:hidden bg-white/95 border-t border-slate-100 shadow-lg">
-        <nav class="px-6 py-4 flex flex-col gap-1.5">
-          <a href="#about"        (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 rounded-xl">About</a>
-          <a href="#features"     (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 rounded-xl">Features</a>
-          <a href="#how-it-works" (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 rounded-xl">How it Works</a>
-          <a href="#testimonials" (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 rounded-xl">Testimonials</a>
-          <a href="#faq"          (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 rounded-xl">FAQ</a>
-          <div class="pt-3 border-t border-slate-100 mt-2 flex flex-col gap-2.5">
-            <a routerLink="/signin" class="text-center px-4 py-3 text-sm font-bold text-slate-700">Sign In</a>
-            <a routerLink="/signup" class="text-center bg-[#EA580C] text-white px-4 py-3.5 rounded-xl hover:rounded-full transition-all text-sm font-bold shadow-md">Get Started Free</a>
-          </div>
-        </nav>
+      <div>
+        <span class="landing-brand-name">FEMS</span>
+        <span class="landing-brand-tag">Fire Safety Platform</span>
       </div>
-    </header>
+    </a>
 
+    <nav class="landing-nav-pill hidden md:flex">
+      <button type="button" *ngFor="let tab of sectionTabs"
+        (click)="activeSection = tab.id"
+        class="landing-nav-item"
+        [class.landing-nav-item--active]="activeSection === tab.id">
+        {{ tab.label }}
+      </button>
+    </nav>
 
-    <!-- ══════════════════════════════════════════════
-         HERO SECTION (Matching Auth Split Mesh Card Vibe)
-    ══════════════════════════════════════════════ -->
-    <section class="p-4 sm:p-8">
-      
-      <!-- Wide Split Banner Card -->
-      <div class="relative bg-[#0E0304] rounded-2xl overflow-hidden text-white grid lg:grid-cols-12 min-h-[540px] shadow-xl border border-slate-800">
-        
-        <!-- Background Flame Mesh Gradients -->
-        <div class="absolute inset-0 bg-gradient-to-br from-[#8C1D24] via-[#5C0D12] to-[#0E0304] opacity-95"></div>
-        <div class="absolute -top-24 -left-24 w-[550px] h-[550px] bg-[#EA580C]/35 rounded-full blur-[120px] pointer-events-none animate-pulse" style="animation-duration: 9s;"></div>
-        <div class="absolute top-1/2 -right-20 w-[500px] h-[500px] bg-[#8C1D24]/40 rounded-full blur-[130px] pointer-events-none"></div>
+    <div class="landing-header-actions">
+      <a routerLink="/signin" class="landing-link hidden sm:inline-flex">Sign in</a>
+      <a routerLink="/signup" class="landing-cta">
+        Get started
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </a>
+      <button type="button" (click)="mobileMenuOpen = !mobileMenuOpen" class="landing-menu-btn md:hidden">
+        <i [attr.data-lucide]="mobileMenuOpen ? 'x' : 'menu'" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </header>
 
-        <!-- Left Copy Side -->
-        <div class="lg:col-span-7 p-8 sm:p-12 relative z-10 flex flex-col justify-between">
-          <div>
-            <!-- Badge -->
-            <div class="inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-1.5 mb-8 shadow-xs">
-              <span class="relative flex h-2.5 w-2.5">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#EA580C]"></span>
-              </span>
-              <span class="text-xs font-bold text-orange-200 tracking-wide">Next-Gen Fire Safety Platform</span>
-            </div>
+  <!-- Mobile nav -->
+  <div *ngIf="mobileMenuOpen" class="landing-mobile-nav md:hidden shrink-0">
+    <button type="button" *ngFor="let tab of sectionTabs" (click)="activeSection = tab.id; mobileMenuOpen = false"
+      class="landing-mobile-tab"
+      [class.landing-mobile-tab--active]="activeSection === tab.id">
+      {{ tab.label }}
+    </button>
+    <a routerLink="/signin" class="landing-mobile-tab">Sign in</a>
+  </div>
 
-            <!-- Headline -->
-            <h1 class="text-4xl sm:text-5xl font-black leading-[1.08] tracking-tight mb-5 text-white drop-shadow-md">
-              Convert your ideas<br/>
-              into fire safety control.
-            </h1>
-
-            <!-- Subhead -->
-            <p class="text-orange-100/80 text-base leading-relaxed max-w-xl font-normal mb-8">
-              FEMS unifies your fire extinguisher inventory, inspection schedules, regulatory compliance, and multi-site maintenance into one audit-ready dashboard.
-            </p>
-
-            <!-- CTA Buttons (Shape-Changing Hover: rounded-xl -> rounded-full without color change) -->
-            <div class="flex flex-col sm:flex-row gap-3.5 items-stretch sm:items-center">
-              <a routerLink="/signup"
-                class="inline-flex items-center justify-center gap-3 bg-[#EA580C] text-white font-bold text-base px-8 py-4 rounded-xl hover:rounded-full hover:scale-[1.02] shadow-lg shadow-orange-500/25 transition-all duration-300">
-                <span>Initialize Free Workspace</span>
-                <i data-lucide="arrow-right" class="w-5 h-5"></i>
-              </a>
-              <a href="#features"
-                class="inline-flex items-center justify-center gap-2.5 text-base font-bold text-white/90 hover:text-white px-7 py-4 rounded-xl hover:rounded-full border border-white/20 hover:bg-white/10 backdrop-blur-md transition-all duration-300">
-                <i data-lucide="play-circle" class="w-5 h-5 text-orange-300"></i>
-                <span>Explore Platform</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Bottom Step Pills (Hover shape morphs) -->
-          <div class="grid grid-cols-3 gap-3 pt-8 mt-6 border-t border-white/15">
-            <div class="bg-white text-slate-900 rounded-xl hover:rounded-2xl p-3.5 shadow-lg border border-white transition-all duration-300 hover:-translate-y-1">
-              <span class="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold mb-2">1</span>
-              <p class="text-[11px] font-extrabold leading-tight">Register workspace</p>
-            </div>
-            <div class="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl hover:rounded-2xl p-3.5 transition-all duration-300 hover:-translate-y-1 hover:bg-white/15">
-              <span class="w-5 h-5 rounded-full bg-white/20 text-white flex items-center justify-center text-[10px] font-bold mb-2">2</span>
-              <p class="text-[11px] font-bold text-orange-100/90 leading-tight">Audit safety fleet</p>
-            </div>
-            <div class="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl hover:rounded-2xl p-3.5 transition-all duration-300 hover:-translate-y-1 hover:bg-white/15">
-              <span class="w-5 h-5 rounded-full bg-white/20 text-white flex items-center justify-center text-[10px] font-bold mb-2">3</span>
-              <p class="text-[11px] font-bold text-orange-100/90 leading-tight">Automate compliance</p>
-            </div>
-          </div>
-
+  <!-- Hero -->
+  <section class="landing-hero shrink-0">
+    <div class="landing-hero-grid">
+      <div class="landing-hero-copy stagger-1">
+        <div class="landing-badge">
+          <span class="landing-badge-dot"></span>
+          Enterprise fire extinguisher management
         </div>
-
-        <!-- Right Visual Component Side -->
-        <div class="lg:col-span-5 relative p-8 lg:p-10 flex items-center justify-center">
-
-          <!-- Main Floating Glass Card -->
-          <div class="relative z-10 w-full max-w-[340px] bg-white/95 text-slate-900 backdrop-blur-xl border border-white rounded-2xl shadow-2xl p-6 transition-transform duration-300 hover:scale-[1.01]">
-            <div class="flex items-center justify-between mb-5">
-              <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fleet Status</p>
-                <p class="text-lg font-black text-slate-900">Active Extinguishers</p>
-              </div>
-              <div class="w-10 h-10 rounded-xl bg-orange-100 border border-orange-200 flex items-center justify-center">
-                <i data-lucide="flame" class="w-5 h-5 text-[#8C1D24]"></i>
-              </div>
-            </div>
-
-            <!-- Status Ring -->
-            <div class="flex items-center gap-4 mb-5 bg-[#F8FAFC] p-4 rounded-xl border border-slate-100">
-              <div class="relative w-18 h-18 flex-shrink-0">
-                <svg viewBox="0 0 80 80" class="w-full h-full -rotate-90">
-                  <circle cx="40" cy="40" r="32" fill="none" stroke="#E2E8F0" stroke-width="8"/>
-                  <circle cx="40" cy="40" r="32" fill="none" stroke="#8C1D24" stroke-width="8"
-                    stroke-dasharray="201" stroke-dashoffset="30" stroke-linecap="round"/>
-                </svg>
-                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                  <span class="text-xl font-black text-slate-900 leading-none">247</span>
-                  <span class="text-[8px] text-slate-400 font-bold">UNITS</span>
-                </div>
-              </div>
-              <div class="flex-1 space-y-2">
-                <div>
-                  <div class="flex justify-between text-xs mb-1">
-                    <span class="text-slate-600 font-medium">Filled</span>
-                    <span class="text-slate-900 font-bold">96%</span>
-                  </div>
-                  <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full bg-gradient-to-r from-[#8C1D24] to-[#EA580C] w-[96%]"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-xs mb-1">
-                    <span class="text-slate-600 font-medium">Inspected</span>
-                    <span class="text-[#EA580C] font-bold">88%</span>
-                  </div>
-                  <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full bg-[#EA580C] w-[88%]"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Mini List -->
-            <div class="space-y-2">
-              <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#F8FAFC]">
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                  <span class="text-xs text-slate-700 font-bold">HQ Main Office</span>
-                </div>
-                <span class="text-[10px] font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">OK</span>
-              </div>
-              <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#F8FAFC]">
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 rounded-full bg-orange-500"></div>
-                  <span class="text-xs text-slate-700 font-bold">Warehouse B</span>
-                </div>
-                <span class="text-[10px] font-extrabold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">Due</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- ══════════════════════════════════════════════
-         STATS STRIP
-    ══════════════════════════════════════════════ -->
-    <section class="py-10 border-y border-slate-200/70 bg-[#F8FAFC]">
-      <div class="max-w-6xl mx-auto px-6 md:px-10">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          <div *ngFor="let stat of stats; let i = index" class="text-center">
-            <p class="text-4xl md:text-5xl font-black text-slate-900 mb-1 tracking-tight">
-              {{ stat.value }}<span class="text-[#EA580C]">{{ stat.suffix }}</span>
-            </p>
-            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">{{ stat.label }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-
-    <!-- ══════════════════════════════════════════════
-         ABOUT SECTION
-    ══════════════════════════════════════════════ -->
-    <section id="about" class="py-16 px-6 md:px-10 max-w-7xl mx-auto">
-      <div class="grid lg:grid-cols-2 gap-12 items-center">
-
-        <!-- Visual Block -->
-        <div class="relative">
-          <div class="bg-[#0E0304] rounded-2xl p-8 text-white relative overflow-hidden shadow-xl border border-slate-800">
-            <div class="absolute inset-0 bg-gradient-to-br from-[#8C1D24] via-[#5C0D12] to-[#0E0304] opacity-95"></div>
-            <div class="absolute -top-20 -left-20 w-80 h-80 bg-[#EA580C]/30 rounded-full blur-[90px] pointer-events-none"></div>
-
-            <div class="relative z-10">
-              <div class="w-12 h-12 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center mb-6 shadow-md">
-                <img src="assets/logo.png" class="w-7 h-7 brightness-0 invert object-contain" alt="" />
-              </div>
-              <h3 class="text-3xl font-black text-white mb-4 leading-tight">Next-Generation<br/>Fire Safety Command</h3>
-              <p class="text-orange-100/80 text-sm leading-relaxed font-normal mb-8">
-                Replace outdated paper logs and disjointed spreadsheets with a real-time digital compliance hub.
-              </p>
-
-              <div class="flex gap-3 flex-wrap">
-                <div class="bg-white/10 border border-white/15 rounded-xl px-4 py-2.5 backdrop-blur-md">
-                  <p class="text-xl font-black text-white">10K+</p>
-                  <p class="text-[9px] text-orange-100/80 uppercase font-bold tracking-wider">Units Managed</p>
-                </div>
-                <div class="bg-white/10 border border-white/15 rounded-xl px-4 py-2.5 backdrop-blur-md">
-                  <p class="text-xl font-black text-white">100%</p>
-                  <p class="text-[9px] text-orange-100/80 uppercase font-bold tracking-wider">Audit Success</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Copy Side -->
-        <div>
-          <span class="inline-flex items-center gap-2 text-[#8C1D24] font-bold tracking-widest text-xs uppercase mb-4 border border-[#8C1D24]/20 bg-orange-50 rounded-full px-3.5 py-1">
-            <i data-lucide="zap" class="w-3.5 h-3.5 text-[#EA580C]"></i>
-            Our Philosophy
-          </span>
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-[1.12] tracking-tight mb-6">
-            Proactive Safety,<br/>
-            Zero Audit Surprises.
-          </h2>
-          <p class="text-slate-600 leading-relaxed mb-6 text-base font-normal">
-            FEMS consolidates every fire safety function into one intelligent platform — location tracking, mandatory inspection routines, refill request approvals, and audit-ready reporting.
-          </p>
-
-          <ul class="space-y-3 mb-8">
-            <li *ngFor="let point of aboutPoints" class="flex items-center gap-3">
-              <div class="w-6 h-6 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-                <i data-lucide="check" class="w-4 h-4 text-[#8C1D24]"></i>
-              </div>
-              <span class="text-sm font-semibold text-slate-700">{{ point }}</span>
-            </li>
-          </ul>
-
-          <!-- Shape-changing Hover Button -->
-          <a routerLink="/signup"
-            class="inline-flex items-center gap-3 bg-[#EA580C] text-white font-bold text-sm px-8 py-4 rounded-xl hover:rounded-full hover:scale-[1.02] shadow-md transition-all duration-300">
-            <span>Get Started Now</span>
+        <h1 class="landing-headline">
+          Fire safety compliance,<br/>
+          <span class="landing-headline-accent">one intelligent dashboard.</span>
+        </h1>
+        <p class="landing-subline">
+          Track inventory, schedule inspections, manage orders, and generate audit-ready reports — across every site, from one clean workspace.
+        </p>
+        <div class="landing-cta-row">
+          <a routerLink="/signup" class="landing-cta landing-cta--lg">
+            Start free workspace
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </a>
+          <a routerLink="/signin" class="landing-cta-secondary">
+            <i data-lucide="log-in" class="w-4 h-4"></i>
+            Sign in
+          </a>
         </div>
-
-      </div>
-    </section>
-
-
-    <!-- ══════════════════════════════════════════════
-         FEATURES SECTION
-    ══════════════════════════════════════════════ -->
-    <section id="features" class="py-16 bg-[#F8FAFC] border-y border-slate-200/70 px-6 md:px-10">
-      <div class="max-w-7xl mx-auto">
-
-        <div class="text-center max-w-2xl mx-auto mb-12">
-          <span class="inline-flex items-center gap-2 text-[#8C1D24] font-bold tracking-widest text-xs uppercase mb-4 border border-[#8C1D24]/20 bg-white rounded-full px-3.5 py-1 shadow-xs">
-            <i data-lucide="layers" class="w-3.5 h-3.5 text-[#EA580C]"></i>
-            Platform Capabilities
-          </span>
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4 leading-tight tracking-tight">
-            Everything You Need to Manage Extinguishers.
-          </h2>
-          <p class="text-slate-600 text-base font-normal">
-            Designed specifically for fire safety administrators, facility managers, and safety compliance teams.
-          </p>
-        </div>
-
-        <!-- Features Grid -->
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div *ngFor="let f of features; let i = index"
-            class="bg-white border border-slate-200/80 rounded-2xl p-7 shadow-xs hover:border-orange-300 hover:shadow-md transition-all">
-            <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center bg-orange-50 border border-orange-100">
-              <i [attr.data-lucide]="f.icon" class="w-6 h-6 text-[#8C1D24]"></i>
-            </div>
-            <h3 class="text-lg font-black text-slate-900 mb-2.5 tracking-tight">{{ f.title }}</h3>
-            <p class="text-sm text-slate-600 leading-relaxed mb-5 font-normal">{{ f.desc }}</p>
-            <div class="flex flex-wrap gap-2">
-              <span *ngFor="let tag of f.tags"
-                class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-[#F8FAFC] text-slate-700">
-                {{ tag }}
-              </span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- ══════════════════════════════════════════════
-         HOW IT WORKS
-    ══════════════════════════════════════════════ -->
-    <section id="how-it-works" class="py-16 px-6 md:px-10 max-w-7xl mx-auto">
-      <div class="text-center max-w-xl mx-auto mb-12">
-        <span class="inline-flex items-center gap-2 text-[#8C1D24] font-bold tracking-widest text-xs uppercase mb-4 border border-[#8C1D24]/20 bg-orange-50 rounded-full px-3.5 py-1">
-          <i data-lucide="workflow" class="w-3.5 h-3.5 text-[#EA580C]"></i>
-          Simple Onboarding
-        </span>
-        <h2 class="text-3xl sm:text-4xl font-black text-slate-900 leading-tight tracking-tight">
-          4 Steps to Complete Control.
-        </h2>
-      </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div *ngFor="let step of steps; let i = index"
-          class="flex flex-col items-center text-center p-7 rounded-2xl bg-white border border-slate-200/80 shadow-xs hover:shadow-md transition-all">
-          <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center font-black text-xl text-white bg-gradient-to-br from-[#8C1D24] to-[#EA580C] shadow-md shadow-[#8C1D24]/15">
-            {{ i + 1 }}
-          </div>
-          <h3 class="text-base font-bold text-slate-900 mb-2">{{ step.title }}</h3>
-          <p class="text-xs text-slate-500 leading-relaxed font-normal">{{ step.desc }}</p>
-        </div>
-      </div>
-    </section>
-
-
-    <!-- ══════════════════════════════════════════════
-         BOTTOM CTA SECTION
-    ══════════════════════════════════════════════ -->
-    <section class="py-12 px-4 sm:px-8">
-      <div class="max-w-5xl mx-auto">
-        <div class="relative rounded-2xl overflow-hidden bg-[#0E0304] p-8 md:p-12 text-center text-white shadow-xl border border-slate-800">
-          <div class="absolute inset-0 bg-gradient-to-br from-[#8C1D24] via-[#5C0D12] to-[#0E0304] opacity-95"></div>
-          <div class="relative z-10">
-            <h2 class="text-3xl md:text-4xl font-black mb-3 tracking-tight">
-              Ready to Streamline Your Fire Safety?
-            </h2>
-            <p class="text-orange-100/80 text-base mb-6 max-w-lg mx-auto font-normal">
-              Join safety managers and facilities who rely on FEMS for compliance and peace of mind.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-3.5 items-center justify-center">
-              <!-- Shape-changing Hover Button -->
-              <a routerLink="/signup"
-                class="inline-flex items-center gap-3 bg-white text-slate-900 font-extrabold text-sm px-8 py-3.5 rounded-xl hover:rounded-full hover:scale-[1.02] shadow-xl transition-all duration-300">
-                <span>Get Started — Free Account</span>
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-              </a>
-              <a routerLink="/signin"
-                class="inline-flex items-center gap-2 text-sm font-bold text-white/90 hover:text-white transition-colors px-5 py-3.5">
-                Sign In to Existing Account →
-              </a>
-            </div>
+        <div class="landing-stats">
+          <div *ngFor="let stat of stats" class="landing-stat">
+            <p class="landing-stat-value">{{ stat.value }}<span class="text-[#0D9488]">{{ stat.suffix }}</span></p>
+            <p class="landing-stat-label">{{ stat.label }}</p>
           </div>
         </div>
       </div>
-    </section>
 
-
-    <!-- ══════════════════════════════════════════════
-         FOOTER
-    ══════════════════════════════════════════════ -->
-    <footer class="bg-slate-950 text-white pt-12 pb-8 border-t border-slate-900">
-      <div class="max-w-7xl mx-auto px-6 md:px-10">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div class="md:col-span-2">
-            <div class="flex items-center gap-3.5 mb-4">
-              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#8C1D24] to-[#EA580C] flex items-center justify-center">
-                <img src="assets/logo.png" alt="FEMS" class="w-4 h-4 brightness-0 invert object-contain" />
+      <!-- Product preview (Finaxy-inspired) -->
+      <div class="landing-preview stagger-2 hidden sm:block">
+        <div class="landing-preview-card">
+          <div class="landing-preview-header">
+            <div>
+              <p class="landing-preview-eyebrow">Fleet overview</p>
+              <p class="landing-preview-title">Live compliance snapshot</p>
+            </div>
+            <span class="landing-preview-badge">Active</span>
+          </div>
+          <div class="landing-preview-metrics">
+            <div class="landing-preview-metric landing-preview-metric--primary">
+              <p class="landing-preview-metric-label">Units tracked</p>
+              <p class="landing-preview-metric-value">247</p>
+            </div>
+            <div class="landing-preview-metric">
+              <p class="landing-preview-metric-label">Inspected</p>
+              <p class="landing-preview-metric-value text-slate-900">88%</p>
+            </div>
+            <div class="landing-preview-metric">
+              <p class="landing-preview-metric-label">Due soon</p>
+              <p class="landing-preview-metric-value text-amber-600">12</p>
+            </div>
+          </div>
+          <div class="landing-preview-sites">
+            <div *ngFor="let site of previewSites" class="landing-preview-site">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="w-2 h-2 rounded-full shrink-0" [ngClass]="site.dot"></span>
+                <span class="text-sm font-semibold text-slate-700 truncate">{{ site.name }}</span>
               </div>
-              <span class="text-xl font-black text-white tracking-tight">FEMS</span>
+              <span class="text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0" [ngClass]="site.badge">{{ site.status }}</span>
             </div>
-            <p class="text-sm text-slate-400 max-w-xs leading-relaxed font-normal">
-              The modern Fire Extinguisher Management System. Engineered for compliance, clarity, and life-saving readiness.
-            </p>
           </div>
+        </div>
+        <div class="landing-preview-shadow"></div>
+      </div>
+    </div>
+  </section>
 
-          <div>
-            <h4 class="text-white font-bold mb-3 text-xs uppercase tracking-wider">Features</h4>
-            <ul class="space-y-2 text-sm text-slate-400 font-normal">
-              <li><a href="#features" class="hover:text-white transition-colors">Inventory Matrix</a></li>
-              <li><a href="#features" class="hover:text-white transition-colors">Compliance Alerts</a></li>
-              <li><a href="#features" class="hover:text-white transition-colors">Inspection Logs</a></li>
-              <li><a href="#features" class="hover:text-white transition-colors">Multi-Site GPS</a></li>
-            </ul>
-          </div>
+  <!-- Tabbed panel -->
+  <section class="landing-panel flex-1 min-h-0">
+    <div class="landing-panel-inner">
+      <div class="landing-panel-tabs">
+        <button type="button" *ngFor="let tab of sectionTabs"
+          (click)="activeSection = tab.id"
+          class="landing-panel-tab"
+          [class.landing-panel-tab--active]="activeSection === tab.id">
+          {{ tab.label }}
+        </button>
+      </div>
 
-          <div>
-            <h4 class="text-white font-bold mb-3 text-xs uppercase tracking-wider">Navigation</h4>
-            <ul class="space-y-2 text-sm text-slate-400 font-normal">
-              <li><a href="#about" class="hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#testimonials" class="hover:text-white transition-colors">Testimonials</a></li>
-              <li><a href="#faq" class="hover:text-white transition-colors">FAQ</a></li>
-              <li><a routerLink="/signin" class="hover:text-white transition-colors">Sign In</a></li>
-            </ul>
+      <div class="landing-panel-body">
+        <div *ngIf="activeSection === 'features'" class="landing-features">
+          <div *ngFor="let f of features" class="landing-feature">
+            <div class="landing-feature-icon">
+              <i [attr.data-lucide]="f.icon" class="w-5 h-5"></i>
+            </div>
+            <h3 class="landing-feature-title">{{ f.title }}</h3>
+            <p class="landing-feature-desc">{{ f.desc }}</p>
+            <div class="landing-feature-tags">
+              <span *ngFor="let tag of f.tags" class="landing-feature-tag">{{ tag }}</span>
+            </div>
           </div>
         </div>
 
-        <div class="border-t border-slate-900 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-          <p>&copy; 2026 FEMS. All rights reserved.</p>
-          <div class="flex gap-6 font-medium">
-            <a href="#" class="hover:text-slate-400">Privacy Policy</a>
-            <a href="#" class="hover:text-slate-400">Terms of Service</a>
+        <div *ngIf="activeSection === 'how'" class="landing-steps">
+          <div *ngFor="let step of steps; let i = index" class="landing-step">
+            <div class="landing-step-num">{{ i + 1 }}</div>
+            <h3 class="landing-step-title">{{ step.title }}</h3>
+            <p class="landing-step-desc">{{ step.desc }}</p>
+          </div>
+        </div>
+
+        <div *ngIf="activeSection === 'faq'" class="landing-faqs">
+          <div *ngFor="let faq of faqs" class="landing-faq">
+            <button type="button" (click)="toggleFaqById(faq.id)" class="landing-faq-trigger">
+              <span>{{ faq.q }}</span>
+              <i [attr.data-lucide]="activeFaqId === faq.id ? 'chevron-up' : 'chevron-down'" class="w-4 h-4 shrink-0 opacity-50"></i>
+            </button>
+            <div class="landing-faq-answer" [class.open]="activeFaqId === faq.id">
+              <p>{{ faq.a }}</p>
+            </div>
           </div>
         </div>
       </div>
-    </footer>
 
-  </div>
+      <div class="landing-panel-footer">
+        <p>&copy; 2026 FEMS — Fire Extinguisher Management System</p>
+        <div class="flex items-center gap-4">
+          <a routerLink="/signin">Sign in</a>
+          <a routerLink="/signup">Register</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
 </div>

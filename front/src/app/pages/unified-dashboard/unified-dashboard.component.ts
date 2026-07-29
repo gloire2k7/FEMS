@@ -46,6 +46,7 @@ interface DashAlert {
   standalone: true,
   imports: [CommonModule, RouterModule, DonutChartComponent, HorizontalBarChartComponent, ChartCardComponent],
   templateUrl: './unified-dashboard.component.html',
+  styleUrls: ['./unified-dashboard.component.css'],
 })
 export class UnifiedDashboardComponent implements OnInit, AfterViewInit {
   private auth = inject(AuthService);
@@ -186,6 +187,15 @@ export class UnifiedDashboardComponent implements OnInit, AfterViewInit {
     return this.canAny(['orders.view', 'my_orders.view']);
   }
 
+  get hasAnyCharts(): boolean {
+    return (
+      (this.showOrderChart && this.orderChart.length > 0) ||
+      (this.can('admins.view') && this.platformChart.length > 0) ||
+      this.can('inventory.view') ||
+      this.can('extinguishers.view')
+    );
+  }
+
   countByStatus(rows: { status: string; count: number }[] | undefined, status: string): number {
     if (!rows) return 0;
     const row = rows.find((r) => r.status === status);
@@ -199,12 +209,12 @@ export class UnifiedDashboardComponent implements OnInit, AfterViewInit {
 
   statusClass(status: string): string {
     const map: Record<string, string> = {
-      pending: 'bg-amber-50 text-amber-700 ring-amber-200/60',
-      granted: 'bg-emerald-50 text-emerald-700 ring-emerald-200/60',
-      cancelled: 'bg-red-50 text-red-700 ring-red-200/60',
-      delivered: 'bg-sky-50 text-sky-700 ring-sky-200/60',
+      pending: 'dash-status--pending',
+      granted: 'dash-status--granted',
+      cancelled: 'dash-status--cancelled',
+      delivered: 'dash-status--delivered',
     };
-    return map[status] ?? 'bg-slate-50 text-slate-600 ring-slate-200/60';
+    return map[status] ?? '';
   }
 
   greeting(): string {

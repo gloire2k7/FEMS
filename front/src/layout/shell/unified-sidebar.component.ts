@@ -16,56 +16,54 @@ declare const lucide: { createIcons: () => void } | undefined;
   imports: [CommonModule, RouterLink, RouterLinkActive],
   template: `
     <aside
-      class="fems-sidebar bg-gradient-to-b from-[#8C1D24] to-[#5A0E12] p-4 md:p-5 flex flex-col h-screen shrink-0 overflow-y-auto transition-all duration-300 z-40 fixed lg:static inset-y-0 left-0 -translate-x-full lg:translate-x-0"
+      class="fems-sidebar bg-white border-r border-slate-200/80 p-4 md:p-5 flex flex-col h-screen shrink-0 overflow-y-auto transition-all duration-300 z-40 fixed lg:static inset-y-0 left-0 -translate-x-full lg:translate-x-0 shadow-sm"
       [class.translate-x-0]="sidebar.mobileOpen()"
       [class.w-64]="!sidebar.collapsed() || sidebar.mobileOpen()"
       [class.lg:w-64]="!sidebar.collapsed()"
       [class.lg:w-[4.5rem]]="sidebar.collapsed()"
       [class.is-collapsed]="sidebar.collapsed()">
 
-      <div class="flex items-center gap-2 mb-6 pl-1">
-        <div class="w-10 h-10 rounded-xl bg-white/10 ring-1 ring-white/20 flex items-center justify-center shrink-0">
-          <img src="assets/logo.png" alt="FEMS" class="w-6 h-6 object-contain brightness-0 invert" />
+      <div class="flex items-center gap-2 mb-5 pl-0.5">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#8C1D24] to-[#5A0E12] flex items-center justify-center shrink-0 shadow-sm">
+          <img src="assets/logo.png" alt="FEMS" class="w-5 h-5 object-contain brightness-0 invert" />
         </div>
         <div *ngIf="!sidebar.collapsed()" class="min-w-0 flex-1">
-          <span class="text-2xl font-black text-white tracking-tight uppercase">FEMS</span>
-          <p class="text-xs text-red-200 font-medium">{{ roleLabel }}</p>
+          <span class="text-lg font-extrabold text-slate-900 tracking-tight">FEMS</span>
+          <p class="text-[10px] text-teal-600 font-bold uppercase tracking-wider">{{ roleLabel }}</p>
         </div>
         <button type="button" (click)="toggleSidebar()" title="Collapse sidebar"
-          class="hidden lg:flex p-2 rounded-lg text-red-200 hover:bg-white/10 hover:text-white transition-colors shrink-0">
+          class="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors shrink-0">
           <i [attr.data-lucide]="sidebar.collapsed() ? 'panel-left-open' : 'panel-left-close'" class="w-4 h-4"></i>
         </button>
         <button type="button" (click)="sidebar.closeMobile()" title="Close menu"
-          class="lg:hidden p-2 rounded-lg text-red-200 hover:bg-white/10 hover:text-white transition-colors shrink-0">
+          class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors shrink-0">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <nav class="space-y-0.5 text-base flex-1">
+      <nav class="space-y-0.5 text-sm flex-1">
         <ng-container *ngFor="let group of groups">
           <ng-container *ngIf="visibleItems(group).length > 0">
 
-            <!-- Collapsible group header (expanded mode, labelled groups only) -->
             <button *ngIf="group.label && !sidebar.collapsed()" type="button" (click)="toggleGroup(group.label)"
-              class="w-full flex items-center justify-between gap-2 px-4 pt-5 pb-2 text-xs font-bold text-red-200 hover:text-white uppercase tracking-widest transition-colors">
+              class="w-full flex items-center justify-between gap-2 px-3 pt-4 pb-1.5 text-[10px] font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-colors">
               <span>{{ group.label }}</span>
-              <i [attr.data-lucide]="isOpen(group.label) ? 'chevron-down' : 'chevron-right'" class="w-4 h-4 opacity-70"></i>
+              <i [attr.data-lucide]="isOpen(group.label) ? 'chevron-down' : 'chevron-right'" class="w-3.5 h-3.5 opacity-70"></i>
             </button>
 
-            <!-- Items: shown when group open, or always in collapsed icon mode / for the label-less group -->
             <ng-container *ngIf="!group.label || sidebar.collapsed() || isOpen(group.label)">
               <a *ngFor="let item of visibleItems(group)"
                 [routerLink]="routeFor(item)"
-                routerLinkActive="bg-white/10 text-white shadow-sm font-bold"
+                routerLinkActive="bg-teal-50 text-teal-700 font-semibold border-teal-200/60"
                 [routerLinkActiveOptions]="{ exact: !!item.exact }"
                 (click)="sidebar.closeMobile()"
-                class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-red-100 hover:bg-white/10 hover:text-white transition-all duration-150"
-                [class.justify-center]="sidebar.collapsed()" [class.px-3]="sidebar.collapsed()"
+                class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-150 border border-transparent"
+                [class.justify-center]="sidebar.collapsed()" [class.px-2.5]="sidebar.collapsed()"
                 [title]="item.label">
-                <i [attr.data-lucide]="item.icon" class="w-5 h-5 shrink-0"></i>
-                <span *ngIf="!sidebar.collapsed()" class="font-medium flex-1">{{ item.label }}</span>
+                <i [attr.data-lucide]="item.icon" class="w-[18px] h-[18px] shrink-0"></i>
+                <span *ngIf="!sidebar.collapsed()" class="font-medium flex-1 text-[13px]">{{ item.label }}</span>
                 <span *ngIf="!sidebar.collapsed() && badgeFor(item) > 0"
-                  class="min-w-[1.25rem] h-5 px-1.5 rounded-full text-white text-xs font-bold flex items-center justify-center"
+                  class="min-w-[1.125rem] h-[1.125rem] px-1 rounded-full text-white text-[10px] font-bold flex items-center justify-center"
                   [ngClass]="badgeClass(item)">
                   {{ badgeFor(item) > 9 ? '9+' : badgeFor(item) }}
                 </span>
@@ -75,18 +73,18 @@ declare const lucide: { createIcons: () => void } | undefined;
         </ng-container>
       </nav>
 
-      <div class="mt-auto pt-4">
-        <div class="bg-white/10 rounded-xl p-3 flex items-center gap-3 border border-white/10"
+      <div class="mt-auto pt-3">
+        <div class="bg-slate-50 rounded-xl p-2.5 flex items-center gap-2.5 border border-slate-200/60"
           [class.justify-center]="sidebar.collapsed()">
-          <img [src]="'https://ui-avatars.com/api/?name=' + userName + '&background=8C1D24&color=fff'" alt=""
-            class="w-9 h-9 rounded-full shrink-0">
+          <img [src]="'https://ui-avatars.com/api/?name=' + userName + '&background=0D9488&color=fff'" alt=""
+            class="w-8 h-8 rounded-lg shrink-0">
           <div *ngIf="!sidebar.collapsed()" class="min-w-0 flex-1">
-            <p class="text-xs text-red-200">Signed in as</p>
-            <p class="text-sm font-semibold text-white truncate">{{ userName }}</p>
+            <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">Signed in</p>
+            <p class="text-xs font-bold text-slate-800 truncate">{{ userName }}</p>
           </div>
           <button *ngIf="!sidebar.collapsed()" type="button" (click)="onLogout()" title="Sign out"
-            class="p-2 rounded-lg hover:bg-white/10 text-red-200 hover:text-white transition-colors">
-            <i data-lucide="log-out" class="w-5 h-5"></i>
+            class="p-1.5 rounded-lg hover:bg-slate-200/60 text-slate-400 hover:text-slate-700 transition-colors">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
           </button>
         </div>
       </div>

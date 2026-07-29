@@ -14,14 +14,14 @@ declare const lucide: { createIcons: () => void } | undefined;
   standalone: true,
   imports: [CommonModule, RouterOutlet, UnifiedSidebarComponent, Topbar],
   template: `
-    <div class="flex h-screen bg-[#F6F8FC] font-['Poppins'] overflow-hidden">
+    <div class="flex h-screen bg-[#F4F6FA] font-['Inter'] overflow-hidden">
       @if (sidebar.mobileOpen()) {
         <div class="fixed inset-0 bg-black/50 z-30 lg:hidden" (click)="sidebar.closeMobile()"></div>
       }
       <app-unified-sidebar />
       <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <app-topbar />
-        <main class="flex-1 overflow-y-auto px-4 py-5 md:px-8">
+        <main class="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-5">
           <router-outlet />
         </main>
       </div>

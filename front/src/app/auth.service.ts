@@ -210,7 +210,13 @@ export class AuthService {
   }
 
   private readStoredUser(): any {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    try {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : null;
+    } catch (e) {
+      console.error('Failed to parse stored user data', e);
+      localStorage.removeItem('user');
+      return null;
+    }
   }
 }
