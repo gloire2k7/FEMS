@@ -1,112 +1,123 @@
-<!-- FEMS Verify Email — Unified Crimson Split Layout -->
-<div class="min-h-screen flex font-['Inter','Poppins',sans-serif] bg-white overflow-hidden">
+<!-- FEMS Verify Email -->
+<div class="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-3 sm:p-5 font-['Inter',sans-serif]">
 
-  <!-- ── LEFT SIDE PANEL (Light Pink → Red Gradient) ── -->
-  <div class="hidden lg:flex lg:w-[50%] bg-gradient-to-tr from-[#FFE4E6] via-[#E11D48] to-[#5A0E12] text-white flex-col justify-between p-16 relative overflow-hidden">
-    <div class="absolute -top-32 -left-32 w-[500px] h-[500px] bg-gradient-to-br from-red-500/20 to-transparent rounded-full blur-[100px] pointer-events-none"></div>
-    <div class="absolute top-1/4 -right-24 w-[400px] h-[400px] bg-gradient-to-tl from-[#3B0A0D]/40 to-transparent rounded-full blur-[120px] pointer-events-none"></div>
-    <div class="absolute -bottom-32 left-1/4 w-[450px] h-[450px] bg-gradient-to-tr from-red-600/15 to-transparent rounded-full blur-[110px] pointer-events-none"></div>
-    <div class="absolute top-2/3 -left-20 w-72 h-72 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-[80px] pointer-events-none"></div>
+  <div class="w-full max-w-[1100px] bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200/70 overflow-hidden grid lg:grid-cols-12 my-auto lg:h-[600px]">
 
-    <!-- Top: Logo -->
-    <div class="flex items-center gap-3 relative z-10 animate-fade-in-up">
-      <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg">
-        <img src="assets/logo.png" alt="FEMS Logo" class="w-5.5 h-5.5 object-contain brightness-0 invert" />
+    <!-- LEFT VISUAL PANEL -->
+    <div class="lg:col-span-6 bg-[#0E0304] text-white flex flex-col justify-between p-8 sm:p-10 relative overflow-hidden min-h-[320px] lg:h-full rounded-2xl lg:rounded-r-none">
+      <div class="absolute inset-0 bg-gradient-to-br from-[#8C1D24] via-[#5C0D12] to-[#0E0304] opacity-95"></div>
+      <div class="absolute -top-24 -left-24 w-[450px] h-[450px] bg-[#EA580C]/35 rounded-full blur-[110px] pointer-events-none animate-pulse" style="animation-duration: 8s;"></div>
+      <div class="absolute top-1/2 -right-20 w-[380px] h-[380px] bg-[#8C1D24]/40 rounded-full blur-[120px] pointer-events-none"></div>
+
+      <!-- Brand Header -->
+      <div class="relative z-10 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-white/15 border border-white/25 backdrop-blur-md flex items-center justify-center shadow-md">
+          <img src="assets/logo.png" alt="FEMS Logo" class="w-5 h-5 object-contain brightness-0 invert" />
+        </div>
+        <div class="flex flex-col leading-none">
+          <span class="text-xl font-black text-white tracking-tight">FEMS</span>
+          <span class="text-[9px] font-bold text-orange-200 tracking-[0.2em] uppercase mt-0.5">Fire Safety</span>
+        </div>
       </div>
-      <span class="text-lg font-black text-white tracking-tight uppercase">FEMS</span>
+
+      <!-- Headline & Subtitle -->
+      <div class="relative z-10 my-auto py-6">
+        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3.5 py-1.5 mb-5 text-[10px] font-black uppercase tracking-[0.25em] text-white">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#EA580C] animate-pulse"></span>
+          Enterprise Fire Command
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-black tracking-tight leading-[1.12] mb-4 text-white">
+          Verify Your<br/>
+          Email Account
+        </h1>
+        <p class="text-orange-100/80 text-xs sm:text-sm font-normal max-w-xs leading-relaxed">
+          Enter the 6-digit verification code sent to your email to activate your account.
+        </p>
+      </div>
+
+      <!-- Step Cards -->
+      <div class="relative z-10 grid grid-cols-3 gap-2">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl p-2">
+          <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold mb-1">1</span>
+          <p class="text-[11px] font-bold text-orange-100/90 leading-tight">Submit</p>
+          <p class="text-[9px] text-orange-200/70 mt-0.5 font-medium">Completed</p>
+        </div>
+        <div class="bg-white text-slate-900 rounded-xl p-2 border border-white shadow-sm">
+          <span class="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold mb-1">2</span>
+          <p class="text-[11px] font-extrabold leading-tight">Verify email</p>
+          <p class="text-[9px] text-slate-500 mt-0.5 font-medium">In progress</p>
+        </div>
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl p-2">
+          <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold mb-1">3</span>
+          <p class="text-[11px] font-bold text-orange-100/90 leading-tight">Approval</p>
+          <p class="text-[9px] text-orange-200/70 mt-0.5 font-medium">Final step</p>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Center: Headline & Subtitle -->
-    <div class="relative z-10 max-w-xl animate-fade-in-up animate-delay-1">
-      <h1 class="text-6xl font-black tracking-tight mb-6 text-[#8C1D24] leading-[1.1]">Verify<br/>Email</h1>
-      <p class="text-red-100/90 text-sm leading-relaxed max-w-sm font-medium">
-        Enter the 6-digit code we sent to your email to complete your registration.
-      </p>
-    </div>
+    <!-- RIGHT FORM PANEL -->
+    <div class="lg:col-span-6 bg-white p-6 sm:p-8 lg:p-10 flex flex-col justify-center overflow-y-auto lg:h-full">
+      <div class="w-full max-w-[380px] mx-auto py-2">
 
-    <!-- Bottom: Security Trust Card -->
-    <div class="relative z-10 animate-fade-in-up animate-delay-2">
-      <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5 max-w-sm shadow-xl">
-        <div class="flex items-center gap-3 mb-3">
-          <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-            <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+        <!-- Header -->
+        <div class="text-center mb-6">
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Verify your Email</h2>
+          <p class="text-xs font-semibold text-slate-500 mt-1">Enter the 6-digit code sent to your inbox.</p>
+        </div>
+
+        <!-- Success State -->
+        <div *ngIf="success" class="rounded-xl bg-emerald-50 border border-emerald-200 p-4 mb-5">
+          <p class="text-xs font-bold text-emerald-800 mb-1">Email verified</p>
+          <p class="text-[11px] text-emerald-700 leading-relaxed">
+            Thanks! An administrator will review your account.
+          </p>
+          <button type="button" (click)="goToSignin()"
+            class="relative overflow-hidden group mt-3 w-full bg-[#EA580C] text-white py-3 px-4 rounded-xl font-bold text-xs shadow-md">
+            <span class="absolute top-1/2 -left-16 -translate-y-1/2 w-12 h-12 bg-white/45 rounded-full blur-[4px] group-hover:left-[115%] transition-all duration-1200 ease-in-out pointer-events-none"></span>
+            <span class="relative z-10">Back to sign in</span>
+          </button>
+        </div>
+
+        <!-- Form -->
+        <form *ngIf="!success" (submit)="onSubmit()" class="space-y-4">
+          <div *ngIf="error" class="bg-rose-50 text-rose-700 p-3 rounded-xl text-xs font-bold text-center border border-rose-200">
+            {{ error }}
           </div>
+          <div *ngIf="resendMessage" class="bg-emerald-50 text-emerald-700 p-3 rounded-xl text-xs font-bold text-center border border-emerald-200">
+            {{ resendMessage }}
+          </div>
+
           <div>
-            <p class="text-sm font-bold text-white">Secure Registration</p>
-            <p class="text-[10px] text-red-100/70 font-medium">Admin approval required</p>
+            <label class="block text-xs font-bold text-slate-700 mb-1 ml-0.5">Email Address</label>
+            <input type="email" name="email" [(ngModel)]="email" placeholder="eg. johnfrancis@gmail.com"
+              class="w-full bg-[#FAFAFA] border border-slate-200 rounded-xl py-3 px-3.5 text-xs font-medium text-slate-900 placeholder-slate-400 outline-none focus:border-[#EA580C] focus:ring-2 focus:ring-orange-100 focus:bg-white transition-all duration-200" required />
           </div>
-        </div>
-        <p class="text-[11px] text-red-100/80 leading-relaxed">
-          Once verified, an administrator will review your account. You'll receive sign-in details via email upon approval.
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1 ml-0.5">Verification Code</label>
+            <input type="text" name="otp" [(ngModel)]="otp" placeholder="6-digit code" maxlength="6" inputmode="numeric" autocomplete="one-time-code"
+              class="w-full bg-[#FAFAFA] border border-slate-200 rounded-xl py-3 px-3.5 text-xs font-medium text-slate-900 placeholder-slate-400 outline-none focus:border-[#EA580C] focus:ring-2 focus:ring-orange-100 focus:bg-white transition-all duration-200 tracking-[0.3em] text-center" required />
+            <p class="text-[10px] text-slate-400 mt-1 text-center">Code expires in 10 minutes</p>
+          </div>
+
+          <button type="submit" [disabled]="isLoading"
+            class="relative overflow-hidden group w-full bg-[#EA580C] text-white py-3.5 px-5 rounded-xl font-bold text-xs shadow-md shadow-orange-500/20 active:scale-[0.98] transition-all duration-300 disabled:opacity-50 mt-1">
+            <span class="absolute top-1/2 -left-16 -translate-y-1/2 w-12 h-12 bg-white/45 rounded-full blur-[4px] group-hover:left-[115%] transition-all duration-[1200ms] ease-in-out pointer-events-none"></span>
+            <span class="absolute top-1/2 -left-20 -translate-y-1/2 w-16 h-16 bg-gradient-to-r from-transparent via-white/30 to-transparent blur-sm group-hover:left-[115%] transition-all duration-[1200ms] ease-in-out pointer-events-none"></span>
+            <span class="relative z-10">{{ isLoading ? 'Verifying…' : 'Verify email' }}</span>
+          </button>
+        </form>
+
+        <!-- Footer link -->
+        <p *ngIf="!success" class="mt-6 text-center text-xs font-semibold text-slate-500">
+          Didn't get a code?
+          <button type="button" (click)="resendCode()" class="font-bold text-slate-900 underline hover:text-[#EA580C] ml-1 transition-colors">Resend code</button>
         </p>
+
       </div>
     </div>
-  </div>
 
-  <!-- ── RIGHT SIDE PANEL (White Theme Form) ── -->
-  <div class="flex-grow flex items-center justify-center p-8 lg:p-16 bg-white overflow-y-auto">
-    <div class="w-full max-w-[390px]">
-
-      <!-- Mobile Brand Display -->
-      <div class="lg:hidden flex items-center gap-2 mb-8">
-        <div class="w-9 h-9 rounded-xl bg-[#8C1D24] flex items-center justify-center">
-          <img src="assets/logo.png" alt="FEMS Logo" class="w-5.5 h-5.5 object-contain brightness-0 invert" />
-        </div>
-        <span class="text-lg font-black text-gray-950 uppercase">FEMS</span>
-      </div>
-
-      <!-- Title Header -->
-      <div class="mb-8">
-        <h2 class="text-3xl font-black text-gray-950 tracking-tight">Verify your Email</h2>
-        <p class="text-xs font-bold text-gray-400 mt-1.5">Enter the 6-digit code sent to your email.</p>
-      </div>
-
-      <!-- Success State -->
-      <div *ngIf="success" class="rounded-xl bg-emerald-50 border border-emerald-100 p-4 mb-6">
-        <p class="text-[13px] font-semibold text-emerald-800 mb-1">Email verified</p>
-        <p class="text-[12px] text-emerald-700 leading-relaxed">
-          Thanks! An administrator will review your account. Once approved, your sign-in details will be emailed to you.
-        </p>
-        <button type="button" (click)="goToSignin()"
-          class="mt-4 w-full bg-[#8C1D24] text-white py-2.5 rounded-xl text-[12px] font-black uppercase tracking-widest hover:bg-[#6E1318] transition-all">
-          Back to sign in
-        </button>
-      </div>
-
-      <!-- Form -->
-      <form *ngIf="!success" (submit)="onSubmit()" class="space-y-4">
-        <div *ngIf="error" class="bg-red-50 text-red-600 p-3 rounded-xl text-xs font-bold text-center border border-red-100">
-          {{ error }}
-        </div>
-        <div *ngIf="resendMessage" class="bg-emerald-50 text-emerald-600 p-3 rounded-xl text-xs font-bold text-center border border-emerald-100">
-          {{ resendMessage }}
-        </div>
-
-        <div>
-          <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-0.5">Email Address</label>
-          <input type="email" name="email" [(ngModel)]="email" placeholder="you@company.com"
-            class="w-full bg-[#F9FAFB] border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-[#8C1D24] focus:ring-4 focus:ring-red-50 transition-all" required />
-        </div>
-
-        <div>
-          <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-0.5">Verification Code</label>
-          <input type="text" name="otp" [(ngModel)]="otp" placeholder="6-digit code" maxlength="6" inputmode="numeric" autocomplete="one-time-code"
-            class="w-full bg-[#F9FAFB] border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold text-gray-900 placeholder-gray-400 outline-none focus:bg-white focus:border-[#8C1D24] focus:ring-4 focus:ring-red-50 transition-all tracking-[0.3em] text-center" required />
-          <p class="text-[11px] text-gray-400 mt-1 text-center">Code expires in 10 minutes</p>
-        </div>
-
-        <button type="submit" [disabled]="isLoading"
-          class="w-full bg-[#8C1D24] hover:bg-[#6E1318] text-white py-3.5 rounded-xl text-sm font-black uppercase tracking-wider shadow-[0_8px_20px_rgba(140,29,36,0.2)] transition-all transform active:scale-[0.98] disabled:opacity-50 mt-4">
-          {{ isLoading ? 'Verifying…' : 'Verify email' }}
-        </button>
-      </form>
-
-      <p *ngIf="!success" class="mt-8 text-center text-xs font-semibold text-gray-400">
-        Didn't get a code?
-        <button type="button" (click)="resendCode()" class="font-black text-[#8C1D24] hover:text-red-700 ml-1 transition-colors">Resend code</button>
-      </p>
-
-    </div>
   </div>
 
 </div>

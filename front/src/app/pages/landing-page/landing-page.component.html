@@ -1,733 +1,450 @@
 <!-- ================================================================
-     FEMS — Premium Landing Page
+     FEMS — Unified Premium Landing Page (#8C1D24 Crimson & #EA580C Flame Orange)
      ================================================================ -->
-<div class="min-h-screen bg-[#0A0304] font-['Inter',sans-serif] overflow-x-hidden text-white">
+<div class="min-h-screen bg-[#F8FAFC] font-['Inter',sans-serif] overflow-x-hidden text-slate-900 p-2 sm:p-4">
 
-  <!-- ══════════════════════════════════════════════
-       STICKY NAVIGATION
-  ══════════════════════════════════════════════ -->
-  <header
-    class="fixed top-0 left-0 right-0 z-50 nav-glass"
-    [class.scrolled]="isScrolled">
-    <div class="max-w-7xl mx-auto px-5 md:px-8 h-16 md:h-18 flex items-center justify-between">
+  <!-- Outer Canvas Card -->
+  <div class="w-full max-w-[1400px] mx-auto bg-[#F8FAFC] rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/70 overflow-hidden">
 
-      <!-- Logo -->
-      <a routerLink="/" class="flex items-center gap-3 group flex-shrink-0">
-        <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-[#8C1D24] to-[#5A0E12] flex items-center justify-center shadow-lg shadow-red-900/40 group-hover:shadow-red-700/50 transition-shadow">
-          <img src="assets/logo.png" alt="FEMS" class="w-5 h-5 brightness-0 invert object-contain" />
-        </div>
-        <div class="flex flex-col leading-none">
-          <span class="text-lg font-black text-white tracking-tight">FEMS</span>
-          <span class="text-[9px] font-semibold text-red-400/80 tracking-[0.18em] uppercase">Fire Safety</span>
-        </div>
-      </a>
+    <!-- ══════════════════════════════════════════════
+         STICKY NAVIGATION
+    ══════════════════════════════════════════════ -->
+    <header
+      class="sticky top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/70 transition-all duration-300">
+      <div class="px-6 md:px-10 h-20 flex items-center justify-between">
 
-      <!-- Desktop Nav Links -->
-      <nav class="hidden lg:flex items-center gap-1">
-        <a href="#about"        class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-all">About</a>
-        <a href="#features"     class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-all">Features</a>
-        <a href="#how-it-works" class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-all">How it Works</a>
-        <a href="#testimonials" class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-all">Testimonials</a>
-        <a href="#faq"          class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-all">FAQ</a>
-      </nav>
-
-      <!-- CTA Buttons -->
-      <div class="flex items-center gap-3">
-        <a routerLink="/signin" class="hidden sm:block text-sm font-semibold text-white/70 hover:text-white transition-colors px-4 py-2">Sign In</a>
-        <a routerLink="/signup"
-          class="btn-primary-glow bg-gradient-to-r from-[#8C1D24] to-[#C0392B] text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-red-900/40 hover:shadow-red-700/60 hover:-translate-y-0.5 transition-all duration-200">
-          Get Started
+        <!-- Logo -->
+        <a routerLink="/" class="flex items-center gap-3.5 group flex-shrink-0">
+          <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#8C1D24] to-[#EA580C] flex items-center justify-center shadow-md shadow-red-900/15 group-hover:shadow-red-900/25 transition-transform duration-300 group-hover:scale-105">
+            <img src="assets/logo.png" alt="FEMS" class="w-5.5 h-5.5 brightness-0 invert object-contain" />
+          </div>
+          <div class="flex flex-col leading-none">
+            <span class="text-xl font-black text-slate-900 tracking-tight">FEMS</span>
+            <span class="text-[9px] font-bold text-[#8C1D24] tracking-[0.2em] uppercase mt-0.5">Fire Safety</span>
+          </div>
         </a>
-        <!-- Mobile menu button -->
-        <button (click)="mobileMenuOpen = !mobileMenuOpen"
-          class="lg:hidden p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors">
-          <i [attr.data-lucide]="mobileMenuOpen ? 'x' : 'menu'" class="w-5 h-5"></i>
-        </button>
-      </div>
-    </div>
 
-    <!-- Mobile Menu -->
-    <div *ngIf="mobileMenuOpen" class="lg:hidden border-t border-white/10 mobile-nav-enter">
-      <nav class="px-5 py-4 flex flex-col gap-1">
-        <a href="#about"        (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-all">About</a>
-        <a href="#features"     (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-all">Features</a>
-        <a href="#how-it-works" (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-all">How it Works</a>
-        <a href="#testimonials" (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-all">Testimonials</a>
-        <a href="#faq"          (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 rounded-xl transition-all">FAQ</a>
-        <div class="pt-2 border-t border-white/10 mt-2 flex flex-col gap-2">
-          <a routerLink="/signin" class="text-center px-4 py-3 text-sm font-semibold text-white/70 hover:text-white">Sign In</a>
-          <a routerLink="/signup" class="text-center bg-gradient-to-r from-[#8C1D24] to-[#C0392B] px-4 py-3 rounded-xl text-sm font-bold">Get Started Free</a>
-        </div>
-      </nav>
-    </div>
-  </header>
+        <!-- Desktop Nav Links -->
+        <nav class="hidden lg:flex items-center gap-2">
+          <a href="#about"        class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-[#8C1D24] hover:bg-orange-50/60 rounded-xl transition-all">About</a>
+          <a href="#features"     class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-[#8C1D24] hover:bg-orange-50/60 rounded-xl transition-all">Features</a>
+          <a href="#how-it-works" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-[#8C1D24] hover:bg-orange-50/60 rounded-xl transition-all">How it Works</a>
+          <a href="#testimonials" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-[#8C1D24] hover:bg-orange-50/60 rounded-xl transition-all">Testimonials</a>
+          <a href="#faq"          class="px-4 py-2 text-sm font-semibold text-slate-600 hover:text-[#8C1D24] hover:bg-orange-50/60 rounded-xl transition-all">FAQ</a>
+        </nav>
 
-
-  <!-- ══════════════════════════════════════════════
-       HERO SECTION
-  ══════════════════════════════════════════════ -->
-  <section class="relative min-h-screen flex flex-col justify-center overflow-hidden pt-16">
-
-    <!-- Dark cinematic background -->
-    <div class="absolute inset-0 bg-[#0A0304]"></div>
-    <div class="absolute inset-0 grid-bg opacity-100"></div>
-
-    <!-- Glowing orbs -->
-    <div class="hero-orb-1 absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-[#8C1D24]/20 blur-[120px] pointer-events-none"></div>
-    <div class="hero-orb-2 absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-[#C0392B]/15 blur-[100px] pointer-events-none"></div>
-    <div class="hero-orb-3 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-[#5A0E12]/25 blur-[80px] pointer-events-none"></div>
-
-    <div class="relative z-10 max-w-7xl mx-auto px-5 md:px-8 py-24 grid lg:grid-cols-2 gap-16 items-center">
-
-      <!-- ── LEFT: Copy ── -->
-      <div>
-        <!-- Live badge -->
-        <div class="stagger-1 inline-flex items-center gap-2.5 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-8 backdrop-blur-sm">
-          <span class="relative flex h-2.5 w-2.5">
-            <span class="badge-live absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-          </span>
-          <span class="text-xs font-semibold text-white/80 tracking-wide">Trusted by Safety Officers Worldwide</span>
-        </div>
-
-        <!-- Headline -->
-        <h1 class="stagger-2 text-5xl md:text-6xl xl:text-7xl font-black leading-[1.07] tracking-[-0.03em] text-white mb-6">
-          Command Your<br/>
-          Fire Safety<br/>
-          <span class="gradient-text">Infrastructure.</span>
-        </h1>
-
-        <!-- Subhead -->
-        <p class="stagger-3 text-lg text-white/50 leading-relaxed mb-10 max-w-xl font-medium">
-          FEMS unifies your entire fire extinguisher fleet — inventory, inspections, compliance,
-          refills, and multi-site logistics — into one beautifully powerful platform.
-        </p>
-
-        <!-- CTA Buttons -->
-        <div class="stagger-4 flex flex-col sm:flex-row gap-4 items-start">
+        <!-- CTA Buttons (Shape-Changing Hover: rounded-xl -> rounded-full without color change) -->
+        <div class="flex items-center gap-3">
+          <a routerLink="/signin" class="hidden sm:block text-sm font-bold text-slate-700 hover:text-[#8C1D24] transition-colors px-4 py-2">Sign In</a>
           <a routerLink="/signup"
-            class="btn-primary-glow group inline-flex items-center gap-3 bg-gradient-to-r from-[#8C1D24] to-[#C0392B] text-white font-bold text-sm px-8 py-4 rounded-2xl shadow-xl shadow-red-900/40 hover:shadow-red-700/60 hover:-translate-y-1 transition-all duration-300">
-            <span>Initialize Your Workspace</span>
-            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+            class="bg-[#EA580C] text-white text-sm font-bold px-6 py-3 rounded-xl hover:rounded-full hover:scale-[1.02] shadow-md shadow-orange-500/20 transition-all duration-300">
+            Get Started
           </a>
-          <a href="#features"
-            class="inline-flex items-center gap-3 text-sm font-semibold text-white/60 hover:text-white px-8 py-4 rounded-2xl border border-white/10 hover:border-white/25 hover:bg-white/5 transition-all duration-300">
-            <i data-lucide="play-circle" class="w-4 h-4"></i>
-            <span>See How it Works</span>
-          </a>
-        </div>
-
-        <!-- Trust proof row -->
-        <div class="stagger-5 mt-12 flex items-center gap-6">
-          <div class="flex -space-x-3">
-            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-red-700 to-red-900 border-2 border-[#0A0304] flex items-center justify-center text-[10px] font-black">JK</div>
-            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-rose-700 to-red-800 border-2 border-[#0A0304] flex items-center justify-center text-[10px] font-black">AM</div>
-            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-red-600 to-rose-900 border-2 border-[#0A0304] flex items-center justify-center text-[10px] font-black">PO</div>
-            <div class="w-9 h-9 rounded-full bg-white/10 border-2 border-[#0A0304] flex items-center justify-center text-[10px] font-bold text-white/60">+99</div>
-          </div>
-          <div class="h-8 w-px bg-white/10"></div>
-          <div class="flex flex-col">
-            <div class="flex items-center gap-1 mb-0.5">
-              <i data-lucide="star" class="w-3.5 h-3.5 text-yellow-400 fill-yellow-400"></i>
-              <i data-lucide="star" class="w-3.5 h-3.5 text-yellow-400 fill-yellow-400"></i>
-              <i data-lucide="star" class="w-3.5 h-3.5 text-yellow-400 fill-yellow-400"></i>
-              <i data-lucide="star" class="w-3.5 h-3.5 text-yellow-400 fill-yellow-400"></i>
-              <i data-lucide="star" class="w-3.5 h-3.5 text-yellow-400 fill-yellow-400"></i>
-            </div>
-            <span class="text-xs text-white/50 font-medium">Rated 4.9/5 by safety teams</span>
-          </div>
+          <!-- Mobile menu button -->
+          <button (click)="mobileMenuOpen = !mobileMenuOpen"
+            class="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i [attr.data-lucide]="mobileMenuOpen ? 'x' : 'menu'" class="w-6 h-6"></i>
+          </button>
         </div>
       </div>
 
-      <!-- ── RIGHT: Dashboard Mockup ── -->
-      <div class="relative flex items-center justify-center h-[540px] lg:h-[600px]">
-
-        <!-- Outer spinning ring -->
-        <div class="spin-slow absolute w-[460px] h-[460px] rounded-full border border-dashed border-[#8C1D24]/20"></div>
-        <div class="spin-reverse absolute w-[380px] h-[380px] rounded-full border border-[#8C1D24]/10"></div>
-
-        <!-- Central glow -->
-        <div class="absolute w-72 h-72 rounded-full bg-[#8C1D24]/30 blur-[60px]"></div>
-
-        <!-- Main dashboard card -->
-        <div class="relative z-10 w-[320px] bg-[#140608]/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl shadow-black/60 p-5 float-a">
-          <!-- Card header -->
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <p class="text-[10px] font-bold text-white/40 uppercase tracking-wider">Fleet Overview</p>
-              <p class="text-base font-black text-white">Active Extinguishers</p>
-            </div>
-            <div class="w-8 h-8 rounded-xl bg-[#8C1D24]/30 flex items-center justify-center">
-              <i data-lucide="flame" class="w-4 h-4 text-red-400"></i>
-            </div>
+      <!-- Mobile Menu -->
+      <div *ngIf="mobileMenuOpen" class="lg:hidden bg-white/95 border-t border-slate-100 shadow-lg">
+        <nav class="px-6 py-4 flex flex-col gap-1.5">
+          <a href="#about"        (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 rounded-xl">About</a>
+          <a href="#features"     (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 rounded-xl">Features</a>
+          <a href="#how-it-works" (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 rounded-xl">How it Works</a>
+          <a href="#testimonials" (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 rounded-xl">Testimonials</a>
+          <a href="#faq"          (click)="mobileMenuOpen=false" class="px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-orange-50 rounded-xl">FAQ</a>
+          <div class="pt-3 border-t border-slate-100 mt-2 flex flex-col gap-2.5">
+            <a routerLink="/signin" class="text-center px-4 py-3 text-sm font-bold text-slate-700">Sign In</a>
+            <a routerLink="/signup" class="text-center bg-[#EA580C] text-white px-4 py-3.5 rounded-xl hover:rounded-full transition-all text-sm font-bold shadow-md">Get Started Free</a>
           </div>
-
-          <!-- Status rings visual -->
-          <div class="flex items-center gap-4 mb-5">
-            <div class="relative w-20 h-20 flex-shrink-0">
-              <svg viewBox="0 0 80 80" class="w-full h-full -rotate-90">
-                <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
-                <circle cx="40" cy="40" r="32" fill="none" stroke="#8C1D24" stroke-width="8"
-                  stroke-dasharray="201" stroke-dashoffset="30" stroke-linecap="round"/>
-                <circle cx="40" cy="40" r="22" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="6"/>
-                <circle cx="40" cy="40" r="22" fill="none" stroke="#16a34a" stroke-width="6"
-                  stroke-dasharray="138" stroke-dashoffset="28" stroke-linecap="round"/>
-              </svg>
-              <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <span class="text-lg font-black text-white leading-none">247</span>
-                <span class="text-[8px] text-white/40 font-semibold">UNITS</span>
-              </div>
-            </div>
-            <div class="flex-1 space-y-2.5">
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span class="text-white/50 font-medium">Filled</span>
-                  <span class="text-white font-bold">84%</span>
-                </div>
-                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                  <div class="progress-bar-fill w-[84%]"></div>
-                </div>
-              </div>
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span class="text-white/50 font-medium">Compliant</span>
-                  <span class="text-green-400 font-bold">96%</span>
-                </div>
-                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                  <div class="h-full rounded-full bg-gradient-to-r from-green-700 to-green-500 w-[96%] transition-all duration-1000"></div>
-                </div>
-              </div>
-              <div>
-                <div class="flex justify-between text-xs mb-1">
-                  <span class="text-white/50 font-medium">Inspected</span>
-                  <span class="text-amber-400 font-bold">72%</span>
-                </div>
-                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                  <div class="h-full rounded-full bg-gradient-to-r from-amber-700 to-amber-400 w-[72%] transition-all duration-1000"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Mini location list -->
-          <div class="space-y-2 border-t border-white/5 pt-4">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-                <span class="text-xs text-white/70 font-medium">Building A — Floor 2</span>
-              </div>
-              <span class="text-[10px] font-bold text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">OK</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
-                <span class="text-xs text-white/70 font-medium">Warehouse B — Sector 4</span>
-              </div>
-              <span class="text-[10px] font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full">Due</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>
-                <span class="text-xs text-white/70 font-medium">Server Room — R-12</span>
-              </div>
-              <span class="text-[10px] font-bold text-red-400 bg-red-400/10 px-2 py-0.5 rounded-full">Alert</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Floating card: Compliance -->
-        <div class="float-b absolute -top-4 -right-6 lg:-right-10 bg-[#140608]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-xl shadow-black/50 w-[170px]">
-          <div class="flex items-center gap-2 mb-2">
-            <div class="w-7 h-7 rounded-lg bg-green-500/15 flex items-center justify-center">
-              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-green-400"></i>
-            </div>
-            <span class="text-[10px] font-bold text-white/40 uppercase tracking-wider">Compliance</span>
-          </div>
-          <p class="text-2xl font-black text-white">99.8%</p>
-          <p class="text-[10px] text-green-400 font-semibold mt-0.5">↑ 2.1% this month</p>
-        </div>
-
-        <!-- Floating card: Alert -->
-        <div class="float-c absolute -bottom-4 -left-6 lg:-left-10 bg-[#140608]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-xl shadow-black/50 min-w-[190px]">
-          <div class="flex items-center gap-2 mb-3">
-            <div class="relative w-7 h-7 rounded-lg bg-red-500/15 flex items-center justify-center">
-              <i data-lucide="bell" class="w-3.5 h-3.5 text-red-400"></i>
-            </div>
-            <span class="text-[10px] font-bold text-white/40 uppercase tracking-wider">Live Alert</span>
-          </div>
-          <p class="text-xs font-bold text-white mb-0.5">Inspection Due — Site C</p>
-          <p class="text-[10px] text-white/40">3 units require immediate check</p>
-          <div class="mt-2.5 flex gap-1.5">
-            <div class="h-1 flex-1 rounded-full bg-red-500"></div>
-            <div class="h-1 flex-1 rounded-full bg-red-500/40"></div>
-            <div class="h-1 flex-1 rounded-full bg-red-500/20"></div>
-          </div>
-        </div>
-
-        <!-- Floating GPS badge -->
-        <div class="float-b absolute bottom-16 -right-4 lg:-right-8 bg-[#140608]/95 backdrop-blur-xl border border-white/10 rounded-full px-4 py-2.5 shadow-xl shadow-black/50 flex items-center gap-2.5">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
-          </span>
-          <span class="text-xs font-bold text-white/80">GPS Tracking Live</span>
-        </div>
+        </nav>
       </div>
-
-    </div>
-
-    <!-- Scroll indicator -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30 hover:text-white/60 transition-colors cursor-pointer" (click)="scrollToSection('about')">
-      <span class="text-[10px] font-semibold tracking-widest uppercase">Scroll</span>
-      <i data-lucide="chevron-down" class="w-4 h-4 animate-bounce"></i>
-    </div>
-  </section>
+    </header>
 
 
-  <!-- ══════════════════════════════════════════════
-       STATS STRIP
-  ══════════════════════════════════════════════ -->
-  <section class="py-16 border-y border-white/5 bg-[#0D0406]/80">
-    <div class="max-w-6xl mx-auto px-5 md:px-8">
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
-        <div *ngFor="let stat of stats; let i = index" class="text-center">
-          <p class="text-4xl md:text-5xl font-black text-white mb-1 tracking-tight">
-            {{ stat.value }}<span class="text-[#8C1D24]">{{ stat.suffix }}</span>
-          </p>
-          <p class="text-sm text-white/40 font-medium uppercase tracking-wider">{{ stat.label }}</p>
-        </div>
-      </div>
-    </div>
-  </section>
+    <!-- ══════════════════════════════════════════════
+         HERO SECTION (Matching Auth Split Mesh Card Vibe)
+    ══════════════════════════════════════════════ -->
+    <section class="p-4 sm:p-8">
+      
+      <!-- Wide Split Banner Card -->
+      <div class="relative bg-[#0E0304] rounded-2xl overflow-hidden text-white grid lg:grid-cols-12 min-h-[540px] shadow-xl border border-slate-800">
+        
+        <!-- Background Flame Mesh Gradients -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#8C1D24] via-[#5C0D12] to-[#0E0304] opacity-95"></div>
+        <div class="absolute -top-24 -left-24 w-[550px] h-[550px] bg-[#EA580C]/35 rounded-full blur-[120px] pointer-events-none animate-pulse" style="animation-duration: 9s;"></div>
+        <div class="absolute top-1/2 -right-20 w-[500px] h-[500px] bg-[#8C1D24]/40 rounded-full blur-[130px] pointer-events-none"></div>
 
-
-  <!-- ══════════════════════════════════════════════
-       ABOUT SECTION
-  ══════════════════════════════════════════════ -->
-  <section id="about" class="py-28 max-w-7xl mx-auto px-5 md:px-8">
-    <div class="grid lg:grid-cols-2 gap-20 items-center">
-
-      <!-- Left: Visual blocks -->
-      <div class="relative">
-        <!-- Large crimson feature block -->
-        <div class="relative bg-gradient-to-br from-[#8C1D24] via-[#6E1318] to-[#3D0709] rounded-3xl p-10 overflow-hidden shadow-2xl shadow-red-950/60">
-          <div class="noise-overlay rounded-3xl"></div>
-          <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
-          <div class="absolute -bottom-12 -left-12 w-48 h-48 bg-black/20 rounded-full blur-2xl pointer-events-none"></div>
-          <div class="relative z-10">
-            <div class="w-16 h-16 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center mb-8 shadow-xl">
-              <img src="assets/logo.png" class="w-9 h-9 brightness-0 invert object-contain" alt="" />
-            </div>
-            <h3 class="text-3xl font-black text-white mb-4 leading-tight">Next-Generation<br/>Safety Operations</h3>
-            <p class="text-red-100/70 text-sm leading-relaxed font-medium max-w-xs">
-              Replace clipboards, spreadsheets, and manual logs with a real-time digital command centre.
-            </p>
-          </div>
-
-          <!-- Mini stat chips inside the card -->
-          <div class="relative z-10 mt-8 flex gap-3 flex-wrap">
-            <div class="bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 backdrop-blur-sm">
-              <p class="text-xl font-black text-white">10K+</p>
-              <p class="text-[10px] text-red-200/70 uppercase font-bold tracking-wider">Units Tracked</p>
-            </div>
-            <div class="bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 backdrop-blur-sm">
-              <p class="text-xl font-black text-white">100%</p>
-              <p class="text-[10px] text-red-200/70 uppercase font-bold tracking-wider">System Uptime</p>
-            </div>
-            <div class="bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 backdrop-blur-sm">
-              <p class="text-xl font-black text-white">60+</p>
-              <p class="text-[10px] text-red-200/70 uppercase font-bold tracking-wider">Client Sites</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Floating badge -->
-        <div class="absolute -bottom-5 -right-5 lg:-right-8 bg-[#0D0406] border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center gap-3">
-          <div class="w-11 h-11 rounded-xl bg-green-500/15 border border-green-500/20 flex items-center justify-center">
-            <i data-lucide="shield-check" class="w-5 h-5 text-green-400"></i>
-          </div>
+        <!-- Left Copy Side -->
+        <div class="lg:col-span-7 p-8 sm:p-12 relative z-10 flex flex-col justify-between">
           <div>
-            <p class="text-sm font-black text-white">Zero Compliance Failures</p>
-            <p class="text-xs text-white/40">100% Audit Readiness</p>
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-1.5 mb-8 shadow-xs">
+              <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#EA580C]"></span>
+              </span>
+              <span class="text-xs font-bold text-orange-200 tracking-wide">Next-Gen Fire Safety Platform</span>
+            </div>
+
+            <!-- Headline -->
+            <h1 class="text-4xl sm:text-5xl font-black leading-[1.08] tracking-tight mb-5 text-white drop-shadow-md">
+              Convert your ideas<br/>
+              into fire safety control.
+            </h1>
+
+            <!-- Subhead -->
+            <p class="text-orange-100/80 text-base leading-relaxed max-w-xl font-normal mb-8">
+              FEMS unifies your fire extinguisher inventory, inspection schedules, regulatory compliance, and multi-site maintenance into one audit-ready dashboard.
+            </p>
+
+            <!-- CTA Buttons (Shape-Changing Hover: rounded-xl -> rounded-full without color change) -->
+            <div class="flex flex-col sm:flex-row gap-3.5 items-stretch sm:items-center">
+              <a routerLink="/signup"
+                class="inline-flex items-center justify-center gap-3 bg-[#EA580C] text-white font-bold text-base px-8 py-4 rounded-xl hover:rounded-full hover:scale-[1.02] shadow-lg shadow-orange-500/25 transition-all duration-300">
+                <span>Initialize Free Workspace</span>
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+              </a>
+              <a href="#features"
+                class="inline-flex items-center justify-center gap-2.5 text-base font-bold text-white/90 hover:text-white px-7 py-4 rounded-xl hover:rounded-full border border-white/20 hover:bg-white/10 backdrop-blur-md transition-all duration-300">
+                <i data-lucide="play-circle" class="w-5 h-5 text-orange-300"></i>
+                <span>Explore Platform</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Bottom Step Pills (Hover shape morphs) -->
+          <div class="grid grid-cols-3 gap-3 pt-8 mt-6 border-t border-white/15">
+            <div class="bg-white text-slate-900 rounded-xl hover:rounded-2xl p-3.5 shadow-lg border border-white transition-all duration-300 hover:-translate-y-1">
+              <span class="w-5 h-5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold mb-2">1</span>
+              <p class="text-[11px] font-extrabold leading-tight">Register workspace</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl hover:rounded-2xl p-3.5 transition-all duration-300 hover:-translate-y-1 hover:bg-white/15">
+              <span class="w-5 h-5 rounded-full bg-white/20 text-white flex items-center justify-center text-[10px] font-bold mb-2">2</span>
+              <p class="text-[11px] font-bold text-orange-100/90 leading-tight">Audit safety fleet</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl hover:rounded-2xl p-3.5 transition-all duration-300 hover:-translate-y-1 hover:bg-white/15">
+              <span class="w-5 h-5 rounded-full bg-white/20 text-white flex items-center justify-center text-[10px] font-bold mb-2">3</span>
+              <p class="text-[11px] font-bold text-orange-100/90 leading-tight">Automate compliance</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Visual Component Side -->
+        <div class="lg:col-span-5 relative p-8 lg:p-10 flex items-center justify-center">
+
+          <!-- Main Floating Glass Card -->
+          <div class="relative z-10 w-full max-w-[340px] bg-white/95 text-slate-900 backdrop-blur-xl border border-white rounded-2xl shadow-2xl p-6 transition-transform duration-300 hover:scale-[1.01]">
+            <div class="flex items-center justify-between mb-5">
+              <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fleet Status</p>
+                <p class="text-lg font-black text-slate-900">Active Extinguishers</p>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-orange-100 border border-orange-200 flex items-center justify-center">
+                <i data-lucide="flame" class="w-5 h-5 text-[#8C1D24]"></i>
+              </div>
+            </div>
+
+            <!-- Status Ring -->
+            <div class="flex items-center gap-4 mb-5 bg-[#F8FAFC] p-4 rounded-xl border border-slate-100">
+              <div class="relative w-18 h-18 flex-shrink-0">
+                <svg viewBox="0 0 80 80" class="w-full h-full -rotate-90">
+                  <circle cx="40" cy="40" r="32" fill="none" stroke="#E2E8F0" stroke-width="8"/>
+                  <circle cx="40" cy="40" r="32" fill="none" stroke="#8C1D24" stroke-width="8"
+                    stroke-dasharray="201" stroke-dashoffset="30" stroke-linecap="round"/>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-xl font-black text-slate-900 leading-none">247</span>
+                  <span class="text-[8px] text-slate-400 font-bold">UNITS</span>
+                </div>
+              </div>
+              <div class="flex-1 space-y-2">
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="text-slate-600 font-medium">Filled</span>
+                    <span class="text-slate-900 font-bold">96%</span>
+                  </div>
+                  <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full bg-gradient-to-r from-[#8C1D24] to-[#EA580C] w-[96%]"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="text-slate-600 font-medium">Inspected</span>
+                    <span class="text-[#EA580C] font-bold">88%</span>
+                  </div>
+                  <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full bg-[#EA580C] w-[88%]"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mini List -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#F8FAFC]">
+                <div class="flex items-center gap-2">
+                  <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                  <span class="text-xs text-slate-700 font-bold">HQ Main Office</span>
+                </div>
+                <span class="text-[10px] font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">OK</span>
+              </div>
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#F8FAFC]">
+                <div class="flex items-center gap-2">
+                  <div class="w-2 h-2 rounded-full bg-orange-500"></div>
+                  <span class="text-xs text-slate-700 font-bold">Warehouse B</span>
+                </div>
+                <span class="text-[10px] font-extrabold text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">Due</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════
+         STATS STRIP
+    ══════════════════════════════════════════════ -->
+    <section class="py-10 border-y border-slate-200/70 bg-[#F8FAFC]">
+      <div class="max-w-6xl mx-auto px-6 md:px-10">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div *ngFor="let stat of stats; let i = index" class="text-center">
+            <p class="text-4xl md:text-5xl font-black text-slate-900 mb-1 tracking-tight">
+              {{ stat.value }}<span class="text-[#EA580C]">{{ stat.suffix }}</span>
+            </p>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">{{ stat.label }}</p>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Right: Copy -->
-      <div>
-        <span class="inline-flex items-center gap-2 text-[#8C1D24] font-bold tracking-widest text-xs uppercase mb-5 border border-[#8C1D24]/30 bg-[#8C1D24]/10 rounded-full px-3 py-1">
-          <i data-lucide="zap" class="w-3 h-3"></i>
-          Our Philosophy
-        </span>
-        <h2 class="text-4xl lg:text-5xl font-black text-white leading-[1.1] tracking-tight mb-6">
-          We Build Technology<br/>
-          <span class="text-white/40">That</span> Saves Lives.
-        </h2>
-        <p class="text-white/50 leading-relaxed mb-6 text-base font-medium">
-          FEMS consolidates every fire safety function into one platform — inventory matrices, multi-location maps, inspection assignments, refill workflows, and audit-ready compliance reports.
-        </p>
-        <p class="text-white/30 leading-relaxed mb-10 text-sm">
-          By automating regulatory reminders and giving field inspectors a mobile-friendly interface, FEMS turns a reactive safety culture into a proactive one.
-        </p>
 
-        <!-- Feature check-list -->
-        <ul class="space-y-4">
-          <li *ngFor="let point of aboutPoints" class="flex items-center gap-3">
-            <div class="w-6 h-6 rounded-lg bg-[#8C1D24]/20 border border-[#8C1D24]/30 flex items-center justify-center flex-shrink-0">
-              <i data-lucide="check" class="w-3.5 h-3.5 text-red-400"></i>
+    <!-- ══════════════════════════════════════════════
+         ABOUT SECTION
+    ══════════════════════════════════════════════ -->
+    <section id="about" class="py-16 px-6 md:px-10 max-w-7xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+        <!-- Visual Block -->
+        <div class="relative">
+          <div class="bg-[#0E0304] rounded-2xl p-8 text-white relative overflow-hidden shadow-xl border border-slate-800">
+            <div class="absolute inset-0 bg-gradient-to-br from-[#8C1D24] via-[#5C0D12] to-[#0E0304] opacity-95"></div>
+            <div class="absolute -top-20 -left-20 w-80 h-80 bg-[#EA580C]/30 rounded-full blur-[90px] pointer-events-none"></div>
+
+            <div class="relative z-10">
+              <div class="w-12 h-12 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center mb-6 shadow-md">
+                <img src="assets/logo.png" class="w-7 h-7 brightness-0 invert object-contain" alt="" />
+              </div>
+              <h3 class="text-3xl font-black text-white mb-4 leading-tight">Next-Generation<br/>Fire Safety Command</h3>
+              <p class="text-orange-100/80 text-sm leading-relaxed font-normal mb-8">
+                Replace outdated paper logs and disjointed spreadsheets with a real-time digital compliance hub.
+              </p>
+
+              <div class="flex gap-3 flex-wrap">
+                <div class="bg-white/10 border border-white/15 rounded-xl px-4 py-2.5 backdrop-blur-md">
+                  <p class="text-xl font-black text-white">10K+</p>
+                  <p class="text-[9px] text-orange-100/80 uppercase font-bold tracking-wider">Units Managed</p>
+                </div>
+                <div class="bg-white/10 border border-white/15 rounded-xl px-4 py-2.5 backdrop-blur-md">
+                  <p class="text-xl font-black text-white">100%</p>
+                  <p class="text-[9px] text-orange-100/80 uppercase font-bold tracking-wider">Audit Success</p>
+                </div>
+              </div>
             </div>
-            <span class="text-sm font-medium text-white/70">{{ point }}</span>
-          </li>
-        </ul>
+          </div>
+        </div>
 
-        <div class="mt-10">
+        <!-- Copy Side -->
+        <div>
+          <span class="inline-flex items-center gap-2 text-[#8C1D24] font-bold tracking-widest text-xs uppercase mb-4 border border-[#8C1D24]/20 bg-orange-50 rounded-full px-3.5 py-1">
+            <i data-lucide="zap" class="w-3.5 h-3.5 text-[#EA580C]"></i>
+            Our Philosophy
+          </span>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-[1.12] tracking-tight mb-6">
+            Proactive Safety,<br/>
+            Zero Audit Surprises.
+          </h2>
+          <p class="text-slate-600 leading-relaxed mb-6 text-base font-normal">
+            FEMS consolidates every fire safety function into one intelligent platform — location tracking, mandatory inspection routines, refill request approvals, and audit-ready reporting.
+          </p>
+
+          <ul class="space-y-3 mb-8">
+            <li *ngFor="let point of aboutPoints" class="flex items-center gap-3">
+              <div class="w-6 h-6 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="check" class="w-4 h-4 text-[#8C1D24]"></i>
+              </div>
+              <span class="text-sm font-semibold text-slate-700">{{ point }}</span>
+            </li>
+          </ul>
+
+          <!-- Shape-changing Hover Button -->
           <a routerLink="/signup"
-            class="btn-primary-glow inline-flex items-center gap-3 bg-gradient-to-r from-[#8C1D24] to-[#C0392B] text-white font-bold text-sm px-7 py-4 rounded-2xl shadow-lg shadow-red-900/40 hover:-translate-y-1 transition-all duration-300">
-            <span>Start for Free</span>
+            class="inline-flex items-center gap-3 bg-[#EA580C] text-white font-bold text-sm px-8 py-4 rounded-xl hover:rounded-full hover:scale-[1.02] shadow-md transition-all duration-300">
+            <span>Get Started Now</span>
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </a>
         </div>
+
       </div>
-    </div>
-  </section>
+    </section>
 
 
-  <!-- ══════════════════════════════════════════════
-       FEATURES SECTION
-  ══════════════════════════════════════════════ -->
-  <section id="features" class="py-28 bg-[#0D0406]/60 border-y border-white/5">
-    <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <!-- ══════════════════════════════════════════════
+         FEATURES SECTION
+    ══════════════════════════════════════════════ -->
+    <section id="features" class="py-16 bg-[#F8FAFC] border-y border-slate-200/70 px-6 md:px-10">
+      <div class="max-w-7xl mx-auto">
 
-      <!-- Section header -->
-      <div class="text-center max-w-2xl mx-auto mb-20">
-        <span class="inline-flex items-center gap-2 text-[#8C1D24] font-bold tracking-widest text-xs uppercase mb-5 border border-[#8C1D24]/30 bg-[#8C1D24]/10 rounded-full px-3 py-1">
-          <i data-lucide="layers" class="w-3 h-3"></i>
-          Platform Capabilities
-        </span>
-        <h2 class="text-4xl lg:text-5xl font-black text-white mb-4 leading-tight tracking-tight">
-          Every Module You Need.<br/><span class="text-white/30">Nothing You Don't.</span>
-        </h2>
-        <p class="text-white/40 text-base font-medium">
-          Built from the ground up for fire safety professionals — not generic enterprise software repurposed.
-        </p>
-      </div>
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="inline-flex items-center gap-2 text-[#8C1D24] font-bold tracking-widest text-xs uppercase mb-4 border border-[#8C1D24]/20 bg-white rounded-full px-3.5 py-1 shadow-xs">
+            <i data-lucide="layers" class="w-3.5 h-3.5 text-[#EA580C]"></i>
+            Platform Capabilities
+          </span>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4 leading-tight tracking-tight">
+            Everything You Need to Manage Extinguishers.
+          </h2>
+          <p class="text-slate-600 text-base font-normal">
+            Designed specifically for fire safety administrators, facility managers, and safety compliance teams.
+          </p>
+        </div>
 
-      <!-- Features grid -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div *ngFor="let f of features; let i = index"
-          class="feature-card group relative bg-[#100406]/80 border rounded-2xl p-7 cursor-default overflow-hidden"
-          [class.border-[#8C1D24]/40]="f.featured"
-          [class.border-white/5]="!f.featured"
-          [class.bg-gradient-to-br]="f.featured"
-          [class.from-[#8C1D24]]="f.featured"
-          [class.via-[#6E1318]]="f.featured"
-          [class.to-[#3D0709]]="f.featured"
-          [class.row-span-1]="true">
-
-          <!-- Glow effect (always present, revealed on hover via ::before) -->
-          <div *ngIf="f.featured" class="noise-overlay rounded-2xl"></div>
-
-          <div class="relative z-10">
-            <!-- Icon -->
-            <div class="w-12 h-12 rounded-xl mb-6 flex items-center justify-center flex-shrink-0 transition-colors duration-300"
-              [class.bg-white/15]="f.featured"
-              [class.border]="!f.featured"
-              [class.border-[#8C1D24]/20]="!f.featured"
-              [class.bg-[#8C1D24]/10]="!f.featured"
-              [class.group-hover:bg-[#8C1D24]/20]="!f.featured">
-              <i [attr.data-lucide]="f.icon" class="w-5 h-5"
-                [class.text-white]="f.featured"
-                [class.text-red-400]="!f.featured"></i>
+        <!-- Features Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div *ngFor="let f of features; let i = index"
+            class="bg-white border border-slate-200/80 rounded-2xl p-7 shadow-xs hover:border-orange-300 hover:shadow-md transition-all">
+            <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center bg-orange-50 border border-orange-100">
+              <i [attr.data-lucide]="f.icon" class="w-6 h-6 text-[#8C1D24]"></i>
             </div>
-
-            <!-- Content -->
-            <h3 class="text-lg font-black mb-3"
-              [class.text-white]="true">{{ f.title }}</h3>
-            <p class="text-sm leading-relaxed mb-6"
-              [class.text-white/60]="!f.featured"
-              [class.text-red-100/70]="f.featured">{{ f.desc }}</p>
-
-            <!-- Tags -->
+            <h3 class="text-lg font-black text-slate-900 mb-2.5 tracking-tight">{{ f.title }}</h3>
+            <p class="text-sm text-slate-600 leading-relaxed mb-5 font-normal">{{ f.desc }}</p>
             <div class="flex flex-wrap gap-2">
               <span *ngFor="let tag of f.tags"
-                class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg"
-                [class.bg-white/10]="f.featured"
-                [class.text-red-100/80]="f.featured"
-                [class.bg-[#8C1D24]/10]="!f.featured"
-                [class.text-red-400/80]="!f.featured">
+                class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-[#F8FAFC] text-slate-700">
                 {{ tag }}
               </span>
             </div>
           </div>
         </div>
+
       </div>
-    </div>
-  </section>
+    </section>
 
 
-  <!-- ══════════════════════════════════════════════
-       HOW IT WORKS
-  ══════════════════════════════════════════════ -->
-  <section id="how-it-works" class="py-28 max-w-7xl mx-auto px-5 md:px-8">
-    <div class="text-center max-w-xl mx-auto mb-20">
-      <span class="inline-flex items-center gap-2 text-[#8C1D24] font-bold tracking-widest text-xs uppercase mb-5 border border-[#8C1D24]/30 bg-[#8C1D24]/10 rounded-full px-3 py-1">
-        <i data-lucide="workflow" class="w-3 h-3"></i>
-        Simple Process
-      </span>
-      <h2 class="text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
-        Up and Running in<br/><span class="gradient-text">Under 5 Minutes.</span>
-      </h2>
-    </div>
-
-    <div class="relative">
-      <!-- Connecting line (desktop) -->
-      <div class="hidden lg:block absolute top-12 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#8C1D24]/40 to-transparent"></div>
+    <!-- ══════════════════════════════════════════════
+         HOW IT WORKS
+    ══════════════════════════════════════════════ -->
+    <section id="how-it-works" class="py-16 px-6 md:px-10 max-w-7xl mx-auto">
+      <div class="text-center max-w-xl mx-auto mb-12">
+        <span class="inline-flex items-center gap-2 text-[#8C1D24] font-bold tracking-widest text-xs uppercase mb-4 border border-[#8C1D24]/20 bg-orange-50 rounded-full px-3.5 py-1">
+          <i data-lucide="workflow" class="w-3.5 h-3.5 text-[#EA580C]"></i>
+          Simple Onboarding
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-black text-slate-900 leading-tight tracking-tight">
+          4 Steps to Complete Control.
+        </h2>
+      </div>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div *ngFor="let step of steps; let i = index"
-          class="relative group flex flex-col items-center text-center p-7 rounded-2xl bg-[#100406]/60 border border-white/5 hover:border-[#8C1D24]/30 hover:bg-[#100406] transition-all duration-300">
-
-          <!-- Step number -->
-          <div class="relative z-10 w-14 h-14 rounded-2xl mb-6 flex items-center justify-center font-black text-2xl text-white shadow-lg transition-all duration-300"
-            [style.background]="'linear-gradient(135deg, #8C1D24, #5A0E12)'"
-            [class.group-hover:shadow-red-900\/60]="true">
+          class="flex flex-col items-center text-center p-7 rounded-2xl bg-white border border-slate-200/80 shadow-xs hover:shadow-md transition-all">
+          <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center font-black text-xl text-white bg-gradient-to-br from-[#8C1D24] to-[#EA580C] shadow-md shadow-[#8C1D24]/15">
             {{ i + 1 }}
           </div>
-
-          <i [attr.data-lucide]="step.icon" class="w-6 h-6 text-red-400/60 mb-4"></i>
-          <h3 class="text-base font-bold text-white mb-2">{{ step.title }}</h3>
-          <p class="text-sm text-white/40 leading-relaxed">{{ step.desc }}</p>
+          <h3 class="text-base font-bold text-slate-900 mb-2">{{ step.title }}</h3>
+          <p class="text-xs text-slate-500 leading-relaxed font-normal">{{ step.desc }}</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
 
-  <!-- ══════════════════════════════════════════════
-       TESTIMONIALS
-  ══════════════════════════════════════════════ -->
-  <section id="testimonials" class="py-28 bg-[#0D0406]/60 border-y border-white/5">
-    <div class="max-w-7xl mx-auto px-5 md:px-8">
-
-      <div class="text-center max-w-xl mx-auto mb-16">
-        <span class="inline-flex items-center gap-2 text-[#8C1D24] font-bold tracking-widest text-xs uppercase mb-5 border border-[#8C1D24]/30 bg-[#8C1D24]/10 rounded-full px-3 py-1">
-          <i data-lucide="quote" class="w-3 h-3"></i>
-          Testimonials
-        </span>
-        <h2 class="text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight mb-4">
-          Trusted by Safety<br/>Professionals.
-        </h2>
-        <p class="text-white/40 font-medium">From compliance officers to field inspectors — here's what they say.</p>
-      </div>
-
-      <!-- Stat row -->
-      <div class="flex justify-center gap-12 mb-16">
-        <div class="text-center">
-          <p class="text-5xl font-black text-white mb-1">52+</p>
-          <p class="text-xs text-white/40 font-bold uppercase tracking-wider">Verified Reviews</p>
-        </div>
-        <div class="w-px bg-white/10"></div>
-        <div class="text-center">
-          <p class="text-5xl font-black text-white mb-1">4.9<span class="text-yellow-400">★</span></p>
-          <p class="text-xs text-white/40 font-bold uppercase tracking-wider">Average Rating</p>
-        </div>
-        <div class="w-px bg-white/10"></div>
-        <div class="text-center">
-          <p class="text-5xl font-black text-white mb-1">100%</p>
-          <p class="text-xs text-white/40 font-bold uppercase tracking-wider">Would Recommend</p>
-        </div>
-      </div>
-
-      <!-- Testimonial grid -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div *ngFor="let t of testimonials; let i = index"
-          class="testimonial-card bg-[#100406]/80 border border-white/5 hover:border-[#8C1D24]/20 rounded-2xl p-7">
-
-          <!-- Stars -->
-          <div class="flex gap-1 mb-5">
-            <i *ngFor="let s of [1,2,3,4,5]" data-lucide="star" class="w-3.5 h-3.5 text-yellow-400 fill-yellow-400"></i>
-          </div>
-
-          <!-- Quote -->
-          <p class="text-sm text-white/60 leading-relaxed mb-6 font-medium italic">"{{ t.quote }}"</p>
-
-          <!-- Author -->
-          <div class="flex items-center gap-3 border-t border-white/5 pt-5">
-            <div class="w-10 h-10 rounded-full flex items-center justify-center font-black text-xs text-white flex-shrink-0"
-              [style.background]="t.avatarGrad">
-              {{ t.initials }}
-            </div>
-            <div>
-              <p class="text-sm font-bold text-white">{{ t.name }}</p>
-              <p class="text-xs text-white/40">{{ t.role }}</p>
+    <!-- ══════════════════════════════════════════════
+         BOTTOM CTA SECTION
+    ══════════════════════════════════════════════ -->
+    <section class="py-12 px-4 sm:px-8">
+      <div class="max-w-5xl mx-auto">
+        <div class="relative rounded-2xl overflow-hidden bg-[#0E0304] p-8 md:p-12 text-center text-white shadow-xl border border-slate-800">
+          <div class="absolute inset-0 bg-gradient-to-br from-[#8C1D24] via-[#5C0D12] to-[#0E0304] opacity-95"></div>
+          <div class="relative z-10">
+            <h2 class="text-3xl md:text-4xl font-black mb-3 tracking-tight">
+              Ready to Streamline Your Fire Safety?
+            </h2>
+            <p class="text-orange-100/80 text-base mb-6 max-w-lg mx-auto font-normal">
+              Join safety managers and facilities who rely on FEMS for compliance and peace of mind.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3.5 items-center justify-center">
+              <!-- Shape-changing Hover Button -->
+              <a routerLink="/signup"
+                class="inline-flex items-center gap-3 bg-white text-slate-900 font-extrabold text-sm px-8 py-3.5 rounded-xl hover:rounded-full hover:scale-[1.02] shadow-xl transition-all duration-300">
+                <span>Get Started — Free Account</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+              <a routerLink="/signin"
+                class="inline-flex items-center gap-2 text-sm font-bold text-white/90 hover:text-white transition-colors px-5 py-3.5">
+                Sign In to Existing Account →
+              </a>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
 
-  <!-- ══════════════════════════════════════════════
-       FAQ SECTION
-  ══════════════════════════════════════════════ -->
-  <section id="faq" class="py-28 max-w-3xl mx-auto px-5 md:px-8">
-    <div class="text-center mb-16">
-      <span class="inline-flex items-center gap-2 text-[#8C1D24] font-bold tracking-widest text-xs uppercase mb-5 border border-[#8C1D24]/30 bg-[#8C1D24]/10 rounded-full px-3 py-1">
-        <i data-lucide="help-circle" class="w-3 h-3"></i>
-        FAQ
-      </span>
-      <h2 class="text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
-        Questions &amp; Answers
-      </h2>
-    </div>
-
-    <div class="space-y-3">
-      <div *ngFor="let faq of faqs; let i = index"
-        class="bg-[#100406]/60 border rounded-2xl overflow-hidden transition-all duration-300"
-        [class.border-[#8C1D24]/40]="activeFaqId === faq.id"
-        [class.border-white/5]="activeFaqId !== faq.id">
-
-        <button (click)="toggleFaqById(faq.id)"
-          class="w-full text-left px-6 py-5 flex justify-between items-center gap-4 hover:bg-white/2 transition-colors group">
-          <span class="font-bold text-white/80 group-hover:text-white text-sm md:text-base transition-colors">{{ faq.q }}</span>
-          <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300"
-            [class.bg-[#8C1D24]/20]="activeFaqId === faq.id"
-            [class.bg-white/5]="activeFaqId !== faq.id">
-            <i data-lucide="chevron-down" class="w-4 h-4 text-white/60 transition-transform duration-300"
-              [class.rotate-180]="activeFaqId === faq.id"></i>
-          </div>
-        </button>
-
-        <div class="faq-answer px-6" [class.open]="activeFaqId === faq.id">
-          <div class="pb-5 text-sm text-white/50 leading-relaxed font-medium">{{ faq.a }}</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ══════════════════════════════════════════════
-       BOTTOM CTA SECTION
-  ══════════════════════════════════════════════ -->
-  <section class="py-20 px-5 md:px-8">
-    <div class="max-w-5xl mx-auto">
-      <div class="relative rounded-[40px] overflow-hidden bg-gradient-to-br from-[#8C1D24] via-[#6E1318] to-[#3D0709] p-12 md:p-20 text-center shadow-2xl shadow-red-950/50">
-        <div class="noise-overlay"></div>
-
-        <!-- Decorative orbs -->
-        <div class="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 w-64 h-64 bg-black/20 rounded-full blur-2xl pointer-events-none"></div>
-
-        <div class="relative z-10">
-          <span class="inline-flex items-center gap-2 text-red-200/80 font-bold tracking-widest text-xs uppercase mb-6 border border-white/15 bg-white/5 rounded-full px-3 py-1 backdrop-blur-sm">
-            <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-red-300"></span>
-            </span>
-            Ready to Transform Your Operations?
-          </span>
-
-          <h2 class="text-4xl md:text-6xl font-black text-white mb-5 leading-tight tracking-tight">
-            Start Protecting Lives<br/>at Scale Today.
-          </h2>
-          <p class="text-red-100/70 text-lg mb-12 max-w-lg mx-auto font-medium leading-relaxed">
-            Join safety teams who've already modernized their fire extinguisher management with FEMS.
-          </p>
-
-          <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <a routerLink="/signup"
-              class="btn-primary-glow group inline-flex items-center gap-3 bg-white text-[#8C1D24] font-black text-sm px-10 py-5 rounded-2xl shadow-2xl hover:shadow-white/20 hover:-translate-y-1 transition-all duration-300">
-              <span>Get Started — It's Free</span>
-              <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-            </a>
-            <a routerLink="/signin"
-              class="inline-flex items-center gap-2 text-sm font-semibold text-red-100/70 hover:text-white transition-colors px-6 py-4">
-              Already have an account? Sign In →
-            </a>
-          </div>
-
-          <!-- Trust row -->
-          <div class="mt-12 flex items-center justify-center gap-8 text-red-100/40 text-xs font-semibold">
-            <div class="flex items-center gap-1.5"><i data-lucide="lock" class="w-3 h-3"></i>No credit card required</div>
-            <div class="hidden sm:flex items-center gap-1.5"><i data-lucide="zap" class="w-3 h-3"></i>Setup in under 5 minutes</div>
-            <div class="hidden md:flex items-center gap-1.5"><i data-lucide="shield" class="w-3 h-3"></i>SOC 2 Compliant</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ══════════════════════════════════════════════
-       FOOTER
-  ══════════════════════════════════════════════ -->
-  <footer class="border-t border-white/5 pt-16 pb-8">
-    <div class="max-w-7xl mx-auto px-5 md:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-
-        <!-- Brand col -->
-        <div class="md:col-span-2">
-          <div class="flex items-center gap-3 mb-5">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#8C1D24] to-[#5A0E12] flex items-center justify-center shadow-lg shadow-red-900/40">
-              <img src="assets/logo.png" alt="FEMS" class="w-5 h-5 brightness-0 invert object-contain" />
+    <!-- ══════════════════════════════════════════════
+         FOOTER
+    ══════════════════════════════════════════════ -->
+    <footer class="bg-slate-950 text-white pt-12 pb-8 border-t border-slate-900">
+      <div class="max-w-7xl mx-auto px-6 md:px-10">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div class="md:col-span-2">
+            <div class="flex items-center gap-3.5 mb-4">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#8C1D24] to-[#EA580C] flex items-center justify-center">
+                <img src="assets/logo.png" alt="FEMS" class="w-4 h-4 brightness-0 invert object-contain" />
+              </div>
+              <span class="text-xl font-black text-white tracking-tight">FEMS</span>
             </div>
-            <div>
-              <span class="text-lg font-black text-white tracking-tight block">FEMS</span>
-              <span class="text-[9px] font-semibold text-red-400/70 tracking-[0.18em] uppercase">Fire Safety Platform</span>
-            </div>
+            <p class="text-sm text-slate-400 max-w-xs leading-relaxed font-normal">
+              The modern Fire Extinguisher Management System. Engineered for compliance, clarity, and life-saving readiness.
+            </p>
           </div>
-          <p class="text-sm text-white/30 max-w-xs leading-relaxed mb-6">
-            The premium fire extinguisher management system. Engineered for clarity, built for compliance, designed for safety professionals.
-          </p>
-          <div class="flex gap-3">
-            <a href="#" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-white/20 transition-colors">
-              <i data-lucide="twitter" class="w-4 h-4 text-white/50"></i>
-            </a>
-            <a href="#" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-white/20 transition-colors">
-              <i data-lucide="linkedin" class="w-4 h-4 text-white/50"></i>
-            </a>
-            <a href="#" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-white/20 transition-colors">
-              <i data-lucide="github" class="w-4 h-4 text-white/50"></i>
-            </a>
+
+          <div>
+            <h4 class="text-white font-bold mb-3 text-xs uppercase tracking-wider">Features</h4>
+            <ul class="space-y-2 text-sm text-slate-400 font-normal">
+              <li><a href="#features" class="hover:text-white transition-colors">Inventory Matrix</a></li>
+              <li><a href="#features" class="hover:text-white transition-colors">Compliance Alerts</a></li>
+              <li><a href="#features" class="hover:text-white transition-colors">Inspection Logs</a></li>
+              <li><a href="#features" class="hover:text-white transition-colors">Multi-Site GPS</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-white font-bold mb-3 text-xs uppercase tracking-wider">Navigation</h4>
+            <ul class="space-y-2 text-sm text-slate-400 font-normal">
+              <li><a href="#about" class="hover:text-white transition-colors">About Us</a></li>
+              <li><a href="#testimonials" class="hover:text-white transition-colors">Testimonials</a></li>
+              <li><a href="#faq" class="hover:text-white transition-colors">FAQ</a></li>
+              <li><a routerLink="/signin" class="hover:text-white transition-colors">Sign In</a></li>
+            </ul>
           </div>
         </div>
 
-        <!-- Features col -->
-        <div>
-          <h4 class="text-white font-bold mb-5 text-sm uppercase tracking-wider">Features</h4>
-          <ul class="space-y-3 text-sm text-white/40">
-            <li><a href="#features" class="hover:text-white transition-colors">Inventory Management</a></li>
-            <li><a href="#features" class="hover:text-white transition-colors">Compliance Alerts</a></li>
-            <li><a href="#features" class="hover:text-white transition-colors">Inspection Workflows</a></li>
-            <li><a href="#features" class="hover:text-white transition-colors">Multi-Site Locations</a></li>
-            <li><a href="#features" class="hover:text-white transition-colors">AI Assistant</a></li>
-          </ul>
-        </div>
-
-        <!-- Company col -->
-        <div>
-          <h4 class="text-white font-bold mb-5 text-sm uppercase tracking-wider">Company</h4>
-          <ul class="space-y-3 text-sm text-white/40">
-            <li><a href="#about"        class="hover:text-white transition-colors">About Us</a></li>
-            <li><a href="#testimonials" class="hover:text-white transition-colors">Testimonials</a></li>
-            <li><a href="#faq"          class="hover:text-white transition-colors">FAQ</a></li>
-            <li><a routerLink="/signin" class="hover:text-white transition-colors">Sign In</a></li>
-            <li><a routerLink="/signup" class="hover:text-white transition-colors">Get Started</a></li>
-          </ul>
+        <div class="border-t border-slate-900 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+          <p>&copy; 2026 FEMS. All rights reserved.</p>
+          <div class="flex gap-6 font-medium">
+            <a href="#" class="hover:text-slate-400">Privacy Policy</a>
+            <a href="#" class="hover:text-slate-400">Terms of Service</a>
+          </div>
         </div>
       </div>
+    </footer>
 
-      <!-- Bottom bar -->
-      <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/25">
-        <p>&copy; 2026 FEMS. All rights reserved. Built for fire safety excellence.</p>
-        <div class="flex gap-6">
-          <a href="#" class="hover:text-white/60 transition-colors">Privacy Policy</a>
-          <a href="#" class="hover:text-white/60 transition-colors">Terms of Service</a>
-          <a href="#" class="hover:text-white/60 transition-colors">Cookie Policy</a>
-        </div>
-      </div>
-    </div>
-  </footer>
+  </div>
 
 </div>

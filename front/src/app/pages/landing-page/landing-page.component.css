@@ -1,12 +1,12 @@
 /* ================================================================
-   FEMS LANDING PAGE — Premium Fire Safety Aesthetic
+   FEMS LANDING PAGE — Light Mode Crimson & Flame Orange Aesthetic
    ================================================================ */
 
 /* ── Noise texture overlay for depth ── */
 .noise-overlay {
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none;
   border-radius: inherit;
 }
@@ -27,14 +27,14 @@
   75%       { transform: translate(-30px, -10px); }
 }
 
-.hero-orb-1 { animation: orb-float-1 12s ease-in-out infinite; }
-.hero-orb-2 { animation: orb-float-2 16s ease-in-out infinite; }
-.hero-orb-3 { animation: orb-float-3 10s ease-in-out infinite; }
+.hero-orb-1 { animation: orb-float-1 14s ease-in-out infinite; }
+.hero-orb-2 { animation: orb-float-2 18s ease-in-out infinite; }
+.hero-orb-3 { animation: orb-float-3 12s ease-in-out infinite; }
 
 /* ── Hero badge shimmer pulse ── */
 @keyframes badge-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 100, 80, 0.4); }
-  50%       { box-shadow: 0 0 0 8px rgba(255, 100, 80, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
 }
 .badge-live { animation: badge-pulse 2s ease-in-out infinite; }
 
@@ -48,15 +48,15 @@
 /* ── Floating dashboard cards ── */
 @keyframes float-card-a {
   0%, 100% { transform: translateY(0px) rotate(-1deg); }
-  50%       { transform: translateY(-14px) rotate(0deg); }
+  50%       { transform: translateY(-12px) rotate(0deg); }
 }
 @keyframes float-card-b {
   0%, 100% { transform: translateY(0px) rotate(1deg); }
-  50%       { transform: translateY(-10px) rotate(-0.5deg); }
+  50%       { transform: translateY(-8px) rotate(-0.5deg); }
 }
 @keyframes float-card-c {
   0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-18px); }
+  50%       { transform: translateY(-14px); }
 }
 .float-a { animation: float-card-a 6s ease-in-out infinite; }
 .float-b { animation: float-card-b 8s ease-in-out infinite 1s; }
@@ -64,7 +64,7 @@
 
 /* ── Stagger entrance animations ── */
 @keyframes slide-up-fade {
-  from { opacity: 0; transform: translateY(40px); }
+  from { opacity: 0; transform: translateY(32px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .stagger-1 { animation: slide-up-fade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
@@ -73,28 +73,18 @@
 .stagger-4 { animation: slide-up-fade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both; }
 .stagger-5 { animation: slide-up-fade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.65s both; }
 
-/* ── Feature cards hover glow ── */
+/* ── Feature cards hover ── */
 .feature-card {
-  position: relative;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.35s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease;
 }
-.feature-card::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  background: linear-gradient(135deg, transparent 0%, rgba(140, 29, 36, 0.3) 50%, transparent 100%);
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  pointer-events: none;
-  z-index: -1;
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -10px rgba(140, 29, 36, 0.08);
 }
-.feature-card:hover::before { opacity: 1; }
-.feature-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -12px rgba(140, 29, 36, 0.18); }
 
-/* ── Crimson gradient button shimmer ── */
+/* ── Primary button shimmer ── */
 .btn-primary-glow {
   position: relative;
   overflow: hidden;
@@ -105,63 +95,42 @@
   top: 0; left: -100%;
   width: 60%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
   transition: left 0.6s ease;
 }
 .btn-primary-glow:hover::after { left: 150%; }
 
-/* ── Scrolling logo ticker ── */
-@keyframes ticker-scroll {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.logo-ticker-track {
-  display: flex;
-  width: max-content;
-  animation: ticker-scroll 28s linear infinite;
-}
-.logo-ticker-track:hover { animation-play-state: paused; }
-
-/* ── Section entrance (intersection observer via CSS) ── */
-.reveal-section {
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.reveal-section.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ── Nav glassmorphism ── */
+/* ── Nav glassmorphism Light Mode ── */
 .nav-glass {
-  background: rgba(12, 4, 4, 0.6);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  transition: background 0.3s ease;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: background 0.3s ease, shadow 0.3s ease;
 }
 .nav-glass.scrolled {
-  background: rgba(8, 2, 2, 0.85);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.06);
 }
 
 /* ── Progress bar for extinguisher status ── */
 .progress-bar-fill {
   height: 100%;
   border-radius: 9999px;
-  background: linear-gradient(90deg, #8C1D24, #E53E3E);
+  background: linear-gradient(90deg, #8C1D24, #F97316);
   transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Testimonial card hover ── */
+/* ── Testimonial card hover & tracking ── */
 .testimonial-card {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s ease;
+              box-shadow 0.3s ease,
+              border-color 0.3s ease;
 }
 .testimonial-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 16px 36px -8px rgba(140, 29, 36, 0.08);
+  border-color: rgba(249, 115, 22, 0.3);
 }
 
 /* ── FAQ accordion smooth open ── */
@@ -177,49 +146,23 @@
   opacity: 1;
 }
 
-/* ── Fire particle behind the hero ── */
-@keyframes fire-particle {
-  0%   { transform: translateY(0) scale(1); opacity: 0.7; }
-  100% { transform: translateY(-120px) scale(0.2); opacity: 0; }
-}
-.fire-particle {
-  position: absolute;
-  bottom: 0;
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  animation: fire-particle 2.5s ease-out infinite;
-}
-
-/* ── Gradient text ── */
+/* ── Gradient text Crimson to Flame Orange ── */
 .gradient-text {
-  background: linear-gradient(135deg, #ff8080 0%, #ff4444 40%, #ff9966 100%);
+  background: linear-gradient(135deg, #8C1D24 0%, #EA580C 50%, #F97316 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ── Stats counter glitch effect ── */
-@keyframes glitch-num {
-  0%, 100% { clip-path: none; transform: none; }
-  20%       { clip-path: inset(20% 0 60% 0); transform: translate(-2px); }
-  40%       { clip-path: inset(60% 0 10% 0); transform: translate(2px); }
-  60%       { clip-path: none; }
-}
-
-/* ── Dashboard mockup grid lines ── */
-.grid-bg {
+/* ── Light Grid background ── */
+.grid-bg-light {
   background-image:
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 32px 32px;
+    linear-gradient(rgba(140, 29, 36, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(140, 29, 36, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
-/* ── 3D tilt card effect ── */
-.tilt-card {
-  transform-style: preserve-3d;
-  transition: transform 0.15s ease;
-}
-
-/* ── Spinning ring ── */
+/* ── Spinning rings ── */
 @keyframes spin-slow {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
@@ -228,8 +171,8 @@
   from { transform: rotate(360deg); }
   to   { transform: rotate(0deg); }
 }
-.spin-slow    { animation: spin-slow 20s linear infinite; }
-.spin-reverse { animation: spin-reverse 15s linear infinite; }
+.spin-slow    { animation: spin-slow 24s linear infinite; }
+.spin-reverse { animation: spin-reverse 18s linear infinite; }
 
 /* ── Mobile nav slide-in ── */
 .mobile-nav-enter {
@@ -240,18 +183,3 @@
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ── Icon ping ── */
-@keyframes icon-ping {
-  0%   { transform: scale(1); opacity: 1; }
-  75%  { transform: scale(1.8); opacity: 0; }
-  100% { transform: scale(1.8); opacity: 0; }
-}
-.icon-ping::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: currentColor;
-  animation: icon-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-  opacity: 0.5;
-}

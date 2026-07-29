@@ -57,7 +57,7 @@
     <div class="client-empty-icon">
       <i data-lucide="map-pin" class="w-8 h-8"></i>
     </div>
-    <p class="text-lg font-semibold text-[#0B1437]">No locations found</p>
+    <p class="text-lg font-semibold text-slate-800">No locations found</p>
     <p class="text-base text-slate-500 mt-2">Try another search or clear the filter.</p>
     <button type="button" (click)="setFilter('all'); searchTerm = ''"
       class="client-btn-secondary mt-6 inline-flex">Show all</button>
@@ -68,22 +68,22 @@
       [queryParams]="{ site: loc.id, name: loc.name }"
       class="client-card client-card--lift block p-5 no-underline text-inherit">
       <div class="flex items-center gap-4">
-        <span class="w-11 h-11 rounded-2xl bg-slate-100 text-[#0B1437] flex items-center justify-center shrink-0">
+        <span class="w-11 h-11 rounded-2xl bg-[#FDF2F2] text-[#8C1D24] flex items-center justify-center shrink-0">
           <i data-lucide="building-2" class="w-5 h-5"></i>
         </span>
         <div class="flex-1 min-w-0">
           <div class="flex flex-wrap items-center gap-2">
-            <h3 class="text-lg font-semibold text-[#0B1437]">{{ loc.name }}</h3>
+            <h3 class="text-base font-bold text-slate-800">{{ loc.name }}</h3>
             <span class="client-badge text-xs font-semibold px-2.5 py-0.5 rounded-full ring-1"
-              [ngClass]="statusBadgeClass(loc.status)">
+               [ngClass]="statusBadgeClass(loc.status)">
               {{ statusLabel(loc.status) }}
             </span>
           </div>
-          <p class="text-sm text-slate-500 mt-0.5 truncate">{{ loc.zone }}<span *ngIf="loc.clientName"> · {{ loc.clientName }}</span></p>
+          <p class="text-xs text-slate-500 mt-0.5 truncate">{{ loc.zone }}<span *ngIf="loc.clientName"> · {{ loc.clientName }}</span></p>
         </div>
         <div class="text-right shrink-0 hidden sm:block">
-          <p class="text-xl font-bold text-[#0B1437]">{{ loc.totalExtinguishers }}</p>
-          <p class="text-xs text-slate-400">units</p>
+          <p class="text-lg font-black text-slate-800">{{ loc.totalExtinguishers }}</p>
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">units</p>
         </div>
         <i data-lucide="chevron-right" class="w-5 h-5 text-slate-300 shrink-0"></i>
       </div>

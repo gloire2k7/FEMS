@@ -1,6 +1,6 @@
 <div class="client-page max-w-6xl pb-8">
 
-  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
+  <section class="client-hero">
     <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
       <div>
         <p class="client-hero-eyebrow">Field team</p>
@@ -61,7 +61,7 @@
         [class.ring-2]="selectedInspector?.id === insp.id" [class.ring-blue-200]="selectedInspector?.id === insp.id">
         <img [src]="insp.avatar" [alt]="insp.name" class="w-12 h-12 rounded-full border border-slate-100 shrink-0">
         <div class="flex-1 min-w-0">
-          <h3 class="font-semibold text-[#0B1437]">{{ insp.name }}</h3>
+          <h3 class="font-bold text-slate-800">{{ insp.name }}</h3>
           <p class="text-sm text-slate-500 truncate">{{ insp.email }}</p>
           <p class="text-xs text-slate-400 mt-0.5">{{ insp.id }} · {{ insp.base }}</p>
         </div>
@@ -85,7 +85,7 @@
         <span class="inline-flex w-14 h-14 rounded-2xl bg-slate-50 items-center justify-center mb-4">
           <i data-lucide="user" class="w-7 h-7 text-slate-300"></i>
         </span>
-        <p class="font-medium text-[#0B1437]">Inspector profile</p>
+        <p class="font-bold text-slate-800">Inspector profile</p>
         <p class="text-sm text-slate-500 mt-1">Select an inspector to view details.</p>
       </div>
 
@@ -94,7 +94,7 @@
           <div class="flex items-center gap-3">
             <img [src]="selectedInspector.avatar" class="w-14 h-14 rounded-full border border-slate-100">
             <div>
-              <h3 class="text-lg font-semibold text-[#0B1437]">{{ selectedInspector.name }}</h3>
+              <h3 class="text-base font-bold text-slate-800">{{ selectedInspector.name }}</h3>
               <p class="text-sm text-slate-500">{{ selectedInspector.id }}</p>
             </div>
           </div>
@@ -105,7 +105,7 @@
 
         <div class="grid grid-cols-2 gap-3">
           <div class="bg-slate-50 rounded-xl p-4 text-center">
-            <p class="text-2xl font-bold text-[#0B1437]">{{ selectedInspector.totalInspections }}</p>
+            <p class="text-2xl font-black text-slate-850">{{ selectedInspector.totalInspections }}</p>
             <p class="text-xs text-slate-500 mt-1">Inspections</p>
           </div>
           <div class="bg-emerald-50 rounded-xl p-4 text-center">

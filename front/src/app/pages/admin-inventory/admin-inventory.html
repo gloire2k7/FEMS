@@ -1,6 +1,6 @@
 <div class="client-page max-w-6xl pb-8">
 
-  <section class="client-hero rounded-3xl px-8 py-10 text-white shadow-lg shadow-[#0B1437]/20">
+  <section class="client-hero">
     <div class="client-hero-inner flex flex-col md:flex-row md:items-end md:justify-between gap-6">
       <div>
         <p class="client-hero-eyebrow">Warehouse</p>
@@ -23,7 +23,7 @@
           <i [attr.data-lucide]="pricingExpanded ? 'chevron-up' : 'chevron-down'" class="w-4 h-4 text-slate-600"></i>
         </span>
         <div class="min-w-0">
-          <h2 class="text-lg font-semibold text-[#0B1437]">Product pricing</h2>
+          <h2 class="text-base font-bold text-slate-800">Product pricing</h2>
           <p class="text-sm text-slate-500">Set unit prices by type and capacity (RWF). Used for inventory registration and client orders.</p>
         </div>
       </button>
@@ -46,7 +46,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let type of priceTypes" class="border-b border-slate-50">
-              <td class="py-3 pr-4 font-medium text-[#0B1437]">{{ type }}</td>
+              <td class="py-3 pr-4 font-bold text-slate-800">{{ type }}</td>
               <td *ngFor="let cap of priceCapacities" class="py-3 px-2">
                 <input type="number" min="0" [ngModel]="getPrice(type, cap)" (ngModelChange)="setPrice(type, cap, $event)"
                   class="client-input w-full text-center py-2 text-sm">
@@ -62,7 +62,7 @@
   <section class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
     <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap justify-between items-center gap-3">
       <div>
-        <h2 class="text-lg font-semibold text-[#0B1437]">Units in stock</h2>
+        <h2 class="text-base font-bold text-slate-800">Units in stock</h2>
         <p class="text-sm text-slate-500">{{ total }} units found</p>
       </div>
       <div class="flex flex-wrap items-center gap-2">
@@ -111,7 +111,7 @@
       <div *ngFor="let u of units" class="flex flex-wrap items-center px-6 py-4 gap-4 hover:bg-slate-50/50">
         <img *ngIf="u.qr_code_path" [src]="qrUrl(u.qr_code_path)" alt="QR" class="w-10 h-10 rounded border shrink-0" />
         <div class="flex-1 min-w-0">
-          <p class="font-semibold text-[#0B1437]">{{ u.serial_number }}</p>
+          <p class="font-bold text-slate-800">{{ u.serial_number }}</p>
           <p class="text-sm text-slate-500">{{ u.type }} · {{ u.capacity }} · {{ u.price | currency }}</p>
           <p *ngIf="u.client_name" class="text-xs text-blue-600 mt-0.5">{{ u.client_name }}</p>
         </div>
@@ -142,7 +142,7 @@
 
   <!-- Recent stock actions -->
   <section *ngIf="recentTotal > 0 || recent.length > 0" class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
-    <h2 class="text-lg font-semibold text-[#0B1437] mb-4">Recent stock actions</h2>
+    <h2 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Recent stock actions</h2>
     <div class="space-y-2 divide-y divide-slate-50">
       <div *ngFor="let m of recent" class="flex flex-wrap justify-between gap-2 py-3 text-sm">
         <span><strong>{{ m.action }}</strong> · {{ m.serial_number || '—' }} by {{ m.performer_name }}</span>
@@ -157,7 +157,7 @@
 <!-- Edit modal -->
 <div *ngIf="editingUnit" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" (click)="cancelEdit()">
   <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6" (click)="$event.stopPropagation()">
-    <h3 class="text-lg font-semibold text-[#0B1437] mb-1">Edit unit</h3>
+    <h3 class="text-base font-bold text-slate-800 mb-1">Edit unit</h3>
     <p class="text-sm text-slate-500 mb-4">{{ editingUnit.serial_number }}</p>
     <div class="space-y-3">
       <div>
