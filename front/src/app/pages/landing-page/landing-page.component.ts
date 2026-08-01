@@ -4,6 +4,11 @@ import { RouterModule } from '@angular/router';
 
 declare const lucide: { createIcons: () => void } | undefined;
 
+interface NavLink { label: string; href: string; }
+interface Partner { name: string; sub: string; }
+interface AboutCard { icon: string; title: string; desc: string; }
+interface Testimonial { quote: string; name: string; role: string; initial: string; }
+
 @Component({
   selector: 'app-landing-page',
   standalone: true,
@@ -13,26 +18,46 @@ declare const lucide: { createIcons: () => void } | undefined;
 })
 export class LandingPageComponent implements OnInit, OnDestroy {
   mobileMenuOpen = false;
-  activeSection: 'features' | 'how' | 'faq' = 'features';
   activeFaqId: number | null = null;
 
-  sectionTabs = [
-    { id: 'features' as const, label: 'Features' },
-    { id: 'how' as const, label: 'How it works' },
-    { id: 'faq' as const, label: 'FAQ' },
+  navLinks: NavLink[] = [
+    { label: 'Features', href: '#features' },
+    { label: 'Process', href: '#process' },
+    { label: 'Stories', href: '#stories' },
+    { label: 'FAQ', href: '#faq' },
   ];
 
   stats = [
     { value: '10K+', suffix: '', label: 'Units tracked' },
-    { value: '99.8', suffix: '%', label: 'Compliance' },
+    { value: '98', suffix: '%', label: 'Compliance' },
     { value: '60+', suffix: '', label: 'Client sites' },
     { value: '100', suffix: '%', label: 'Uptime' },
   ];
 
-  previewSites = [
-    { name: 'HQ Main Office', status: 'Compliant', dot: 'bg-emerald-500', badge: 'bg-emerald-50 text-emerald-700' },
-    { name: 'Warehouse B', status: 'Due soon', dot: 'bg-amber-500', badge: 'bg-amber-50 text-amber-700' },
-    { name: 'Retail Floor 2', status: 'Compliant', dot: 'bg-emerald-500', badge: 'bg-emerald-50 text-emerald-700' },
+  partners: Partner[] = [
+    { name: 'NFPA', sub: 'Fire codes' },
+    { name: 'ISO 9001', sub: 'Quality mgmt' },
+    { name: 'RBS', sub: 'Standards body' },
+    { name: 'EN 3', sub: 'Extinguishers' },
+    { name: 'OSHA', sub: 'Workplace safety' },
+  ];
+
+  aboutCards: AboutCard[] = [
+    {
+      icon: 'cpu',
+      title: 'Smart Integration With Several Devices & Platforms',
+      desc: 'FEMS integrates QR scanning, GPS mapping, and automated reporting — connect every site and unit in one place.',
+    },
+    {
+      icon: 'hand-heart',
+      title: 'Easy to Control, Built for Your Whole Team',
+      desc: 'Intuitive dashboards for admins, inspectors, and clients so everyone can master fire safety without training.',
+    },
+    {
+      icon: 'building-2',
+      title: 'Flexible for Managing Every Room In Your Building',
+      desc: 'Organise extinguishers by building, floor, and room with long-distance access to every location.',
+    },
   ];
 
   features = [
@@ -72,13 +97,58 @@ export class LandingPageComponent implements OnInit, OnDestroy {
       desc: 'Instant answers on compliance, procedures, and operational guidance 24/7.',
       tags: ['AI powered', 'Contextual'],
     },
+    {
+      icon: 'radar',
+      title: 'Weather & Risk Detector',
+      desc: 'See risk levels for every site and get notified when conditions require extra care.',
+      tags: ['Live risk', 'Alerts'],
+    },
+    {
+      icon: 'gauge',
+      title: 'Powerful Analytics',
+      desc: 'Visualise order trends, stock levels, and inspection performance across your fleet.',
+      tags: ['Charts', 'Trends'],
+    },
   ];
 
   steps = [
-    { title: 'Register company', desc: 'Sign up, verify email, and get approved by an admin.' },
-    { title: 'Add locations', desc: 'Map buildings and sites with GPS coordinates.' },
-    { title: 'Import inventory', desc: 'Bulk-import your fleet or add units individually.' },
-    { title: 'Stay compliant', desc: 'Automated inspections, alerts, and reports.' },
+    {
+      title: 'Project Discovery Call',
+      desc: 'We learn about your sites, fleet size, and compliance goals — then tailor FEMS to your needs.',
+    },
+    {
+      title: 'Register & Onboard',
+      desc: 'Sign up, verify your company, and import your extinguisher inventory in minutes.',
+    },
+    {
+      title: 'Track & Assign Inspections',
+      desc: 'Automated schedules, inspector assignments, and QR-based field reports keep everyone aligned.',
+    },
+    {
+      title: 'Stay Audit-Ready',
+      desc: 'Live compliance tracking, automatic reminders, and one-click audit reports for every site.',
+    },
+  ];
+
+  testimonials: Testimonial[] = [
+    {
+      quote: 'FEMS cut our inspection admin time by 60%. We now know exactly which units need attention and when.',
+      name: 'Diane Uwera',
+      role: 'HSE Manager, Kigali',
+      initial: 'D',
+    },
+    {
+      quote: 'The single dashboard gave us full visibility across 14 sites. Audits that took a week now take an afternoon.',
+      name: 'Jean Bosco',
+      role: 'Facilities Director',
+      initial: 'J',
+    },
+    {
+      quote: 'Ordering refills and tracking deliveries is effortless. Our compliance score has never been higher.',
+      name: 'Aline Mukamana',
+      role: 'Operations Lead',
+      initial: 'A',
+    },
   ];
 
   faqs = [
@@ -109,6 +179,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       setTimeout(() => lucide?.createIcons?.(), 80);
+      setTimeout(() => lucide?.createIcons?.(), 300);
     }
   }
 
